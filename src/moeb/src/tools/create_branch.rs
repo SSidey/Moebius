@@ -15,7 +15,7 @@ impl ToolHandler for CreateBranchTool {
     fn definition(&self) -> ToolDef {
         ToolDef {
             name: "create_branch",
-            description: "Create a Conventional Branch chore/<domain>-<slug> in the repository. \
+            description: "Create a Conventional Branch feat/<domain>-<slug> in the repository. \
                 Call this after writing the spec file and before linking README.",
             parameters: json!({
                 "type": "object",

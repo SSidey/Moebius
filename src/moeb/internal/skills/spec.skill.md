@@ -84,7 +84,7 @@ Write the authored specification to disk:
 ## Phase 5 — Branch
 
 After the file is written, call `create_branch` with `domain` and `slug` extracted from
-the frontmatter. The tool creates the `chore/<domain>-<slug>` branch per Conventional
+the frontmatter. The tool creates the `feat/<domain>-<slug>` branch per Conventional
 Branch 1.0.0.
 
 ## Phase 6 — Link README

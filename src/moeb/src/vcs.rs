@@ -25,12 +25,12 @@ fn to_branch_description(s: &str) -> String {
     out
 }
 
-/// Create a Conventional Branch-compliant `chore/<domain>-<slug>` branch.
+/// Create a Conventional Branch-compliant `feat/<domain>-<slug>` branch.
 /// Returns the branch name that was created.
 /// Must be called from the repository root (CWD must contain the `.git/` directory).
 pub fn create_spec_branch(domain: &str, slug: &str) -> Result<String> {
     let desc = format!("{}-{}", to_branch_description(domain), to_branch_description(slug));
-    let branch = format!("chore/{}", desc);
+    let branch = format!("feat/{}", desc);
 
     eprintln!("[moeb] creating branch: {}", branch);
 
@@ -118,8 +118,8 @@ mod tests {
     #[test]
     fn domain_slug_combination() {
         assert_eq!(
-            format!("chore/{}-{}", to_branch_description("vcs"), to_branch_description("my-spec")),
-            "chore/vcs-my-spec"
+            format!("feat/{}-{}", to_branch_description("vcs"), to_branch_description("my-spec")),
+            "feat/vcs-my-spec"
         );
     }
 
@@ -129,12 +129,12 @@ mod tests {
         let domain = "vcs";
         let slug = "spec-creation-branch-commit-format";
         let desc = format!("{}-{}", to_branch_description(domain), to_branch_description(slug));
-        let branch = format!("chore/{}", desc);
+        let branch = format!("feat/{}", desc);
 
-        assert_eq!(branch, "chore/vcs-spec-creation-branch-commit-format");
-        assert!(branch.starts_with("chore/"), "type prefix must be chore/");
+        assert_eq!(branch, "feat/vcs-spec-creation-branch-commit-format");
+        assert!(branch.starts_with("feat/"), "type prefix must be feat/");
 
-        let description = &branch["chore/".len()..];
+        let description = &branch["feat/".len()..];
         assert!(!description.is_empty(), "description must not be empty");
         assert!(!description.starts_with('-'), "description must not start with hyphen");
         assert!(!description.ends_with('-'), "description must not end with hyphen");
