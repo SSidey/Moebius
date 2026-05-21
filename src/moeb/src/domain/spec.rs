@@ -238,6 +238,12 @@ impl SpecService {
             eprintln!("[moeb] warning: trace could not be saved: {}", e);
         }
 
+        // ── VCS: create the dedicated branch before any file is written ────────
+        // Conventional Branch 1.0.0: chore/<domain>-<slug>
+        // (lowercase, hyphens, no consecutive/leading/trailing hyphens).
+        let branch = crate::vcs::create_spec_branch(&domain, &slug)?;
+        eprintln!("[moeb] branch created: {}", branch);
+
         if status == "draft" {
             eprintln!("[moeb] note: spec has status 'draft' and is not yet considered governing.");
         }
@@ -267,9 +273,9 @@ impl SpecService {
         })?;
 
         let filename = format!("{}.{}.md", domain, slug);
-        let path = spec_dir.join(&filename);
-        fs::write(&path, &body)
-            .with_context(|| format!("Failed to write {}", path.display()))?;
+        let spec_file_path = spec_dir.join(&filename);
+        fs::write(&spec_file_path, &body)
+            .with_context(|| format!("Failed to write {}", spec_file_path.display()))?;
 
         println!(
             "Created: .moeb/specifications/{}/{}",
@@ -277,6 +283,13 @@ impl SpecService {
         );
 
         self.link_readme(&domain, &filename, working_dir, file_content_mode)?;
+
+        // ── VCS: stage spec file + README and create a Conventional Commit ─────
+        // Conventional Commits 1.0.0: docs(<domain>): add <slug> specification
+        let readme_path = working_dir.join("README.md");
+        if let Err(e) = crate::vcs::commit_spec(&spec_file_path, &readme_path, &domain, &slug) {
+            eprintln!("[moeb] warning: git commit failed (files written successfully): {}", e);
+        }
 
         Ok(())
     }

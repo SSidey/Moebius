@@ -17,6 +17,7 @@ pub mod run_state;
 pub mod skills;
 pub mod tools;
 pub mod trace;
+pub mod vcs;
 pub mod version_tests;
 
 #[derive(Parser)]
