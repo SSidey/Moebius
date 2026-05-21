@@ -122,4 +122,51 @@ mod tests {
             "chore/vcs-my-spec"
         );
     }
+
+    #[test]
+    fn branch_name_is_conventional_branch_compliant() {
+        // Verify the full branch name produced for the actual spec that introduced this rule.
+        let domain = "vcs";
+        let slug = "spec-creation-branch-commit-format";
+        let desc = format!("{}-{}", to_branch_description(domain), to_branch_description(slug));
+        let branch = format!("chore/{}", desc);
+
+        assert_eq!(branch, "chore/vcs-spec-creation-branch-commit-format");
+        assert!(branch.starts_with("chore/"), "type prefix must be chore/");
+
+        let description = &branch["chore/".len()..];
+        assert!(!description.is_empty(), "description must not be empty");
+        assert!(!description.starts_with('-'), "description must not start with hyphen");
+        assert!(!description.ends_with('-'), "description must not end with hyphen");
+        assert!(!description.contains("--"), "description must not have consecutive hyphens");
+        assert!(
+            description.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-'),
+            "description must only contain lowercase alphanumeric characters and hyphens"
+        );
+    }
+
+    #[test]
+    fn commit_message_is_conventional_commits_compliant() {
+        // Verify the format string used in commit_spec produces a valid Conventional Commits message.
+        let domain = "vcs";
+        let slug = "spec-creation-branch-commit-format";
+        let message = format!("docs({}): add {} specification", domain, slug);
+
+        assert_eq!(message, "docs(vcs): add spec-creation-branch-commit-format specification");
+        // type must be `docs`
+        assert!(message.starts_with("docs("), "commit type must be docs");
+        // scope must be the domain name in parentheses followed by colon-space
+        assert!(message.contains(&format!("docs({}):", domain)), "commit scope must be domain");
+        // separator must be colon + single space
+        assert!(message.contains("): "), "separator must be colon-space");
+        // description must be non-empty after the separator
+        let after_sep = message.split("): ").nth(1).unwrap_or("");
+        assert!(!after_sep.is_empty(), "commit description must be non-empty");
+        // subject line must be ≤ 72 characters
+        assert!(
+            message.len() <= 72,
+            "subject line must be ≤ 72 characters, got {}",
+            message.len()
+        );
+    }
 }

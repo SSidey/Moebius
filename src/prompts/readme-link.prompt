@@ -2,19 +2,29 @@ You are a harness maintenance agent. A new specification has just been written t
 
   {{spec_path}}
 
-Your task is to register it in the Specification index inside README.md.
+Your task is to register it in the Specification index inside README.md and to mark any
+superseded specifications accordingly, all in a single atomic write.
 
 ## Step 1 — Read the spec
 
 Call read_file on "{{spec_path}}". Extract:
 - The specification title from the level-1 heading (# Title).
 - A one-sentence description from the opening of the ## Description section.
+- Any `supersedes:` block in the YAML frontmatter. For each entry, note the `path:` value
+  (e.g. `specifications/vcs/vcs.specification-branch-and-commit.md`). Collect these paths
+  in a list — you will need them in Step 4b. If no `supersedes:` block is present the list
+  is empty and Step 4b is skipped.
 
 ## Step 2 — Read README.md
 
 Call read_file on "README.md". The response includes line numbers. Locate the
 `### {{domain}}` section under the Specification index and note the line number
-of its last data row. You need this line number to construct the patch hunk in Step 5.
+of its last data row. You need this line number to construct the patch hunk in Step 5a.
+
+Also, for each superseded spec path collected in Step 1, scan the README table rows and
+locate the row whose Path column matches that path. Note the line number of that row and
+its current content verbatim — you will need both to build an accurate replacement hunk
+in Step 4b.
 
 ## Step 3 — Determine write strategy
 
@@ -22,45 +32,69 @@ If the `### {{domain}}` section does not exist in README.md, use write_file (see
 
 If the `### {{domain}}` section exists, use patch_file (see Step 5a).
 
-## Step 4 — Construct the new table row
+## Step 4a — Construct the new table row
 
 Format the row exactly as (four pipe-separated columns):
 
   | <title> | <one-sentence description> | [{{spec_path}}]({{spec_path}}) | active |
 
+## Step 4b — Construct superseded-row replacements (skip if supersedes list is empty)
+
+For each superseded spec path, produce a patch hunk that replaces `active` with
+`superseded` in the Status column of that row. The row content must be verbatim from
+Step 2. Example — if the superseded row is at line M with content
+`| Old Spec | ... | path | active |`:
+
+  @@ -M,1 +M,1 @@
+  -| Old Spec | ... | path | active |
+  +| Old Spec | ... | path | superseded |
+
+Rules:
+- Change only the final `active` in the Status column; leave all other columns intact.
+- If the row already reads `superseded`, skip it — no hunk needed.
+- Do not modify the superseded spec file itself — only the README row.
+
 ## Step 5a — Apply patch (existing domain section)
 
-Call patch_file on "README.md" with a unified diff that inserts the new row after the
-last existing data row in the `### {{domain}}` table.
+Call patch_file on "README.md" once with a single unified diff containing:
+1. One hunk for the new row insertion (from Step 4a).
+2. One hunk per superseded row update (from Step 4b), if any.
 
-The diff MUST use a `@@` hunk header. Use the last existing row as a single context line
-before the insertion. Example — if the last existing row is at line N:
+New-row insertion hunk — use the last existing row as a single context line before the
+insertion. Example — if the last existing row is at line N:
 
   @@ -N,1 +N,2 @@
    | last existing row content |
   +| <title> | <description> | [{{spec_path}}]({{spec_path}}) | active |
 
-Rules:
-- The hunk header counts must be accurate: `-N,1` means 1 line starting at N in the
-  original; `+N,2` means 2 lines starting at N in the result (the original row plus the
-  new row).
-- The context line (space-prefixed) must be copied verbatim from the file — any mismatch
+Rules for all hunks:
+- The hunk header counts must be accurate: `-N,<old-count> +N,<new-count>`.
+- Context lines (space-prefixed) must be copied verbatim from the file — any mismatch
   causes the patch to be rejected.
-- Do not include `--- a/file` / `+++ b/file` header lines; the hunk is sufficient.
+- Do not include `--- a/file` / `+++ b/file` header lines; hunks are sufficient.
+- All hunks in the diff must be in ascending line-number order.
 
 ## Step 5b — Full file write (new domain section)
 
-If the `### {{domain}}` section did not exist, insert a new domain subsection in the
-correct alphabetical position within the Specification index. The section must follow
-the pattern of existing domain sections:
+If the `### {{domain}}` section did not exist, build the complete updated README:
+1. Insert a new domain subsection in the correct alphabetical position, following the
+   pattern of existing domain sections:
 
-  ### {{domain}}
+     ### {{domain}}
 
-  | Name | Description | Path | Status |
-  |------|-------------|------|--------|
-  | <title> | <description> | [{{spec_path}}]({{spec_path}}) | active |
+     | Name | Description | Path | Status |
+     |------|-------------|------|--------|
+     | <title> | <description> | [{{spec_path}}]({{spec_path}}) | active |
 
-Call write_file on "README.md" with the complete updated content.
+2. Also update any superseded spec rows (from Step 4b) in the same file content.
 
-Do not alter any other content in README.md. When done, respond with a single sentence
-describing what you added.
+Call write_file on "README.md" once with the fully updated content.
+
+## Step 6 — Confirm atomicity
+
+A single patch_file or write_file call covers every change (new row + superseded row
+updates). Do not make separate calls for each change. This ensures all mutations land in
+the same README write and therefore the same git commit.
+
+When done, respond with a single sentence describing what you added and which rows
+(if any) were marked superseded.
