@@ -11,6 +11,7 @@ pub mod commands;
 pub mod compaction;
 pub mod config;
 pub mod domain;
+pub mod mcp;
 pub mod ports;
 pub mod run_state;
 pub mod skills;
@@ -82,6 +83,26 @@ enum Commands {
         #[arg(long)]
         attempt: Option<u32>,
     },
+    /// Run as an MCP server (stdio or HTTP+OAuth)
+    ///
+    /// stdio (default): Claude Desktop connects via stdin/stdout. No flags required.
+    ///
+    /// HTTP: claude.ai web connects via HTTPS (use Cloudflare Tunnel or a reverse proxy).
+    ///   moeb serve --transport http --public-url https://my-tunnel.example.com
+    Serve {
+        /// Transport mode: stdio (default) or http
+        #[arg(long, default_value = "stdio")]
+        transport: String,
+        /// TCP port for HTTP transport (default 3000)
+        #[arg(long, default_value_t = 3000)]
+        port: u16,
+        /// Bind host for HTTP transport (default 127.0.0.1)
+        #[arg(long, default_value = "127.0.0.1")]
+        host: String,
+        /// Public HTTPS base URL shown in OAuth metadata (required for --transport http)
+        #[arg(long)]
+        public_url: Option<String>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -131,6 +152,15 @@ fn main() -> anyhow::Result<()> {
         }
         Commands::Replay { trace_file, attempt } => {
             commands::replay::run_replay(&trace_file, attempt)
+        }
+        Commands::Serve { transport, port, host, public_url } => {
+            let working_dir = std::env::current_dir()?;
+            let t = match transport.as_str() {
+                "stdio" => commands::serve::Transport::Stdio,
+                "http" => commands::serve::Transport::Http,
+                other => anyhow::bail!("unknown transport '{}': use 'stdio' or 'http'", other),
+            };
+            commands::serve::serve(working_dir, t, port, host, public_url)
         }
     }
 }

@@ -1,4 +1,5 @@
 pub mod create_task_list;
+pub mod get_run_status;
 pub mod grep_files;
 pub mod list_directory;
 pub mod patch_file;
@@ -7,6 +8,7 @@ pub mod read_file_range;
 pub mod read_files;
 pub mod search_files;
 pub mod spawn_agent;
+pub mod start_run;
 pub mod update_task;
 pub mod verify_rubrics;
 pub mod write_file;
@@ -92,6 +94,14 @@ impl ToolRegistry {
         r
     }
 
+    /// Register the thirteen MCP tools (eleven standard tools + start_run + get_run_status).
+    pub fn mcp(state: SharedRunState) -> Self {
+        let mut r = Self::standard(std::sync::Arc::clone(&state));
+        r.register(Box::new(start_run::StartRunTool));
+        r.register(Box::new(get_run_status::GetRunStatusTool { state: std::sync::Arc::clone(&state) }));
+        r
+    }
+
     /// Register the twelve coordinator tools (eleven standard tools + spawn_agent).
     pub fn with_spawn_agent(state: SharedRunState, adapter: std::sync::Arc<dyn crate::ports::AiPort>) -> Self {
         let mut r = Self::standard(std::sync::Arc::clone(&state));
@@ -125,6 +135,7 @@ impl ToolRegistry {
             "read_file", "write_file", "patch_file", "list_directory",
             "search_files", "grep_files", "read_files", "read_file_range",
             "create_task_list", "update_task", "verify_rubrics", "spawn_agent",
+            "start_run", "get_run_status",
         ];
         order.iter()
             .filter_map(|name| self.handlers.get(name).map(|h| h.definition()))
@@ -141,7 +152,7 @@ type ContentCache = Mutex<HashMap<String, (String, u32)>>;
 
 pub struct RealToolExecutor {
     pub state: SharedRunState,
-    registry: ToolRegistry,
+    pub registry: ToolRegistry,
     cache: ContentCache,
     read_paths: Mutex<std::collections::HashSet<String>>,
 }
@@ -159,6 +170,15 @@ impl RealToolExecutor {
     pub fn new_sub_agent(state: SharedRunState) -> Self {
         Self {
             registry: ToolRegistry::sub_agent(std::sync::Arc::clone(&state)),
+            cache: Mutex::new(HashMap::new()),
+            read_paths: Mutex::new(std::collections::HashSet::new()),
+            state,
+        }
+    }
+
+    pub fn new_mcp(state: SharedRunState) -> Self {
+        Self {
+            registry: ToolRegistry::mcp(std::sync::Arc::clone(&state)),
             cache: Mutex::new(HashMap::new()),
             read_paths: Mutex::new(std::collections::HashSet::new()),
             state,
