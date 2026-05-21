@@ -77,8 +77,8 @@ Before writing the file, verify:
 Write the authored specification to disk:
 
 - Derive `domain` and `slug` from the YAML frontmatter you authored.
-- Call `write_file` with path `specifications/<domain>/<domain>.<slug>.md` (relative to
-  the `.moeb/` working directory) and the complete specification document as content.
+- Call `write_file` with path `.moeb/specifications/<domain>/<domain>.<slug>.md` and the
+  complete specification document as content.
   The content must begin with `---` (the YAML opening delimiter) as its very first characters.
 
 ## Phase 5 — Branch
@@ -89,8 +89,8 @@ Branch 1.0.0.
 
 ## Phase 6 — Link README
 
-Read `README.md` using `read_file`. Locate the `### <domain>` section (create it if
-absent). Append a new table row for this specification using `patch_file`:
+Read `.moeb/README.md` using `read_file`. Locate the `### <domain>` section (create it if
+absent). Append a new table row for this specification using `patch_file` on `.moeb/README.md`:
 
 ```
 | <Title> | <one-sentence description> | [specifications/<domain>/<domain>.<slug>.md](specifications/<domain>/<domain>.<slug>.md) | active |
@@ -102,6 +102,6 @@ table row must include the Status column with value `active`.
 ## Phase 7 — Commit
 
 Call `git_commit` with:
-- `spec_path`: `specifications/<domain>/<domain>.<slug>.md`
-- `readme_path`: `README.md`
+- `spec_path`: `.moeb/specifications/<domain>/<domain>.<slug>.md`
+- `readme_path`: `.moeb/README.md`
 - `domain` and `slug` from frontmatter.

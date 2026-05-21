@@ -23,8 +23,12 @@ it in your context directly rather than making another tool call. This applies t
 tools: read_file, read_files, and read_file_range.
 
 Repository boundary — read this carefully before using any file tool:
-- Your working directory is `.moeb/`. All paths you pass to tools are resolved relative to
-  `.moeb/`, not the repository root.
+- Your working directory is the **repository root**. All harness files live under `.moeb/`
+  at the repository root. Use explicit `.moeb/`-prefixed paths when calling any file tool
+  that targets harness artefacts: `.moeb/specifications/<domain>/<domain>.<slug>.md` for
+  spec files, `.moeb/README.md` for the harness index. Do not use bare `specifications/`
+  or bare `README.md` — those resolve to the repository root and will place files in the
+  wrong location.
 - The `.moeb/` tree contains only harness documents: README.md, spec-schema.yaml,
   specifications/, rubrics/, and config.toml. There is no `src/` directory inside `.moeb/`.
 - Solution source code lives under `src/` at the repository root — one level above your
