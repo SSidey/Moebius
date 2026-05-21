@@ -1,9 +1,9 @@
-use std::path::Path;
-
+use std::path::{Path, PathBuf};
 use anyhow::Result;
 use serde_json::json;
 
 use crate::adapters::ToolDef;
+use crate::assets::{Internal, Prompts};
 use super::ToolHandler;
 
 pub struct StartRunTool;
@@ -16,16 +16,17 @@ impl ToolHandler for StartRunTool {
     fn definition(&self) -> ToolDef {
         ToolDef {
             name: "start_run",
-            description: "Load a moeb specification and return the full run-context prompt \
-                (spec, role, skill, rubrics). Call this at the start of a session before \
-                using file or task tools.",
+            description: "Load a moeb specification and return the fully rendered run-context \
+                prompt (role, spec, skill, rubrics). Call this at the start of a run session \
+                before using file or task tools. Accepts either a full relative path or a \
+                partial name that uniquely identifies a spec under .moeb/specifications/.",
             parameters: json!({
                 "type": "object",
                 "properties": {
                     "spec_path": {
                         "type": "string",
-                        "description": "Relative path to the spec file from the working directory, \
-                            e.g. .moeb/specifications/moeb/moeb.kernel.md"
+                        "description": "Relative path or partial name of the spec file, \
+                            e.g. 'moeb.kernel' or '.moeb/specifications/moeb/moeb.kernel.md'."
                     }
                 },
                 "required": ["spec_path"]
@@ -34,71 +35,130 @@ impl ToolHandler for StartRunTool {
     }
 
     fn execute(&self, args: &serde_json::Value, working_dir: &Path) -> Result<String> {
-        let spec_path = args["spec_path"]
+        let spec_path_arg = args["spec_path"]
             .as_str()
             .ok_or_else(|| anyhow::anyhow!("start_run: 'spec_path' must be a string"))?;
 
-        let spec_full_path = working_dir.join(spec_path);
-        let spec_content = std::fs::read_to_string(&spec_full_path)
-            .map_err(|e| anyhow::anyhow!("start_run: cannot read spec '{}': {}", spec_path, e))?;
+        let (abs_spec_path, rel_spec_path) = resolve_spec_path(spec_path_arg, working_dir)?;
 
-        let readme_path = working_dir.join(".moeb").join("README.md");
-        let readme_content = std::fs::read_to_string(&readme_path)
+        let spec_content = std::fs::read_to_string(&abs_spec_path)
+            .map_err(|e| anyhow::anyhow!("start_run: cannot read '{}': {}", rel_spec_path, e))?;
+
+        let moeb_dir = working_dir.join(".moeb");
+
+        let readme_content = std::fs::read_to_string(moeb_dir.join("README.md"))
             .unwrap_or_else(|_| "(not found)".to_string());
 
-        let (role, skill) = extract_frontmatter_role_skill(&spec_content);
+        let skill_name = crate::skills::extract_skill_name(&spec_content)
+            .unwrap_or_else(|| "run".to_string());
+        let skill_content = crate::skills::load_skill(&moeb_dir, &skill_name);
 
-        let role_path = working_dir.join(".moeb").join("roles").join(format!("{}.role.md", role));
-        let role_content = std::fs::read_to_string(&role_path)
-            .unwrap_or_else(|_| format!("(no role file found for '{}')", role));
+        let role_name = crate::skills::extract_role_name(&spec_content)
+            .unwrap_or_else(|| "run".to_string());
+        let role_content = crate::skills::load_role(&moeb_dir, &role_name);
 
-        let skill_path = working_dir.join(".moeb").join("skills").join(format!("{}.skill.md", skill));
-        let skill_content = std::fs::read_to_string(&skill_path)
-            .unwrap_or_else(|_| format!("(no skill file found for '{}')", skill));
+        let command_rubrics = build_run_rubrics(&moeb_dir);
 
-        let global_rubrics_path = working_dir.join(".moeb").join("rubrics").join("global.rubrics.md");
-        let run_rubrics_path = working_dir.join(".moeb").join("rubrics").join("run.rubrics.md");
+        let asset = Prompts::get("run.prompt")
+            .ok_or_else(|| anyhow::anyhow!("start_run: run.prompt not found in binary"))?;
+        let template = std::str::from_utf8(asset.data.as_ref())
+            .map_err(|e| anyhow::anyhow!("start_run: run.prompt not valid UTF-8: {}", e))?;
 
-        let mut rubrics_parts = Vec::new();
-        if let Ok(content) = std::fs::read_to_string(&global_rubrics_path) {
-            rubrics_parts.push(content);
-        }
-        if let Ok(content) = std::fs::read_to_string(&run_rubrics_path) {
-            rubrics_parts.push(content);
-        }
-        let rubrics_content = rubrics_parts.join("\n\n");
+        let prompt = template
+            .replace("{{role_content}}", &role_content)
+            .replace("{{spec}}", &rel_spec_path)
+            .replace("{{readme_content}}", &readme_content)
+            .replace("{{spec_content}}", &spec_content)
+            .replace("{{skill_content}}", &skill_content)
+            .replace("{{command_rubrics}}", &command_rubrics);
 
-        Ok(format!(
-            "## Role\n\n{}\n\n## Skill\n\n{}\n\n## Specification Index (README)\n\n{}\n\n## Specification\n\n{}\n\n## Rubrics\n\n{}",
-            role_content, skill_content, readme_content, spec_content, rubrics_content
-        ))
+        Ok(prompt)
     }
 }
 
-fn extract_frontmatter_role_skill(content: &str) -> (String, String) {
-    let mut in_frontmatter = false;
-    let mut found_open = false;
-    let mut role = "run".to_string();
-    let mut skill = "run".to_string();
+pub(crate) fn build_run_rubrics(moeb_dir: &Path) -> String {
+    let binary_layers: Vec<String> = [
+        "rubrics/global.rubrics.md",
+        "rubrics/run.rubrics.md",
+    ]
+    .iter()
+    .filter_map(|key| {
+        Internal::get(key)
+            .and_then(|f| std::str::from_utf8(f.data.as_ref()).ok().map(str::to_owned))
+            .filter(|s| !s.trim().is_empty())
+    })
+    .collect();
 
-    for line in content.lines() {
-        if line.trim() == "---" {
-            if !found_open {
-                found_open = true;
-                in_frontmatter = true;
-            } else if in_frontmatter {
-                break;
-            }
-        } else if in_frontmatter {
-            if let Some(val) = line.strip_prefix("role:") {
-                role = val.trim().to_string();
-            } else if let Some(val) = line.strip_prefix("skill:") {
-                skill = val.trim().to_string();
+    let global_project_path = moeb_dir.join("rubrics/global.rubrics.md");
+    let global_project = if global_project_path.exists() {
+        std::fs::read_to_string(&global_project_path).unwrap_or_default()
+    } else {
+        String::new()
+    };
+
+    let command_project_path = moeb_dir.join("rubrics/run.rubrics.md");
+    let command_project = if command_project_path.exists() {
+        std::fs::read_to_string(&command_project_path).unwrap_or_default()
+    } else {
+        String::new()
+    };
+
+    let mut combined: Vec<String> = binary_layers;
+    if !global_project.trim().is_empty() { combined.push(global_project); }
+    if !command_project.trim().is_empty() { combined.push(command_project); }
+    combined.join("\n\n")
+}
+
+fn resolve_spec_path(spec_path: &str, working_dir: &Path) -> Result<(PathBuf, String)> {
+    let candidate = working_dir.join(spec_path);
+    if candidate.exists() {
+        let rel = spec_path.replace('\\', "/");
+        return Ok((candidate, rel));
+    }
+
+    let specs_dir = working_dir.join(".moeb").join("specifications");
+    if !specs_dir.exists() {
+        anyhow::bail!(
+            "start_run: '{}' not found and .moeb/specifications/ does not exist",
+            spec_path
+        );
+    }
+
+    let matches = find_spec_matches(&specs_dir, spec_path)?;
+    match matches.len() {
+        0 => anyhow::bail!("start_run: no specification found matching '{}'", spec_path),
+        1 => {
+            let abs = matches.into_iter().next().unwrap();
+            let rel = abs
+                .strip_prefix(working_dir)
+                .map(|p| p.to_string_lossy().replace('\\', "/"))
+                .unwrap_or_else(|_| abs.to_string_lossy().replace('\\', "/"));
+            Ok((abs, rel))
+        }
+        _ => anyhow::bail!(
+            "start_run: multiple specifications match '{}', be more specific",
+            spec_path
+        ),
+    }
+}
+
+fn find_spec_matches(dir: &Path, query: &str) -> Result<Vec<PathBuf>> {
+    let mut matches = Vec::new();
+    for entry in std::fs::read_dir(dir)
+        .map_err(|e| anyhow::anyhow!("start_run: cannot read {}: {}", dir.display(), e))?
+    {
+        let entry = entry?;
+        let path = entry.path();
+        if path.is_dir() {
+            matches.extend(find_spec_matches(&path, query)?);
+        } else if path.extension().and_then(|e| e.to_str()) == Some("md") {
+            let name = path.file_name().unwrap_or_default().to_string_lossy();
+            if name.contains(query) {
+                matches.push(path);
             }
         }
     }
-
-    (role, skill)
+    Ok(matches)
 }
 
 #[cfg(test)]

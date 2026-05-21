@@ -15,13 +15,11 @@ use crate::trace::{
 
 #[path = "spec_parser.rs"]
 mod spec_parser;
-use self::spec_parser::{parse_frontmatter, sanitize_slug, validate_sections, REQUIRED_SECTIONS};
+use self::spec_parser::sanitize_slug;
 #[path = "spec_schema.rs"]
 mod spec_schema;
-use self::spec_schema::load_validation_schema;
 
 const PROMPT_FILE: &str = "spec.prompt";
-const README_LINK_PROMPT_FILE: &str = "readme-link.prompt";
 const INPUT_TOKEN: &str = "{{input}}";
 const README_TOKEN: &str = "{{readme_content}}";
 const SPEC_SCHEMA_TOKEN: &str = "{{spec_schema_content}}";
@@ -105,19 +103,17 @@ impl SpecService {
 
         let command_rubrics = {
             let binary_layers: Vec<String> = [
-                // Layer 1: global-baseline (binary)
                 "rubrics/global.rubrics.md",
-                // Layer 2: command-baseline (binary)
                 "rubrics/spec.rubrics.md",
-            ].iter()
-                .filter_map(|asset| {
-                    Internal::get(asset)
-                        .and_then(|f| std::str::from_utf8(f.data.as_ref()).ok().map(str::to_owned))
-                        .filter(|s| !s.trim().is_empty())
-                })
-                .collect();
+            ]
+            .iter()
+            .filter_map(|key| {
+                Internal::get(key)
+                    .and_then(|f| std::str::from_utf8(f.data.as_ref()).ok().map(str::to_owned))
+                    .filter(|s| !s.trim().is_empty())
+            })
+            .collect();
 
-            // Layer 3: global-project (project file, optional)
             let global_project_path = working_dir.join("rubrics/global.rubrics.md");
             let global_project = if global_project_path.exists() {
                 std::fs::read_to_string(&global_project_path).unwrap_or_default()
@@ -125,7 +121,6 @@ impl SpecService {
                 String::new()
             };
 
-            // Layer 4: command-project (project file, optional)
             let command_project_path = working_dir.join("rubrics/spec.rubrics.md");
             let command_project = if command_project_path.exists() {
                 std::fs::read_to_string(&command_project_path).unwrap_or_default()
@@ -166,180 +161,60 @@ impl SpecService {
         let trace = Arc::new(TraceContext::new(trace_config));
         let ai = self.factory.build(Arc::clone(&trace))?;
 
-        let schema = load_validation_schema(working_dir);
-        let required_sections: Vec<String> = schema
-            .as_ref()
-            .map(|s| s.body.required_sections.clone())
-            .unwrap_or_else(|| REQUIRED_SECTIONS.iter().map(|s| s.to_string()).collect());
-
         let mut last_err: anyhow::Error = anyhow::anyhow!("no attempts made");
         let mut total_attempts = 0u32;
 
-        let (domain, slug, status, supersedes, body) = 'retry: {
-            for attempt in 1..=retry_limit {
-                total_attempts = attempt;
-                trace.current_attempt.store(attempt, std::sync::atomic::Ordering::SeqCst);
+        for attempt in 1..=retry_limit {
+            total_attempts = attempt;
+            trace.current_attempt.store(attempt, std::sync::atomic::Ordering::SeqCst);
 
-                let state = crate::run_state::new_shared_run_state();
-                let tools = crate::tools::ToolRegistry::standard(std::sync::Arc::clone(&state)).definitions();
-                let executor = crate::tools::RealToolExecutor::new(std::sync::Arc::clone(&state));
-                let initial_messages = vec![crate::adapters::Message::User(prompt.clone())];
-                let compaction_config = crate::agent::CompactionConfig {
-                    enabled: cfg.effective_compaction_enabled(),
-                    threshold: cfg.effective_compaction_threshold(),
-                    keep_turns: cfg.effective_compaction_keep_turns(),
-                };
-                let raw = match crate::agent::run_agent_loop_traced(
-                    ai.as_ref(),
-                    &executor,
-                    &tools,
-                    working_dir,
-                    initial_messages,
-                    MAX_TURNS,
-                    &trace,
-                    attempt,
-                    compaction_config,
-                    state,
-                ) {
-                    Ok(r) => r,
-                    Err(e) => return Err(e),
-                };
+            let state = crate::run_state::new_shared_run_state();
+            let tools = crate::tools::ToolRegistry::standard(
+                std::sync::Arc::clone(&state),
+            ).definitions();
+            let executor = crate::tools::RealToolExecutor::new(std::sync::Arc::clone(&state));
+            let initial_messages = vec![crate::adapters::Message::User(prompt.clone())];
+            let compaction_config = crate::agent::CompactionConfig {
+                enabled: cfg.effective_compaction_enabled(),
+                threshold: cfg.effective_compaction_threshold(),
+                keep_turns: cfg.effective_compaction_keep_turns(),
+            };
 
-                if raw.is_empty() {
-                    let e = anyhow::anyhow!("Agent returned an empty response.");
+            match crate::agent::run_agent_loop_run_mode(
+                ai.as_ref(),
+                &executor,
+                &tools,
+                working_dir,
+                initial_messages,
+                MAX_TURNS,
+                &trace,
+                attempt,
+                compaction_config,
+                state,
+            ) {
+                Ok(_) => {
+                    trace.set_total_attempts(total_attempts);
+                    if let Err(e) = trace.finalize(TraceOutcome::Success, None) {
+                        eprintln!("[moeb] warning: trace could not be saved: {}", e);
+                    }
+                    return Ok(());
+                }
+                Err(e) => {
                     eprintln!("[moeb] spec attempt {}/{} failed: {}", attempt, retry_limit, e);
                     last_err = e;
-                    continue;
-                }
-
-                let result = parse_frontmatter(&raw)
-                    .and_then(|(domain, slug, status, supersedes, body)| {
-                        validate_sections(&body, &required_sections)?;
-                        Ok((domain, slug, status, supersedes, body))
-                    });
-
-                match result {
-                    Ok(parsed) => break 'retry parsed,
-                    Err(e) => {
-                        eprintln!("[moeb] spec attempt {}/{} failed: {}", attempt, retry_limit, e);
-                        last_err = e;
-                    }
                 }
             }
-            trace.set_total_attempts(total_attempts);
-            if let Err(e) = trace.finalize(TraceOutcome::Failure, Some(last_err.to_string())) {
-                eprintln!("[moeb] warning: trace could not be saved: {}", e);
-            }
-            bail!("spec generation failed after {} attempt(s). Last error: {}", retry_limit, last_err);
-        };
+        }
 
         trace.set_total_attempts(total_attempts);
-        if let Err(e) = trace.finalize(TraceOutcome::Success, None) {
+        if let Err(e) = trace.finalize(TraceOutcome::Failure, Some(last_err.to_string())) {
             eprintln!("[moeb] warning: trace could not be saved: {}", e);
         }
-
-        // ── VCS: create the dedicated branch before any file is written ────────
-        // Conventional Branch 1.0.0: chore/<domain>-<slug>
-        // (lowercase, hyphens, no consecutive/leading/trailing hyphens).
-        let branch = crate::vcs::create_spec_branch(&domain, &slug)?;
-        eprintln!("[moeb] branch created: {}", branch);
-
-        if status == "draft" {
-            eprintln!("[moeb] note: spec has status 'draft' and is not yet considered governing.");
-        }
-        for (path, decision) in &supersedes {
-            eprintln!("[moeb] spec supersedes: {} — {}", path, decision);
-        }
-
-        // Forward-compatibility guard: warn if the JSON schema requires a field the kernel
-        // has no dedicated parser for yet.
-        if let Some(ref s) = schema {
-            let known_fields: std::collections::HashSet<&str> =
-                ["domain", "slug", "status", "supersedes"].iter().copied().collect();
-            for required_field in &s.frontmatter.required {
-                if !known_fields.contains(required_field.as_str()) {
-                    eprintln!(
-                        "[moeb] warning: schema requires frontmatter field '{}' \
-                         but the kernel has no parser for it yet.",
-                        required_field
-                    );
-                }
-            }
-        }
-
-        let spec_dir = working_dir.join("specifications").join(&domain);
-        fs::create_dir_all(&spec_dir).with_context(|| {
-            format!("Failed to create directory {}", spec_dir.display())
-        })?;
-
-        let filename = format!("{}.{}.md", domain, slug);
-        let spec_file_path = spec_dir.join(&filename);
-        fs::write(&spec_file_path, &body)
-            .with_context(|| format!("Failed to write {}", spec_file_path.display()))?;
-
-        println!(
-            "Created: .moeb/specifications/{}/{}",
-            domain, filename
+        bail!(
+            "spec generation failed after {} attempt(s). Last error: {}",
+            retry_limit,
+            last_err
         );
-
-        self.link_readme(&domain, &filename, working_dir, file_content_mode)?;
-
-        // ── VCS: stage spec file + README and create a Conventional Commit ─────
-        // Conventional Commits 1.0.0: docs(<domain>): add <slug> specification
-        let readme_path = working_dir.join("README.md");
-        if let Err(e) = crate::vcs::commit_spec(&spec_file_path, &readme_path, &domain, &slug) {
-            eprintln!("[moeb] warning: git commit failed (files written successfully): {}", e);
-        }
-
-        Ok(())
-    }
-
-    fn link_readme(
-        &self,
-        domain: &str,
-        filename: &str,
-        working_dir: &Path,
-        file_content_mode: FileContentMode,
-    ) -> Result<()> {
-        let asset = Prompts::get(README_LINK_PROMPT_FILE)
-            .context("Embedded prompt template 'readme-link.prompt' not found in binary")?;
-        let template = std::str::from_utf8(asset.data.as_ref())
-            .context("readme-link.prompt is not valid UTF-8")?;
-
-        let spec_path = format!("specifications/{}/{}", domain, filename);
-        let prompt = template
-            .replace("{{spec_path}}", &spec_path)
-            .replace("{{domain}}", domain);
-
-        eprintln!("[moeb] linking specification in README...");
-
-        let noop_trace = Arc::new(TraceContext::new(TraceConfig {
-            command: TraceCommand::Spec,
-            spec: String::new(),
-            adapter: String::new(),
-            model: String::new(),
-            retention: 0,
-            file_content_mode,
-        }));
-        let ai = self.factory.build(Arc::clone(&noop_trace))?;
-        let link_state = crate::run_state::new_shared_run_state();
-        let tools = crate::tools::ToolRegistry::standard(std::sync::Arc::clone(&link_state)).definitions();
-        let executor = crate::tools::RealToolExecutor::new(std::sync::Arc::clone(&link_state));
-        let initial_messages = vec![crate::adapters::Message::User(prompt)];
-        let _ = crate::agent::run_agent_loop_traced(
-            ai.as_ref(),
-            &executor,
-            &tools,
-            working_dir,
-            initial_messages,
-            MAX_TURNS,
-            &noop_trace,
-            1,
-            crate::agent::CompactionConfig::default(),
-            link_state,
-        )?;
-        println!("Updated: .moeb/README.md");
-        Ok(())
     }
 }
 

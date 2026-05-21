@@ -1,5 +1,7 @@
+pub mod create_branch;
 pub mod create_task_list;
 pub mod get_run_status;
+pub mod git_commit;
 pub mod grep_files;
 pub mod list_directory;
 pub mod patch_file;
@@ -9,6 +11,7 @@ pub mod read_files;
 pub mod search_files;
 pub mod spawn_agent;
 pub mod start_run;
+pub mod start_spec;
 pub mod update_task;
 pub mod verify_rubrics;
 pub mod write_file;
@@ -63,7 +66,7 @@ impl ToolRegistry {
         Self { handlers: HashMap::new() }
     }
 
-    /// Register the eleven standard tools (eight file tools + three task-list tools).
+    /// Register the thirteen standard tools (eight file tools + three task-list tools + two VCS tools).
     pub fn standard(state: SharedRunState) -> Self {
         let mut r = Self::new();
         r.register(Box::new(read_file::ReadFileTool));
@@ -77,6 +80,8 @@ impl ToolRegistry {
         r.register(Box::new(create_task_list::CreateTaskListTool { state: std::sync::Arc::clone(&state) }));
         r.register(Box::new(update_task::UpdateTaskTool { state: std::sync::Arc::clone(&state) }));
         r.register(Box::new(verify_rubrics::VerifyRubricsTool { state: std::sync::Arc::clone(&state) }));
+        r.register(Box::new(create_branch::CreateBranchTool));
+        r.register(Box::new(git_commit::GitCommitTool));
         r
     }
 
@@ -94,10 +99,11 @@ impl ToolRegistry {
         r
     }
 
-    /// Register the thirteen MCP tools (eleven standard tools + start_run + get_run_status).
+    /// Register the MCP tools (standard tools + start_run + start_spec + get_run_status).
     pub fn mcp(state: SharedRunState) -> Self {
         let mut r = Self::standard(std::sync::Arc::clone(&state));
         r.register(Box::new(start_run::StartRunTool));
+        r.register(Box::new(start_spec::StartSpecTool));
         r.register(Box::new(get_run_status::GetRunStatusTool { state: std::sync::Arc::clone(&state) }));
         r
     }
@@ -134,8 +140,9 @@ impl ToolRegistry {
         let order = [
             "read_file", "write_file", "patch_file", "list_directory",
             "search_files", "grep_files", "read_files", "read_file_range",
-            "create_task_list", "update_task", "verify_rubrics", "spawn_agent",
-            "start_run", "get_run_status",
+            "create_task_list", "update_task", "verify_rubrics",
+            "create_branch", "git_commit",
+            "spawn_agent", "start_run", "start_spec", "get_run_status",
         ];
         order.iter()
             .filter_map(|name| self.handlers.get(name).map(|h| h.definition()))

@@ -1,5 +1,5 @@
-    use super::*;
-    use super::spec_parser::{parse_frontmatter, validate_sections};
+    use super::spec_parser::{parse_frontmatter, validate_sections, REQUIRED_SECTIONS};
+    use super::spec_schema::load_validation_schema;
 
     fn valid_body() -> String {
         [
