@@ -138,6 +138,22 @@
     }
 
     #[test]
+    fn run_in_retries_on_empty_response() {
+        let tmp = tempfile::tempdir().unwrap();
+        setup_harness(&tmp);
+
+        let ai = MockAi::new(vec![
+            AgentResponse::Text("".to_string()),
+            AgentResponse::Text(spec_doc("auth", "token-rotation")),
+            AgentResponse::Text("Registered.".to_string()),
+        ]);
+        SpecService::new(ai).run_in("rotate tokens", tmp.path(), 2, FileContentMode::Embed).unwrap();
+
+        let spec_path = tmp.path().join("specifications/auth/auth.token-rotation.md");
+        assert!(spec_path.exists(), "spec file must be created after empty-response retry");
+    }
+
+    #[test]
     fn run_in_fails_after_exhausting_retries() {
         let tmp = tempfile::tempdir().unwrap();
         setup_harness(&tmp);

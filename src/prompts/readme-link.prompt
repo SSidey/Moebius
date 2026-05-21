@@ -2,13 +2,65 @@ You are a harness maintenance agent. A new specification has just been written t
 
   {{spec_path}}
 
-Your task is to register it in the Specification index inside README.md. Follow these steps exactly:
+Your task is to register it in the Specification index inside README.md.
 
-1. Call read_file on "{{spec_path}}" to obtain the specification title (the level-1 heading) and a one-sentence description from the ## Description section.
-2. Call read_file on "README.md" to get the current content.
-3. Find the `### {{domain}}` section under the Specification index. If no such section exists, create one following the pattern of existing domain sections (a `### domain` heading followed by a markdown table with Name, Description, Path columns).
-4. Append a new row to that table:
-   | <title from step 1> | <one sentence from step 1> | [{{spec_path}}]({{spec_path}}) |
-5. Call write_file on "README.md" with the updated content.
+## Step 1 — Read the spec
 
-Do not alter any other content in README.md. When done, respond with a single sentence describing what you added.
+Call read_file on "{{spec_path}}". Extract:
+- The specification title from the level-1 heading (# Title).
+- A one-sentence description from the opening of the ## Description section.
+
+## Step 2 — Read README.md
+
+Call read_file on "README.md". The response includes line numbers. Locate the
+`### {{domain}}` section under the Specification index and note the line number
+of its last data row. You need this line number to construct the patch hunk in Step 5.
+
+## Step 3 — Determine write strategy
+
+If the `### {{domain}}` section does not exist in README.md, use write_file (see Step 5b).
+
+If the `### {{domain}}` section exists, use patch_file (see Step 5a).
+
+## Step 4 — Construct the new table row
+
+Format the row exactly as (four pipe-separated columns):
+
+  | <title> | <one-sentence description> | [{{spec_path}}]({{spec_path}}) | active |
+
+## Step 5a — Apply patch (existing domain section)
+
+Call patch_file on "README.md" with a unified diff that inserts the new row after the
+last existing data row in the `### {{domain}}` table.
+
+The diff MUST use a `@@` hunk header. Use the last existing row as a single context line
+before the insertion. Example — if the last existing row is at line N:
+
+  @@ -N,1 +N,2 @@
+   | last existing row content |
+  +| <title> | <description> | [{{spec_path}}]({{spec_path}}) | active |
+
+Rules:
+- The hunk header counts must be accurate: `-N,1` means 1 line starting at N in the
+  original; `+N,2` means 2 lines starting at N in the result (the original row plus the
+  new row).
+- The context line (space-prefixed) must be copied verbatim from the file — any mismatch
+  causes the patch to be rejected.
+- Do not include `--- a/file` / `+++ b/file` header lines; the hunk is sufficient.
+
+## Step 5b — Full file write (new domain section)
+
+If the `### {{domain}}` section did not exist, insert a new domain subsection in the
+correct alphabetical position within the Specification index. The section must follow
+the pattern of existing domain sections:
+
+  ### {{domain}}
+
+  | Name | Description | Path | Status |
+  |------|-------------|------|--------|
+  | <title> | <description> | [{{spec_path}}]({{spec_path}}) | active |
+
+Call write_file on "README.md" with the complete updated content.
+
+Do not alter any other content in README.md. When done, respond with a single sentence
+describing what you added.

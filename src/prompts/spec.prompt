@@ -118,11 +118,19 @@ omit a catalogue entry whose trait is clearly present without explicit justifica
 
 The `### Qualitative` section is always spec-specific and is never drawn from the rubrics index.
 
-CRITICAL: The very first characters of your response must be the three-character sequence "---"
-on its own line, with absolutely no text, whitespace, or BOM before it. Do not write any
-introduction, explanation, or preamble before the frontmatter block. A response that does not
-start with "---" is invalid, will be rejected immediately, and the run will be retried at
-additional cost. Start your response now with "---".
+CRITICAL: Your response must begin and end its YAML frontmatter with "---" delimiters. The
+structure is exactly:
+
+---
+domain: <value>
+slug: <value>
+status: active
+---
+
+The opening "---" must be the very first characters of your response, with no text, whitespace,
+or BOM before it. The closing "---" on its own line is equally required — omitting it causes
+"Frontmatter block is not closed with '---'" and the run will be retried. Do not write any
+introduction or preamble before the opening "---". Start your response now with "---".
 
 Requirement:
 {{input}}

@@ -206,7 +206,10 @@ impl SpecService {
                 };
 
                 if raw.is_empty() {
-                    return Err(anyhow::anyhow!("Agent returned an empty response."));
+                    let e = anyhow::anyhow!("Agent returned an empty response.");
+                    eprintln!("[moeb] spec attempt {}/{} failed: {}", attempt, retry_limit, e);
+                    last_err = e;
+                    continue;
                 }
 
                 let result = parse_frontmatter(&raw)
