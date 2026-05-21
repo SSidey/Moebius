@@ -4,6 +4,129 @@ use serde_json::json;
 use crate::adapters::ToolDef;
 use crate::tools::ToolHandler;
 
+/// Search `orig_lines` for the first consecutive run of `context` lines closest to
+/// `near` (1-indexed).  Returns the 1-indexed start line of that run, or `None` if
+/// `context` does not appear consecutively anywhere in `orig_lines`.
+fn find_closest_context(orig_lines: &[&str], context: &[&str], near: usize) -> Option<usize> {
+    if context.is_empty() || orig_lines.len() < context.len() {
+        return None;
+    }
+    let mut best: Option<(usize, usize)> = None; // (distance, 1-indexed line)
+    let max_start = orig_lines.len() - context.len();
+    'outer: for i in 0..=max_start {
+        for (j, &c) in context.iter().enumerate() {
+            if orig_lines[i + j] != c {
+                continue 'outer;
+            }
+        }
+        let line = i + 1; // 1-indexed
+        let dist = if line >= near { line - near } else { near - line };
+        if best.map_or(true, |(d, _)| dist < d) {
+            best = Some((dist, line));
+        }
+    }
+    best.map(|(_, line)| line)
+}
+
+/// For each hunk in `diff`, extract the context lines and search `original` for the
+/// closest consecutive occurrence.  If found at a line other than the declared
+/// `orig_start`, rewrite both `orig_start` and `new_start` in the hunk header by the
+/// same delta, preserving the counts that `normalize_hunk_counts` already set.
+/// Hunks whose context cannot be located are passed through unchanged.
+fn relocate_hunk_positions(diff: &str, original: &str) -> String {
+    let diff_lines: Vec<&str> = diff.lines().collect();
+    let orig_lines: Vec<&str> = original.lines().collect();
+    let mut out: Vec<String> = Vec::with_capacity(diff_lines.len());
+    let mut i = 0;
+
+    while i < diff_lines.len() {
+        let line = diff_lines[i];
+
+        if !line.starts_with("@@") {
+            out.push(line.to_string());
+            i += 1;
+            continue;
+        }
+
+        // Parse the hunk header produced by normalize_hunk_counts:
+        // @@ -orig_start,orig_count +new_start,new_count @@ [suffix]
+        let inner = line.trim_start_matches('@').trim_start().trim_end_matches('@').trim();
+        let (ranges, suffix) = if let Some(idx) = inner.find("@@") {
+            (inner[..idx].trim(), inner[idx + 2..].trim())
+        } else {
+            (inner, "")
+        };
+
+        let mut parts = ranges.split_whitespace();
+        let orig_range = parts.next().unwrap_or("");
+        let new_range  = parts.next().unwrap_or("");
+
+        let parse_start = |r: &str, prefix: char| -> Option<usize> {
+            r.trim_start_matches(prefix).split(',').next()?.parse().ok()
+        };
+        let parse_count = |r: &str, prefix: char| -> Option<usize> {
+            r.trim_start_matches(prefix).split(',').nth(1)?.parse().ok()
+        };
+
+        let orig_start = parse_start(orig_range, '-');
+        let new_start  = parse_start(new_range,  '+');
+        let orig_count = parse_count(orig_range, '-');
+        let new_count  = parse_count(new_range,  '+');
+
+        // Collect the hunk body.
+        i += 1;
+        let body_start = i;
+        while i < diff_lines.len() && !diff_lines[i].starts_with("@@") {
+            i += 1;
+        }
+        let body = &diff_lines[body_start..i];
+
+        // Attempt relocation only when the header is fully parseable.
+        if let (Some(os), Some(ns), Some(oc), Some(nc)) =
+            (orig_start, new_start, orig_count, new_count)
+        {
+            let context: Vec<&str> = body
+                .iter()
+                .filter(|l| !l.starts_with('-') && !l.starts_with('+') && !l.starts_with('\\'))
+                .map(|l| if l.starts_with(' ') { &l[1..] } else { *l })
+                .collect();
+
+            if !context.is_empty() {
+                if let Some(found) = find_closest_context(&orig_lines, &context, os) {
+                    if found != os {
+                        let delta: i64 = (found as i64) - (os as i64);
+                        let new_ns = (ns as i64) + delta;
+                        if new_ns >= 1 {
+                            let new_header = if suffix.is_empty() {
+                                format!("@@ -{},{} +{},{} @@", found, oc, new_ns, nc)
+                            } else {
+                                format!("@@ -{},{} +{},{} @@ {}", found, oc, new_ns, nc, suffix)
+                            };
+                            out.push(new_header);
+                            for bl in body {
+                                out.push(bl.to_string());
+                            }
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+
+        // No relocation: emit hunk unchanged.
+        out.push(line.to_string());
+        for bl in body {
+            out.push(bl.to_string());
+        }
+    }
+
+    let mut result = out.join("\n");
+    if diff.ends_with('\n') {
+        result.push('\n');
+    }
+    result
+}
+
 /// Rewrite each `@@ -orig_start[,orig_count] +new_start[,new_count] @@[ text]` header
 /// so that the declared counts match the actual hunk body lines.  Lines prefixed with
 /// `-` count only toward the original count; `+` only toward the new count; a space (or
@@ -151,7 +274,8 @@ impl ToolHandler for PatchFileTool {
             .with_context(|| format!("patch_file: could not read '{}'", path))?;
 
         let normalized = normalize_hunk_counts(diff);
-        let patch = diffy::Patch::from_str(&normalized)
+        let relocated = relocate_hunk_positions(&normalized, &original);
+        let patch = diffy::Patch::from_str(&relocated)
             .map_err(|e| anyhow::anyhow!(
                 "patch_file: failed to parse diff for '{}': {}. \
                  Ensure the diff uses @@ hunk headers with context lines.",
@@ -266,5 +390,50 @@ mod tests {
         let args = serde_json::json!({"path": "nonexistent.rs", "diff": diff});
         let err = tool.execute(&args, dir.path()).unwrap_err();
         assert!(err.to_string().contains("could not read"), "expected read error: {}", err);
+    }
+
+    #[test]
+    fn patch_file_relocates_wrong_start_and_applies() {
+        // Content is at line 6 but the diff declares line 1.
+        // relocate_hunk_positions finds the context at line 6 and adjusts the header;
+        // diffy::apply then succeeds.
+        let dir = temp_dir();
+        let file = dir.path().join("target.rs");
+        std::fs::write(
+            &file,
+            "fn a() {}\nfn b() {}\nfn c() {}\nfn d() {}\nfn e() {}\nfn foo() {}\nfn old() {}\n",
+        )
+        .unwrap();
+
+        let tool = PatchFileTool;
+        // Declares start at line 1, but fn foo() is at line 6.
+        let diff = "@@ -1,2 +1,2 @@\n fn foo() {}\n-fn old() {}\n+fn new() {}\n";
+        let args = serde_json::json!({"path": "target.rs", "diff": diff});
+        let result = tool.execute(&args, dir.path()).unwrap();
+
+        assert!(result.contains("applied"), "expected success: {}", result);
+        let content = std::fs::read_to_string(&file).unwrap();
+        assert!(content.contains("fn new() {}"), "added line must be present");
+        assert!(!content.contains("fn old() {}"), "removed line must be absent");
+    }
+
+    #[test]
+    fn patch_file_does_not_relocate_absent_context() {
+        // Context line does not exist anywhere in the file; relocation cannot help.
+        // The hunk is passed through unchanged and diffy returns an apply error.
+        let dir = temp_dir();
+        let file = dir.path().join("target.rs");
+        std::fs::write(&file, "fn foo() {}\n").unwrap();
+
+        let tool = PatchFileTool;
+        let diff = "@@ -99,2 +99,2 @@\n fn nonexistent() {}\n-fn old() {}\n+fn new() {}\n";
+        let args = serde_json::json!({"path": "target.rs", "diff": diff});
+        let err = tool.execute(&args, dir.path()).unwrap_err();
+        assert!(
+            err.to_string().contains("failed to apply"),
+            "expected apply error: {}",
+            err
+        );
+        assert_eq!(std::fs::read_to_string(&file).unwrap(), "fn foo() {}\n");
     }
 }
