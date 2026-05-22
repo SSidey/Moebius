@@ -16,6 +16,7 @@ use crate::trace::{
 #[path = "spec_parser.rs"]
 mod spec_parser;
 use self::spec_parser::sanitize_slug;
+#[cfg(test)]
 #[path = "spec_schema.rs"]
 mod spec_schema;
 

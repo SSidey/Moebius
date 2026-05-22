@@ -1,16 +1,3 @@
-use anyhow::{bail, Context, Result};
-
-pub(super) const REQUIRED_SECTIONS: &[&str] = &[
-    "# ",
-    "## Raw Requirement",
-    "## Description",
-    "```mermaid",
-    "## Backlinks",
-    "## Steps",
-    "## Decisions",
-    "## Rubric",
-];
-
 pub(super) fn sanitize_slug(input: &str) -> String {
     input
         .chars()
@@ -23,6 +10,22 @@ pub(super) fn sanitize_slug(input: &str) -> String {
         .collect()
 }
 
+#[cfg(test)]
+use anyhow::{bail, Context, Result};
+
+#[cfg(test)]
+pub(super) const REQUIRED_SECTIONS: &[&str] = &[
+    "# ",
+    "## Raw Requirement",
+    "## Description",
+    "```mermaid",
+    "## Backlinks",
+    "## Steps",
+    "## Decisions",
+    "## Rubric",
+];
+
+#[cfg(test)]
 pub(super) fn parse_frontmatter(content: &str) -> Result<(String, String, String, Vec<(String, String)>, String)> {
     let content = content.trim_start();
 
@@ -127,6 +130,7 @@ pub(super) fn parse_frontmatter(content: &str) -> Result<(String, String, String
     Ok((domain, slug, status, supersedes, body.to_string()))
 }
 
+#[cfg(test)]
 pub(super) fn validate_sections(body: &str, required: &[impl AsRef<str>]) -> Result<()> {
     let mut remaining = required.iter().peekable();
 

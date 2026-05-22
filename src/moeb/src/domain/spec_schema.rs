@@ -11,7 +11,6 @@ pub(super) struct ValidationSchema {
 pub(super) struct FrontmatterSchema {
     pub(super) required: Vec<String>,
     #[serde(default)]
-    #[allow(dead_code)]
     pub(super) optional: Vec<String>,
 }
 
