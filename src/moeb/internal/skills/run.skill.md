@@ -85,6 +85,19 @@ For each criterion, evaluate pass, fail, or na:
 Call `verify_rubrics` with the complete list of verdicts covering all criteria from both
 sources. Do not call `verify_rubrics` with a partial list.
 
-## Phase 5 — Complete
+## Phase 5 — Commit
+
+Extract `domain` and `slug` from the YAML frontmatter at the top of the active
+specification (the content between the opening `---` and closing `---` markers). Call
+`git_commit` with:
+- `kind`: `"run"`
+- `domain`: the value of the `domain` field from the frontmatter
+- `slug`: the value of the `slug` field from the frontmatter
+
+Do not pass `spec_path` or `readme_path` — they are not used for run commits. The tool
+stages all working-tree changes and commits with the message
+`feat(<domain>): execute <slug> specification`.
+
+## Phase 6 — Complete
 
 Respond with a concise summary of every file created or updated.

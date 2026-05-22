@@ -49,39 +49,63 @@ pub fn create_spec_branch(domain: &str, slug: &str) -> Result<String> {
 
 /// Stage the spec file and README, then create a Conventional Commits message commit.
 /// `spec_path` and `readme_path` must be relative to the repository root.
-pub fn commit_spec(spec_path: &Path, readme_path: &Path, domain: &str, slug: &str) -> Result<()> {
-    let spec_str = spec_path
-        .to_str()
-        .context("spec path contains non-UTF-8 characters")?;
-    let readme_str = readme_path
-        .to_str()
-        .context("README path contains non-UTF-8 characters")?;
-
-    eprintln!("[moeb] staging: {} and {}", spec_str, readme_str);
-
-    let add_output = Command::new("git")
-        .args(["add", spec_str, readme_str])
-        .output()
-        .context("failed to invoke git add")?;
-
-    if !add_output.status.success() {
-        let stderr = String::from_utf8_lossy(&add_output.stderr);
-        bail!("git add failed: {}", stderr.trim());
-    }
-
+pub fn commit_spec(spec_path: &Path, readme_path: &Path, domain: &str, slug: &str) -> Result<String, String> {
+    git_add_files(&[spec_path, readme_path])?;
     let message = format!("docs({}): add {} specification", domain, slug);
+    git_commit_with_message(&message)
+}
+
+/// Stage all working-tree changes and create a feat commit for the run.
+pub fn commit_run(domain: &str, slug: &str) -> Result<String, String> {
+    git_stage_all()?;
+    let message = format!("feat({}): execute {} specification", domain, slug);
+    git_commit_with_message(&message)
+}
+
+fn git_add_files(paths: &[&Path]) -> Result<(), String> {
+    let mut cmd = Command::new("git");
+    cmd.arg("add");
+    for p in paths {
+        cmd.arg(p.as_os_str());
+    }
+    let output = cmd
+        .output()
+        .map_err(|e| format!("failed to invoke git add: {}", e))?;
+
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        return Err(format!("git add failed: {}", stderr.trim()));
+    }
+    Ok(())
+}
+
+fn git_commit_with_message(message: &str) -> Result<String, String> {
     eprintln!("[moeb] committing: {}", message);
 
-    let commit_output = Command::new("git")
-        .args(["commit", "-m", &message])
+    let output = Command::new("git")
+        .args(["commit", "-m", message])
         .output()
-        .context("failed to invoke git commit")?;
+        .map_err(|e| format!("failed to invoke git commit: {}", e))?;
 
-    if !commit_output.status.success() {
-        let stderr = String::from_utf8_lossy(&commit_output.stderr);
-        bail!("git commit failed: {}", stderr.trim());
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        return Err(format!("git commit failed: {}", stderr.trim()));
     }
+    Ok(format!("Committed: {}", message))
+}
 
+fn git_stage_all() -> Result<(), String> {
+    eprintln!("[moeb] staging all changes");
+
+    let output = Command::new("git")
+        .args(["add", "-A"])
+        .output()
+        .map_err(|e| format!("failed to invoke git add -A: {}", e))?;
+
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        return Err(format!("git add -A failed: {}", stderr.trim()));
+    }
     Ok(())
 }
 
