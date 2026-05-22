@@ -98,6 +98,36 @@ Do not pass `spec_path` or `readme_path` — they are not used for run commits. 
 stages all working-tree changes and commits with the message
 `feat(<domain>): execute <slug> specification`.
 
-## Phase 6 — Complete
+## Phase 6 — Version and Tag
+
+Classify the change implemented in Phases 1–3 as one of `"major"`, `"minor"`, or
+`"patch"` using SemVer 2.0.0 semantics:
+
+- **major**: a publicly visible behaviour is removed or altered incompatibly (a tool is
+  removed, an argument is renamed, a command changes its output format in a breaking way).
+- **minor**: new capability is added without breaking existing behaviour (a new tool,
+  command, flag, or workflow phase is introduced).
+- **patch**: a bug fix, refactor, or internal improvement that does not alter the public
+  interface.
+
+Consult the active specification's `## Description` and `## Steps` sections to classify
+correctly.
+
+1. Call `bump_version` with the determined bump class:
+   ```json
+   { "bump_type": "<major|minor|patch>" }
+   ```
+
+2. Call `create_candidate_tag` with `domain` and `slug` from the spec frontmatter:
+   ```json
+   { "domain": "<domain>", "slug": "<slug>" }
+   ```
+   If the tool returns an error indicating the tag already exists, retry with
+   `"force": true`:
+   ```json
+   { "domain": "<domain>", "slug": "<slug>", "force": true }
+   ```
+
+## Phase 7 — Complete
 
 Respond with a concise summary of every file created or updated.

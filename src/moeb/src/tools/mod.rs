@@ -1,3 +1,5 @@
+pub mod bump_version;
+pub mod create_candidate_tag;
 pub mod create_branch;
 pub mod create_task_list;
 pub mod get_run_status;
@@ -82,6 +84,8 @@ impl ToolRegistry {
         r.register(Box::new(verify_rubrics::VerifyRubricsTool { state: std::sync::Arc::clone(&state) }));
         r.register(Box::new(create_branch::CreateBranchTool));
         r.register(Box::new(git_commit::GitCommitTool));
+        r.register(Box::new(bump_version::BumpVersionTool));
+        r.register(Box::new(create_candidate_tag::CreateCandidateTagTool));
         r
     }
 
@@ -142,6 +146,7 @@ impl ToolRegistry {
             "search_files", "grep_files", "read_files", "read_file_range",
             "create_task_list", "update_task", "verify_rubrics",
             "create_branch", "git_commit",
+            "bump_version", "create_candidate_tag",
             "spawn_agent", "start_run", "start_spec", "get_run_status",
         ];
         order.iter()
