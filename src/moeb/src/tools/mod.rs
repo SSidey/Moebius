@@ -7,21 +7,20 @@ pub mod git_commit;
 pub mod grep_files;
 pub mod list_directory;
 pub mod patch_file;
+pub mod query_agent;
 pub mod read_file;
 pub mod read_file_range;
 pub mod read_files;
-pub mod review_artifact;
 pub mod search_files;
-pub mod spawn_agent;
 pub mod start_run;
 pub mod start_spec;
 pub mod update_task;
 pub mod verify_rubrics;
 pub mod write_file;
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::Path;
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use anyhow::Result;
 use sha2::Digest;
 
@@ -41,24 +40,19 @@ pub fn truncate_to_byte_limit(content: String, limit: usize) -> String {
         boundary -= 1;
     }
     let total = content.len();
-    let shown = boundary;
     format!(
         "{}\n[... truncated: {} of {} chars shown ...]",
         &content[..boundary],
-        shown,
+        boundary,
         total
     )
 }
-
-// ── ToolHandler ───────────────────────────────────────────────────────────────
 
 pub trait ToolHandler: Send + Sync {
     fn name(&self) -> &'static str;
     fn definition(&self) -> ToolDef;
     fn execute(&self, args: &serde_json::Value, working_dir: &Path) -> Result<String>;
 }
-
-// ── ToolRegistry ──────────────────────────────────────────────────────────────
 
 pub struct ToolRegistry {
     handlers: HashMap<&'static str, Box<dyn ToolHandler>>,
@@ -69,8 +63,8 @@ impl ToolRegistry {
         Self { handlers: HashMap::new() }
     }
 
-    /// Register the standard tools (file tools + task-list tools + VCS tools + review_artifact).
-    pub fn standard(state: SharedRunState) -> Self {
+    /// Register the standard tools (file tools + task-list tools + VCS tools + query_agent).
+    pub fn standard(state: SharedRunState, read_paths: Arc<Mutex<HashSet<String>>>) -> Self {
         let mut r = Self::new();
         r.register(Box::new(read_file::ReadFileTool));
         r.register(Box::new(write_file::WriteFileTool));
@@ -87,11 +81,11 @@ impl ToolRegistry {
         r.register(Box::new(git_commit::GitCommitTool));
         r.register(Box::new(bump_version::BumpVersionTool));
         r.register(Box::new(create_candidate_tag::CreateCandidateTagTool));
-        r.register(Box::new(review_artifact::ReviewArtifactTool { adapter: None }));
+        r.register(Box::new(query_agent::QueryAgentTool { adapter: None, read_paths }));
         r
     }
 
-    /// Register the sub-agent tools (read tools + task-list, no write/patch/spawn/review).
+    /// Register the sub-agent tools (read tools + task-list, no write/patch/query).
     pub fn sub_agent(state: SharedRunState) -> Self {
         let mut r = Self::new();
         r.register(Box::new(read_file::ReadFileTool));
@@ -106,19 +100,18 @@ impl ToolRegistry {
     }
 
     /// Register the MCP tools (standard tools + start_run + start_spec + get_run_status).
-    pub fn mcp(state: SharedRunState) -> Self {
-        let mut r = Self::standard(std::sync::Arc::clone(&state));
+    pub fn mcp(state: SharedRunState, read_paths: Arc<Mutex<HashSet<String>>>) -> Self {
+        let mut r = Self::standard(std::sync::Arc::clone(&state), Arc::clone(&read_paths));
         r.register(Box::new(start_run::StartRunTool));
         r.register(Box::new(start_spec::StartSpecTool));
         r.register(Box::new(get_run_status::GetRunStatusTool { state: std::sync::Arc::clone(&state) }));
         r
     }
 
-    /// Register the coordinator tools (standard tools + spawn_agent + review_artifact with adapter).
-    pub fn with_spawn_agent(state: SharedRunState, adapter: std::sync::Arc<dyn crate::ports::AiPort>) -> Self {
-        let mut r = Self::standard(std::sync::Arc::clone(&state));
-        r.register(Box::new(spawn_agent::SpawnAgentTool { adapter: std::sync::Arc::clone(&adapter) }));
-        r.register(Box::new(review_artifact::ReviewArtifactTool { adapter: Some(adapter) }));
+    /// Register the coordinator tools (standard tools + query_agent with adapter).
+    pub fn with_query_agent(state: SharedRunState, adapter: std::sync::Arc<dyn crate::ports::AiPort>, read_paths: Arc<Mutex<HashSet<String>>>) -> Self {
+        let mut r = Self::standard(std::sync::Arc::clone(&state), Arc::clone(&read_paths));
+        r.register(Box::new(query_agent::QueryAgentTool { adapter: Some(adapter), read_paths }));
         r
     }
 
@@ -126,12 +119,7 @@ impl ToolRegistry {
         self.handlers.insert(handler.name(), handler);
     }
 
-    pub fn execute(
-        &self,
-        name: &str,
-        args: &serde_json::Value,
-        working_dir: &Path,
-    ) -> Result<String> {
+    pub fn execute(&self, name: &str, args: &serde_json::Value, working_dir: &Path) -> Result<String> {
         match self.handlers.get(name) {
             Some(h) => h.execute(args, working_dir),
             None => anyhow::bail!(
@@ -142,7 +130,6 @@ impl ToolRegistry {
         }
     }
 
-    /// Returns definitions in stable order.
     pub fn definitions(&self) -> Vec<ToolDef> {
         let order = [
             "read_file", "write_file", "patch_file", "list_directory",
@@ -150,8 +137,7 @@ impl ToolRegistry {
             "create_task_list", "update_task", "verify_rubrics",
             "create_branch", "git_commit",
             "bump_version", "create_candidate_tag",
-            "review_artifact",
-            "spawn_agent", "start_run", "start_spec", "get_run_status",
+            "query_agent", "start_run", "start_spec", "get_run_status",
         ];
         order.iter()
             .filter_map(|name| self.handlers.get(name).map(|h| h.definition()))
@@ -161,24 +147,23 @@ impl ToolRegistry {
 
 // ── RealToolExecutor ──────────────────────────────────────────────────────────
 
-/// Per-run in-memory deduplication cache.
-/// Key: file path string as provided by the agent.
-/// Value: (sha256_hex of content returned, turn number on which it was first sent).
+/// Per-run deduplication cache: path → (sha256_hex, turn first sent).
 type ContentCache = Mutex<HashMap<String, (String, u32)>>;
 
 pub struct RealToolExecutor {
     pub state: SharedRunState,
     pub registry: ToolRegistry,
     cache: ContentCache,
-    read_paths: Mutex<std::collections::HashSet<String>>,
+    read_paths: Arc<Mutex<HashSet<String>>>,
 }
 
 impl RealToolExecutor {
     pub fn new(state: SharedRunState) -> Self {
+        let read_paths = Arc::new(Mutex::new(HashSet::new()));
         Self {
-            registry: ToolRegistry::standard(std::sync::Arc::clone(&state)),
+            registry: ToolRegistry::standard(std::sync::Arc::clone(&state), Arc::clone(&read_paths)),
             cache: Mutex::new(HashMap::new()),
-            read_paths: Mutex::new(std::collections::HashSet::new()),
+            read_paths,
             state,
         }
     }
@@ -187,42 +172,38 @@ impl RealToolExecutor {
         Self {
             registry: ToolRegistry::sub_agent(std::sync::Arc::clone(&state)),
             cache: Mutex::new(HashMap::new()),
-            read_paths: Mutex::new(std::collections::HashSet::new()),
+            read_paths: Arc::new(Mutex::new(HashSet::new())),
             state,
         }
     }
 
     pub fn new_mcp(state: SharedRunState) -> Self {
+        let read_paths = Arc::new(Mutex::new(HashSet::new()));
         Self {
-            registry: ToolRegistry::mcp(std::sync::Arc::clone(&state)),
+            registry: ToolRegistry::mcp(std::sync::Arc::clone(&state), Arc::clone(&read_paths)),
             cache: Mutex::new(HashMap::new()),
-            read_paths: Mutex::new(std::collections::HashSet::new()),
+            read_paths,
             state,
         }
     }
 
-    pub fn new_coordinator(
-        state: SharedRunState,
-        adapter: std::sync::Arc<dyn crate::ports::AiPort>,
-    ) -> Self {
+    pub fn new_coordinator(state: SharedRunState, adapter: std::sync::Arc<dyn crate::ports::AiPort>) -> Self {
+        let read_paths = Arc::new(Mutex::new(HashSet::new()));
         Self {
-            registry: ToolRegistry::with_spawn_agent(std::sync::Arc::clone(&state), adapter),
+            registry: ToolRegistry::with_query_agent(
+                std::sync::Arc::clone(&state),
+                std::sync::Arc::clone(&adapter),
+                Arc::clone(&read_paths),
+            ),
             cache: Mutex::new(HashMap::new()),
-            read_paths: Mutex::new(std::collections::HashSet::new()),
+            read_paths,
             state,
         }
     }
 }
 
 impl ToolExecutorPort for RealToolExecutor {
-    fn execute(
-        &self,
-        name: &str,
-        _call_id: &str,
-        args: &serde_json::Value,
-        working_dir: &Path,
-        current_turn: u32,
-    ) -> Result<(String, bool)> {
+    fn execute(&self, name: &str, _call_id: &str, args: &serde_json::Value, working_dir: &Path, current_turn: u32) -> Result<(String, bool)> {
         if name == "write_file" || name == "patch_file" {
             if !self.state.lock().unwrap().task_list_created() {
                 eprintln!(

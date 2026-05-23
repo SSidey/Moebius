@@ -31,7 +31,8 @@
     #[test]
     fn standard_registry_has_ten_tools() {
         let state = new_shared_run_state();
-        assert_eq!(ToolRegistry::standard(state).definitions().len(), 16);
+        let rp = std::sync::Arc::new(std::sync::Mutex::new(std::collections::HashSet::new()));
+        assert_eq!(ToolRegistry::standard(state, rp).definitions().len(), 16);
     }
 
     #[test]

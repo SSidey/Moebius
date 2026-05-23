@@ -88,19 +88,41 @@ Write the authored specification to disk:
 
 Skip this sub-loop entirely if `{{no_review}}` is `"true"`.
 
-After writing the spec file in Phase 4, execute the review sub-loop:
+After writing the spec file in Phase 4:
 
-1. Call `review_artifact` with:
-   - `artifact_path`: the path of the spec file just written
-   - `step_id`: `"spec-file"`
-   - `step_intent`: the specification title and description verbatim
-   - `rubric_criteria`: the full `## Rubric / ### Structured` table from the spec
-   - `iteration_history`: `[]` initially; append `{ delta_score, accepted }` per call
+1. **Reviewer call.** Call `query_agent` with:
+   - `role`: `"reviewer"`
+   - `prompt`: Provide the spec file path, its current content, the specification title
+     and description as step intent, the full `## Rubric / ### Structured` table as
+     rubric criteria, and `[]` as iteration history.
+     Instruct the Reviewer: "Propose a unified diff of improvements if any are needed.
+     Return an empty string if the artifact fully satisfies all criteria."
+   - `expected_response_type`: `"diff"`
 
-2. If `accepted: true`: apply `proposed_changes` via `patch_file` and repeat up to 2 iterations
-   (stop when `delta_score < 0.01` or iterations exhausted).
+2. If the returned diff is empty or whitespace: terminate sub-loop. Record StepMetric
+   with `step_id: "spec-file"`, `iteration_count = 0`, `acceptance_rate = 1.0`,
+   `delta_scores = []`.
 
-3. Record a StepMetric for `step_id: "spec-file"`.
+3. **Moderator call.** Call `query_agent` with:
+   - `role`: `"moderator"`
+   - `prompt`: Provide the spec file content, the proposed diff, the rubric criteria,
+     and the iteration history as JSON.
+     Instruct the Moderator: "Score the expected quality improvement from this diff on
+     a scale 0.0–1.0. Accept only if the change is a genuine, measurable improvement.
+     Return JSON: { \"accepted\": bool, \"delta_score\": float, \"rationale\": string }"
+   - `expected_response_type`: `"json"`
+
+4. Parse the Moderator JSON. If `[PARSE_WARNING]` prefix is present, treat as
+   `{ "accepted": false, "delta_score": 0.0, "rationale": "Moderator parse failure" }`.
+
+5. If `accepted = true` and `delta_score >= 0.01` and `iteration_count < 2`:
+   - Apply the diff: `patch_file` with the proposed diff on the spec file path.
+   - Append `{ "delta_score": <score>, "accepted": true }` to iteration history.
+   - Return to step 1.
+
+6. Otherwise: terminate sub-loop.
+
+7. Record StepMetric for `step_id: "spec-file"`.
 
 ## Phase 5 — Branch
 
@@ -124,33 +146,58 @@ table row must include the Status column with value `active`.
 
 Skip this sub-loop entirely if `{{no_review}}` is `"true"`.
 
-After patching `.moeb/README.md`, execute the review sub-loop for the README patch:
+After patching `.moeb/README.md`:
 
-1. Call `review_artifact` with `artifact_path: ".moeb/README.md"`, `step_id: "readme-link"`,
-   and `step_intent`: "README index row for <title> added to ### <domain> section".
-2. Apply accepted proposals via `patch_file`; record StepMetric.
+1. **Reviewer call.** Call `query_agent` with:
+   - `role`: `"reviewer"`
+   - `prompt`: Provide the README path, its current content, step intent
+     "README index row for <title> added to ### <domain> section", empty rubric
+     criteria, and `[]` as iteration history.
+     Instruct the Reviewer: "Propose a unified diff if the row is incorrectly formatted
+     or missing. Return an empty string if the row is correct."
+   - `expected_response_type`: `"diff"`
+
+2. If the returned diff is empty or whitespace: terminate sub-loop. Record StepMetric
+   with `step_id: "readme-link"`.
+
+3. **Moderator call.** Call `query_agent` with:
+   - `role`: `"moderator"`
+   - `prompt`: Provide the README content, proposed diff, rubric criteria, and iteration
+     history. Instruct the Moderator to score and return JSON.
+   - `expected_response_type`: `"json"`
+
+4. Parse Moderator JSON. Apply diff via `patch_file` if `accepted = true` and
+   `delta_score >= 0.01` and `iteration_count < 2`. Record StepMetric for
+   `step_id: "readme-link"`.
 
 ## Phase — End-of-Skill Review
 
 Skip this phase entirely if `{{no_review}}` is `"true"`.
 
-1. Spawn a QA Architect sub-agent using `spawn_agent` with role `qa-architect`.
-   Provide the spec file path, README.md path, their contents, and the accumulated
-   StepMetrics as JSON.
+Call `query_agent` with:
+- `role`: `"qa-architect"`
+- `prompt`: Provide the spec file path, README.md path, their contents, and the
+  accumulated StepMetrics as JSON. Instruct the QA Architect to return a
+  ReviewSignalReport JSON as defined in `qa-architect.role.md`.
+- `expected_response_type`: `"json"`
 
-2. Parse the returned `ReviewSignalReport` JSON.
+If `[PARSE_WARNING]` prefix is present in the response, treat it as a Critical error
+signal: append a signal with title "QA Architect response parse failure" and description
+containing the raw response, then continue.
 
-3. For each signal with `severity = "Critical"`:
+Parse the returned `ReviewSignalReport` JSON:
+
+1. For each signal with `severity = "Critical"`:
    a. If `auto_generated` is set in the run context, skip `start_spec` calls entirely
       (recursion guard — resolution specs do not generate further resolution specs).
    b. Otherwise call `start_spec` with `proposed_resolution` as the requirement and
       record the resulting spec path in the signal as `auto_spec_path`.
 
-4. Assign `signal_id`, `run_id`, `timestamp` to each signal.
+2. Assign `signal_id`, `run_id`, `timestamp` to each signal.
 
-5. Write signals to `.moeb/signals/<run_id>.signals.json`.
+3. Write signals to `.moeb/signals/<run_id>.signals.json`.
 
-6. Continue to Metrics Recording regardless of critical signal presence.
+4. Continue to Metrics Recording regardless of critical signal presence.
 
 ## Phase — Metrics Recording
 

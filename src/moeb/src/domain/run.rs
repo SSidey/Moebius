@@ -43,16 +43,12 @@ impl AdapterFactoryPort for FixedAdapterFactory {
 
 impl RunService {
     pub fn from_config() -> Self {
-        Self {
-            factory: Arc::new(crate::adapters::DefaultAdapterFactory),
-        }
+        Self { factory: Arc::new(crate::adapters::DefaultAdapterFactory) }
     }
 
     #[cfg(test)]
     pub fn new(ai: Arc<dyn AiPort>) -> Self {
-        Self {
-            factory: Arc::new(FixedAdapterFactory(ai)),
-        }
+        Self { factory: Arc::new(FixedAdapterFactory(ai)) }
     }
 
     pub fn run(&self, spec: &str, file_content_mode: FileContentMode, no_review: bool) -> Result<()> {
@@ -64,17 +60,11 @@ impl RunService {
         let matches = find_specs(harness, spec)?;
 
         let spec_path = match matches.len() {
-            0 => anyhow::bail!(
-                "No specification found matching '{}' under {}.",
-                spec,
-                SPECS_DIR
-            ),
+            0 => anyhow::bail!("No specification found matching '{}' under {}.", spec, SPECS_DIR),
             1 => matches.into_iter().next().unwrap(),
             _ => {
                 eprintln!("Multiple specifications match '{}'. Narrow your query:", spec);
-                for m in &matches {
-                    eprintln!("  {}", m.display());
-                }
+                for m in &matches { eprintln!("  {}", m.display()); }
                 anyhow::bail!("Ambiguous specification name.");
             }
         };
@@ -87,10 +77,7 @@ impl RunService {
             .context("run.prompt is not valid UTF-8")?;
 
         let readme_content = fs::read_to_string(README_PATH)
-            .with_context(|| format!(
-                "Cannot read {}. Run `moeb init` first.",
-                README_PATH
-            ))?;
+            .with_context(|| format!("Cannot read {}. Run `moeb init` first.", README_PATH))?;
 
         let spec_content = fs::read_to_string(&spec_path)
             .with_context(|| format!("Cannot read {}", spec_path.display()))?;
@@ -105,31 +92,20 @@ impl RunService {
         let role_content = crate::skills::load_role(moeb_dir, &role_name);
 
         let command_rubrics = {
-            let binary_layers: Vec<String> = [
-                "rubrics/global.rubrics.md",
-                "rubrics/run.rubrics.md",
-            ].iter()
+            let binary_layers: Vec<String> = ["rubrics/global.rubrics.md", "rubrics/run.rubrics.md"]
+                .iter()
                 .filter_map(|asset| {
                     Internal::get(asset)
                         .and_then(|f| std::str::from_utf8(f.data.as_ref()).ok().map(str::to_owned))
                         .filter(|s| !s.trim().is_empty())
                 })
                 .collect();
-
-            let global_project_path = Path::new(".moeb/rubrics/global.rubrics.md");
-            let global_project = if global_project_path.exists() {
-                std::fs::read_to_string(global_project_path).unwrap_or_default()
-            } else {
-                String::new()
-            };
-
-            let command_project_path = Path::new(".moeb/rubrics/run.rubrics.md");
-            let command_project = if command_project_path.exists() {
-                std::fs::read_to_string(command_project_path).unwrap_or_default()
-            } else {
-                String::new()
-            };
-
+            let global_project = if Path::new(".moeb/rubrics/global.rubrics.md").exists() {
+                std::fs::read_to_string(".moeb/rubrics/global.rubrics.md").unwrap_or_default()
+            } else { String::new() };
+            let command_project = if Path::new(".moeb/rubrics/run.rubrics.md").exists() {
+                std::fs::read_to_string(".moeb/rubrics/run.rubrics.md").unwrap_or_default()
+            } else { String::new() };
             let mut combined: Vec<String> = binary_layers;
             if !global_project.trim().is_empty() { combined.push(global_project); }
             if !command_project.trim().is_empty() { combined.push(command_project); }
@@ -162,29 +138,23 @@ impl RunService {
         let adapter_cfg = cfg.adapter_config(&adapter_name);
         let model = adapter_cfg.effective_model("unknown");
 
-        let trace_config = TraceConfig {
+        let trace = Arc::new(TraceContext::new(TraceConfig {
             command: TraceCommand::Run,
             spec: spec_slug,
             adapter: adapter_name,
             model,
             retention: cfg.effective_run_retention(),
             file_content_mode,
-        };
-        let trace = Arc::new(TraceContext::new(trace_config));
+        }));
 
         let ai = self.factory.build(Arc::clone(&trace))?;
-
         let working_dir = Path::new(".");
         let state = crate::run_state::new_shared_run_state();
-        let tools = crate::tools::ToolRegistry::with_spawn_agent(
-            std::sync::Arc::clone(&state),
-            std::sync::Arc::clone(&ai),
-        ).definitions();
         let executor = crate::tools::RealToolExecutor::new_coordinator(
             std::sync::Arc::clone(&state),
             std::sync::Arc::clone(&ai),
         );
-        let initial_messages = vec![crate::adapters::Message::User(prompt)];
+        let tools = executor.registry.definitions();
         let compaction_config = crate::agent::CompactionConfig {
             enabled: cfg.effective_compaction_enabled(),
             threshold: cfg.effective_compaction_threshold(),
@@ -195,7 +165,7 @@ impl RunService {
             &executor,
             &tools,
             working_dir,
-            initial_messages,
+            vec![crate::adapters::Message::User(prompt)],
             MAX_TURNS,
             &trace,
             1,
@@ -212,9 +182,7 @@ impl RunService {
         }
 
         let result = run_result?;
-        if !result.is_empty() {
-            println!("{}", result);
-        }
+        if !result.is_empty() { println!("{}", result); }
         Ok(())
     }
 }
@@ -235,9 +203,7 @@ fn visit_dir(dir: &Path, query: &str, matches: &mut Vec<PathBuf>) -> Result<()> 
             visit_dir(&path, query, matches)?;
         } else if path.extension().and_then(|e| e.to_str()) == Some("md") {
             let name = path.file_name().unwrap_or_default().to_string_lossy();
-            if name.contains(query) {
-                matches.push(path);
-            }
+            if name.contains(query) { matches.push(path); }
         }
     }
     Ok(())
@@ -252,9 +218,7 @@ mod tests {
     use std::sync::{Arc, Mutex};
     use tempfile::TempDir;
 
-    struct CapturingStub {
-        captured: Mutex<Option<String>>,
-    }
+    struct CapturingStub { captured: Mutex<Option<String>> }
 
     impl AiPort for CapturingStub {
         fn send(&self, messages: &[Message], _tools: &[ToolDef]) -> Result<AgentResponse> {
@@ -278,34 +242,19 @@ mod tests {
     #[test]
     fn run_substitutes_readme_and_spec_content() {
         let (_dir, _guard) = setup();
-
         fs::create_dir_all(".moeb/specifications/moeb").expect("create spec dir");
         fs::write(".moeb/README.md", "readme-body").expect("write README");
-        fs::write(
-            ".moeb/specifications/moeb/test.spec.md",
-            "spec-body",
-        )
-        .expect("write spec");
+        fs::write(".moeb/specifications/moeb/test.spec.md", "spec-body").expect("write spec");
 
-        let stub = Arc::new(CapturingStub {
-            captured: Mutex::new(None),
-        });
-
+        let stub = Arc::new(CapturingStub { captured: Mutex::new(None) });
         let service = RunService::new(stub.clone() as Arc<dyn AiPort>);
         service.run("test.spec", crate::trace::FileContentMode::Embed, false).expect("run should succeed");
 
         let captured = stub.captured.lock().unwrap();
         let prompt = captured.as_ref().expect("prompt should have been captured");
-
         assert!(prompt.contains("readme-body"), "prompt must contain README content");
         assert!(prompt.contains("spec-body"), "prompt must contain spec content");
-        assert!(
-            !prompt.contains("{{readme_content}}"),
-            "{{readme_content}} token must be replaced"
-        );
-        assert!(
-            !prompt.contains("{{spec_content}}"),
-            "{{spec_content}} token must be replaced"
-        );
+        assert!(!prompt.contains("{{readme_content}}"), "{{readme_content}} token must be replaced");
+        assert!(!prompt.contains("{{spec_content}}"), "{{spec_content}} token must be replaced");
     }
 }

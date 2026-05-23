@@ -16,13 +16,15 @@ touches and what change is required.
 
 After creating your task list, identify tasks that are **independent and
 analysis-heavy** (reading multiple files to propose a diff with no ordering dependency
-on other tasks). For each such task, call `spawn_agent` instead of doing the work
+on other tasks). For each such task, call `query_agent` instead of doing the work
 inline:
 
-- `task` — one precise instruction: which files to read and what diff to produce.
-- `context` — the spec steps, file paths, and constraints the sub-agent needs.
+- `role`: `"run"` — the standard run-agent role.
+- `prompt`: one precise instruction: which files to read and what unified diff to produce.
+- `expected_response_type`: `"diff"`
+- `context_files`: any additional file paths the sub-agent needs beyond the .moeb/** auto-context.
 
-`spawn_agent` is synchronous: it blocks until the sub-agent returns its text response.
+`query_agent` is synchronous: it blocks until the sub-agent returns its text response.
 Process sub-agents one at a time.
 
 **Applying a sub-agent diff:**
@@ -32,7 +34,7 @@ Process sub-agents one at a time.
 2. Call `patch_file` with the unified diff from the sub-agent's response.
 3. Mark the corresponding coordinator task as done.
 
-Do not spawn a sub-agent for tasks that require writing new files that do not yet exist
+Do not use `query_agent` for tasks that require writing new files that do not yet exist
 (scope enforcement is bypassed for new files, so write them directly) or for tasks
 that depend on the output of a prior task's write.
 
@@ -70,37 +72,49 @@ For each task in your task list, in order:
 
 Skip this sub-loop entirely if `{{no_review}}` is `"true"`.
 
-After every `write_file` or `patch_file` call within a step, execute the following:
+After every `write_file` or `patch_file` call within a step:
 
-1. Call `review_artifact` with:
-   - `artifact_path`: the path just written or patched
-   - `step_id`: a short identifier for the current step (e.g., the step title slug)
-   - `step_intent`: the current step's title and description verbatim
-   - `rubric_criteria`: the rows from the active specification's `## Rubric / ### Structured`
-     table whose Pass Condition is relevant to this artifact (empty string if none apply)
-   - `iteration_history`: the array of prior review decisions for this step (empty array
-     initially; append each result as `{ delta_score, accepted }` after each call)
+1. **Reviewer call.** Call `query_agent` with:
+   - `role`: `"reviewer"`
+   - `prompt`: Provide the artifact path, its current content, the step intent
+     (title + description), rubric criteria (explicit rows from the spec's
+     `## Rubric / ### Structured` table applicable to this artifact; empty string
+     if none apply), and the iteration history as JSON.
+     Instruct the Reviewer: "Propose a unified diff of improvements if any are
+     needed. Return an empty string if the artifact fully satisfies all criteria."
+   - `expected_response_type`: `"diff"`
 
-2. If the result has `accepted: true`:
-   a. Apply `proposed_changes` to the artifact using `patch_file`.
-   b. Append `{ "delta_score": <result.delta_score>, "accepted": true }` to
-      `iteration_history`.
-   c. If `iteration_history` length < 2 and `result.delta_score >= 0.01`:
-      go to step 1 (repeat review).
-   d. Otherwise: terminate sub-loop.
+2. If the returned diff is empty or whitespace: terminate sub-loop. Record StepMetric
+   with `iteration_count = 0`, `acceptance_rate = 1.0`, `delta_scores = []`.
 
-3. If `accepted: false` or `proposed_changes` is null: terminate sub-loop immediately.
+3. **Moderator call.** Call `query_agent` with:
+   - `role`: `"moderator"`
+   - `prompt`: Provide the artifact's current content, the proposed diff from step 1,
+     the rubric criteria, and the iteration history as JSON.
+     Instruct the Moderator: "Score the expected quality improvement from this diff on
+     a scale 0.0–1.0. Accept only if the change is a genuine, measurable improvement
+     (not stylistic or speculative). Return JSON: { \"accepted\": bool,
+     \"delta_score\": float, \"rationale\": string }"
+   - `expected_response_type`: `"json"`
 
-4. Record a StepMetric for this step:
-   - `step_id`: as above
-   - `iteration_count`: length of `iteration_history`
-   - `acceptance_rate`: if `iteration_history` is empty, `1.0`; otherwise count of
-     entries where `accepted = true` divided by total entries
-   - `delta_scores`: `[entry.delta_score for each entry in iteration_history]`
+4. Parse the Moderator JSON. If `[PARSE_WARNING]` prefix is present, treat as
+   `{ "accepted": false, "delta_score": 0.0, "rationale": "Moderator parse failure" }`.
 
-5. If the active specification's rubric contains criteria evaluable against this
-   artifact now, evaluate those criteria immediately and note the outcome before
-   proceeding to the next step.
+5. If `accepted = true` and `delta_score >= 0.01` and `iteration_count < 2`:
+   - Apply the diff: `patch_file` with the proposed diff on the artifact path.
+   - Append `{ "delta_score": <score>, "accepted": true }` to iteration history.
+   - Return to step 1.
+
+6. Otherwise: terminate sub-loop.
+
+7. Record StepMetric:
+   - `step_id`: current step identifier
+   - `iteration_count`: length of iteration history
+   - `acceptance_rate`: if history empty → `1.0`; else accepted-count / total-count
+   - `delta_scores`: `[entry.delta_score for each entry]`
+
+8. Evaluate any spec rubric criteria applicable to this artifact now (e.g. `no-drift`
+   immediately after a spec file is written) and note the result before continuing.
 
 Continue until all tasks are marked done.
 
@@ -128,16 +142,21 @@ sources. Do not call `verify_rubrics` with a partial list.
 
 Skip this phase entirely if `{{no_review}}` is `"true"`.
 
-1. Spawn a QA Architect sub-agent using `spawn_agent` with role `qa-architect`.
-   Provide:
-   - The paths and full contents of every artifact produced during this run.
-   - The accumulated StepMetrics from all steps (as JSON).
-   - The active specification's full `## Rubric` section.
+Call `query_agent` with:
+- `role`: `"qa-architect"`
+- `prompt`: Provide the paths and contents of all artifacts produced in this run,
+  the accumulated StepMetrics as JSON, and the active specification's full `## Rubric`
+  section. Instruct the QA Architect to return a ReviewSignalReport JSON as defined
+  in `qa-architect.role.md`.
+- `expected_response_type`: `"json"`
 
-2. Parse the returned `ReviewSignalReport` JSON (schema defined in
-   `qa-architect.role.md`).
+If `[PARSE_WARNING]` prefix is present in the response, treat it as a Critical error
+signal: append a signal with title "QA Architect response parse failure" and
+description containing the raw response, then continue.
 
-3. For each signal with `severity = "Critical"`:
+Parse the returned `ReviewSignalReport` JSON:
+
+1. For each signal with `severity = "Critical"`:
    a. Call `start_spec` with `proposed_resolution` (or the signal's `description` if
       `proposed_resolution` is null) as the requirement.
    b. Record the resulting spec path in the signal as `auto_spec_path`.
@@ -145,14 +164,14 @@ Skip this phase entirely if `{{no_review}}` is `"true"`.
       auto-generated resolution spec (guard: check if `auto_generated` is set in run
       context; if so, skip auto-spec generation).
 
-4. Assign each signal:
+2. Assign each signal:
    - `signal_id`: a fresh UUID v4
    - `run_id`: the current run identifier
    - `timestamp`: ISO 8601 current time
 
-5. Write the complete array of signals to `.moeb/signals/<run_id>.signals.json`.
+3. Write the complete array of signals to `.moeb/signals/<run_id>.signals.json`.
 
-6. Do not fail or abort the skill if critical signals are present. Continue to the
+4. Do not fail or abort the skill if critical signals are present. Continue to the
    Metrics Recording phase.
 
 ## Phase — Metrics Recording

@@ -183,10 +183,8 @@ impl SpecService {
             trace.current_attempt.store(attempt, std::sync::atomic::Ordering::SeqCst);
 
             let state = crate::run_state::new_shared_run_state();
-            let tools = crate::tools::ToolRegistry::standard(
-                std::sync::Arc::clone(&state),
-            ).definitions();
             let executor = crate::tools::RealToolExecutor::new(std::sync::Arc::clone(&state));
+            let tools = executor.registry.definitions();
             let initial_messages = vec![crate::adapters::Message::User(prompt.clone())];
             let compaction_config = crate::agent::CompactionConfig {
                 enabled: cfg.effective_compaction_enabled(),

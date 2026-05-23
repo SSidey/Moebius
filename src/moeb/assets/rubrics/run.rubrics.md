@@ -1,2 +1,3 @@
 | Name | Description | Threshold | Pass Condition |
 |------|-------------|-----------|----------------|
+| `no-dead-code` | When a specification explicitly removes a tool, function, module, or file, the implementing agent must verify that the removed item no longer exists in the codebase before marking the run complete. | Zero removed items remaining | grep_files confirms absence of each deleted file path and each deleted symbol name listed in the spec's removal steps |

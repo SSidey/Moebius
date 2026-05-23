@@ -33,7 +33,8 @@ pub fn run_agent_loop(
     working_dir: &Path,
 ) -> Result<String> {
     let state = crate::run_state::new_shared_run_state();
-    let tools = crate::tools::ToolRegistry::standard(std::sync::Arc::clone(&state)).definitions();
+    let executor = crate::tools::RealToolExecutor::new(std::sync::Arc::clone(&state));
+    let tools = executor.registry.definitions();
     let messages: Vec<Message> = vec![Message::User(initial_prompt.to_string())];
     let noop_trace = Arc::new(crate::trace::TraceContext::new(crate::trace::TraceConfig {
         command: crate::trace::TraceCommand::Run,
@@ -43,7 +44,6 @@ pub fn run_agent_loop(
         retention: 0,
         file_content_mode: FileContentMode::Embed,
     }));
-    let executor = crate::tools::RealToolExecutor::new(std::sync::Arc::clone(&state));
     agent_inner::run_agent_loop_inner(adapter, &executor, &tools, working_dir, messages, MAX_TURNS, &noop_trace, 1, true, CompactionConfig::default(), state)
 }
 

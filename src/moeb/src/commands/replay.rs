@@ -172,7 +172,9 @@ pub fn run_replay_from_envelope(envelope: &TraceEnvelope, attempt_override: Opti
     }));
 
     let replay_state = crate::run_state::new_shared_run_state();
-    let tools: Vec<ToolDef> = crate::tools::ToolRegistry::standard(std::sync::Arc::clone(&replay_state)).definitions();
+    let tools: Vec<ToolDef> = crate::tools::RealToolExecutor::new(
+        std::sync::Arc::clone(&replay_state)
+    ).registry.definitions();
     let working_dir = std::path::Path::new(".");
 
     let result = run_agent_loop_traced(
