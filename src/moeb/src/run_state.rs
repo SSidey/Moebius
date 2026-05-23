@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::sync::{Arc, Mutex};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -32,6 +33,7 @@ pub struct RubricVerification {
 pub struct RunState {
     pub tasks: Vec<Task>,
     pub rubric_verifications: Vec<RubricVerification>,
+    pub pending_reviews: HashSet<String>,
 }
 
 impl RunState {
@@ -45,6 +47,14 @@ impl RunState {
 
     pub fn task_list_created(&self) -> bool {
         !self.tasks.is_empty()
+    }
+
+    pub fn register_write(&mut self, path: &str) {
+        self.pending_reviews.insert(path.to_string());
+    }
+
+    pub fn acknowledge_review(&mut self, path: &str) -> bool {
+        self.pending_reviews.remove(path)
     }
 }
 

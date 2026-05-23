@@ -45,12 +45,18 @@ impl ToolHandler for VerifyRubricsTool {
             .as_array()
             .ok_or_else(|| anyhow::anyhow!("verify_rubrics: 'criteria' must be an array"))?;
 
+        let unreviewed: Vec<String> = {
+            let state = self.state.lock().unwrap();
+            state.pending_reviews.iter().cloned().collect()
+        };
+
         let mut passes = 0usize;
         let mut fails = 0usize;
         let mut nas = 0usize;
 
-        let verifications: Vec<RubricVerification> = criteria_json
+        let mut verifications: Vec<RubricVerification> = criteria_json
             .iter()
+            .filter(|c| c["name"].as_str().unwrap_or("") != "write-review-compliance")
             .map(|c| {
                 let name = c["name"].as_str().unwrap_or("").to_string();
                 let status_str = c["status"].as_str().unwrap_or("na");
@@ -63,6 +69,22 @@ impl ToolHandler for VerifyRubricsTool {
                 RubricVerification { name, status, note }
             })
             .collect();
+
+        if unreviewed.is_empty() {
+            passes += 1;
+            verifications.push(RubricVerification {
+                name: "write-review-compliance".to_string(),
+                status: RubricStatus::Pass,
+                note: Some("All writes acknowledged".to_string()),
+            });
+        } else {
+            fails += 1;
+            verifications.push(RubricVerification {
+                name: "write-review-compliance".to_string(),
+                status: RubricStatus::Fail,
+                note: Some(format!("Unreviewed writes: {}", unreviewed.join(", "))),
+            });
+        }
 
         self.state.lock().unwrap().rubric_verifications = verifications;
 

@@ -124,6 +124,10 @@ After writing the spec file in Phase 4:
 
 7. Record StepMetric for `step_id: "spec-file"`.
 
+8. Call `complete_review` with the spec file path (`.moeb/specifications/<domain>/<domain>.<slug>.md`).
+   This is a no-op at the kernel level (path starts with `.moeb/`) but makes the review
+   obligation explicit and maintains symmetry with the run skill.
+
 ## Phase 5 — Branch
 
 After the file is written, call `create_branch` with `domain` and `slug` extracted from
@@ -169,6 +173,10 @@ After patching `.moeb/README.md`:
 4. Parse Moderator JSON. Apply diff via `patch_file` if `accepted = true` and
    `delta_score >= 0.01` and `iteration_count < 2`. Record StepMetric for
    `step_id: "readme-link"`.
+
+5. Call `complete_review` with `.moeb/README.md`.
+   This is a no-op at the kernel level (path starts with `.moeb/`) but makes the review
+   obligation explicit and maintains symmetry with the run skill.
 
 ## Phase — End-of-Skill Review
 

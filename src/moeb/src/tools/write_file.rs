@@ -3,9 +3,12 @@ use std::path::Path;
 use anyhow::{Context, Result};
 use serde_json::json;
 use crate::adapters::ToolDef;
+use crate::run_state::SharedRunState;
 use super::ToolHandler;
 
-pub struct WriteFileTool;
+pub struct WriteFileTool {
+    pub state: SharedRunState,
+}
 
 impl ToolHandler for WriteFileTool {
     fn name(&self) -> &'static str { "write_file" }
@@ -35,6 +38,10 @@ impl ToolHandler for WriteFileTool {
         }
         fs::write(&full, content)
             .with_context(|| format!("write_file: cannot write {}", full.display()))?;
+        let rel_normalized = rel.replace('\\', "/");
+        if !rel_normalized.starts_with(".moeb/") {
+            self.state.lock().unwrap().register_write(rel);
+        }
         Ok(format!("Wrote {} bytes to {}", content.len(), rel))
     }
 }

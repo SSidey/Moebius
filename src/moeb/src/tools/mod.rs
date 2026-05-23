@@ -1,4 +1,5 @@
 pub mod bump_version;
+pub mod complete_review;
 pub mod create_candidate_tag;
 pub mod create_branch;
 pub mod create_task_list;
@@ -68,7 +69,7 @@ impl ToolRegistry {
     pub fn standard(state: SharedRunState, read_paths: Arc<Mutex<HashSet<String>>>) -> Self {
         let mut r = Self::new();
         r.register(Box::new(read_file::ReadFileTool));
-        r.register(Box::new(write_file::WriteFileTool));
+        r.register(Box::new(write_file::WriteFileTool { state: Arc::clone(&state) }));
         r.register(Box::new(patch_file::PatchFileTool));
         r.register(Box::new(list_directory::ListDirectoryTool));
         r.register(Box::new(search_files::SearchFilesTool));
@@ -78,6 +79,7 @@ impl ToolRegistry {
         r.register(Box::new(create_task_list::CreateTaskListTool { state: std::sync::Arc::clone(&state) }));
         r.register(Box::new(update_task::UpdateTaskTool { state: std::sync::Arc::clone(&state) }));
         r.register(Box::new(verify_rubrics::VerifyRubricsTool { state: std::sync::Arc::clone(&state) }));
+        r.register(Box::new(complete_review::CompleteReviewTool { state: Arc::clone(&state) }));
         r.register(Box::new(create_branch::CreateBranchTool));
         r.register(Box::new(git_commit::GitCommitTool));
         r.register(Box::new(bump_version::BumpVersionTool));
@@ -156,7 +158,7 @@ impl ToolRegistry {
         let order = [
             "read_file", "write_file", "patch_file", "list_directory",
             "search_files", "grep_files", "read_files", "read_file_range",
-            "create_task_list", "update_task", "verify_rubrics",
+            "create_task_list", "update_task", "verify_rubrics", "complete_review",
             "create_branch", "git_commit",
             "bump_version", "create_candidate_tag",
             "get_version", "query_agent", "start_run", "start_spec", "get_run_status",

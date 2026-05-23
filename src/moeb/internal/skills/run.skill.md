@@ -117,6 +117,12 @@ After every `write_file` or `patch_file` call within a step:
 8. Evaluate any spec rubric criteria applicable to this artifact now (e.g. `no-drift`
    immediately after a spec file is written) and note the result before continuing.
 
+9. Call `complete_review` with the path that was passed to `write_file` in this step.
+   This acknowledges the review cycle and clears the review obligation for this path.
+   Call it regardless of whether a diff was applied — once per write, after the
+   sub-loop terminates. Omitting this call causes `verify_rubrics` to fail
+   `write-review-compliance`.
+
 Continue until all tasks are marked done.
 
 ## Phase 4 — Verify
