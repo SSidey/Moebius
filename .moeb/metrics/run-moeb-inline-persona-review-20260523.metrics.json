@@ -1,0 +1,18 @@
+{
+  "run_id": "run-moeb-inline-persona-review-20260523",
+  "timestamp": "2026-05-23T00:00:00Z",
+  "rubric_score": 0.889,
+  "step_metrics": [
+    {"step_id": "1", "iteration_count": 0, "acceptance_rate": 1.0, "delta_scores": []},
+    {"step_id": "2", "iteration_count": 0, "acceptance_rate": 1.0, "delta_scores": []},
+    {"step_id": "3", "iteration_count": 0, "acceptance_rate": 1.0, "delta_scores": []},
+    {"step_id": "4", "iteration_count": 0, "acceptance_rate": 1.0, "delta_scores": []},
+    {"step_id": "5", "iteration_count": 0, "acceptance_rate": 1.0, "delta_scores": []},
+    {"step_id": "6", "iteration_count": 0, "acceptance_rate": 1.0, "delta_scores": []},
+    {"step_id": "7", "iteration_count": 0, "acceptance_rate": 1.0, "delta_scores": []},
+    {"step_id": "8", "iteration_count": 0, "acceptance_rate": 1.0, "delta_scores": []},
+    {"step_id": "9", "iteration_count": 0, "acceptance_rate": 1.0, "delta_scores": []}
+  ],
+  "end_review_error_count": 0,
+  "wall_time_ms": 0
+}

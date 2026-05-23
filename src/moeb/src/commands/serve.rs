@@ -24,20 +24,7 @@ pub fn serve(
         Transport::Stdio => {
             let session = McpSession::new(working_dir);
             let state = Arc::clone(&session.state);
-            let adapter = {
-                use crate::ports::AdapterFactoryPort;
-                use crate::trace::{FileContentMode, TraceCommand, TraceConfig, TraceContext};
-                let noop_trace = Arc::new(TraceContext::new(TraceConfig {
-                    command: TraceCommand::Run,
-                    spec: String::new(),
-                    adapter: String::new(),
-                    model: String::new(),
-                    retention: 0,
-                    file_content_mode: FileContentMode::Embed,
-                }));
-                crate::adapters::DefaultAdapterFactory.build(noop_trace)?
-            };
-            let executor = RealToolExecutor::new_mcp_with_adapter(state, adapter);
+            let executor = RealToolExecutor::new_mcp(Arc::clone(&state));
             let mut server = McpServer::new(session, executor);
             server.run().context("MCP stdio server error")
         }

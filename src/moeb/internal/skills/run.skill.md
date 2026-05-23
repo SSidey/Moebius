@@ -12,32 +12,6 @@ Call `create_task_list` as your very first tool call. Derive one task per number
 in the specification's `## Steps` section. Each task entry must state which file(s) it
 touches and what change is required.
 
-## Phase 1a — Delegate (optional)
-
-After creating your task list, identify tasks that are **independent and
-analysis-heavy** (reading multiple files to propose a diff with no ordering dependency
-on other tasks). For each such task, call `query_agent` instead of doing the work
-inline:
-
-- `role`: `"run"` — the standard run-agent role.
-- `prompt`: one precise instruction: which files to read and what unified diff to produce.
-- `expected_response_type`: `"diff"`
-- `context_files`: any additional file paths the sub-agent needs beyond the .moeb/** auto-context.
-
-`query_agent` is synchronous: it blocks until the sub-agent returns its text response.
-Process sub-agents one at a time.
-
-**Applying a sub-agent diff:**
-
-1. Call `read_file` on the file the sub-agent proposes to change (required for scope
-   enforcement — the coordinator must have read a file before patching it).
-2. Call `patch_file` with the unified diff from the sub-agent's response.
-3. Mark the corresponding coordinator task as done.
-
-Do not use `query_agent` for tasks that require writing new files that do not yet exist
-(scope enforcement is bypassed for new files, so write them directly) or for tasks
-that depend on the output of a prior task's write.
-
 ## Phase 2 — Scope
 
 Before modifying anything, locate all relevant code:
@@ -75,28 +49,20 @@ This sub-loop runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
 
 After every `write_file` or `patch_file` call within a step:
 
-1. **Reviewer call.** Call `query_agent` with:
-   - `role`: `"reviewer"`
-   - `prompt`: Provide the artifact path, its current content, the step intent
-     (title + description), rubric criteria (explicit rows from the spec's
-     `## Rubric / ### Structured` table applicable to this artifact; empty string
-     if none apply), and the iteration history as JSON.
-     Instruct the Reviewer: "Propose a unified diff of improvements if any are
-     needed. Return an empty string if the artifact fully satisfies all criteria."
-   - `expected_response_type`: `"diff"`
+1. **Inline Reviewer.** Without calling any tool, adopt the **Reviewer Persona**
+   pre-loaded in your context. Evaluate the artifact against the step intent and the
+   applicable rubric criteria. Produce a unified diff if improvements are needed, or
+   an empty string if the artifact fully satisfies all criteria. Hold this result in
+   working memory — do not output it as a standalone message before continuing.
 
 2. If the returned diff is empty or whitespace: terminate sub-loop. Record StepMetric
    with `iteration_count = 0`, `acceptance_rate = 1.0`, `delta_scores = []`.
 
-3. **Moderator call.** Call `query_agent` with:
-   - `role`: `"moderator"`
-   - `prompt`: Provide the artifact's current content, the proposed diff from step 1,
-     the rubric criteria, and the iteration history as JSON.
-     Instruct the Moderator: "Score the expected quality improvement from this diff on
-     a scale 0.0–1.0. Accept only if the change is a genuine, measurable improvement
-     (not stylistic or speculative). Return JSON: { \"accepted\": bool,
-     \"delta_score\": float, \"rationale\": string }"
-   - `expected_response_type`: `"json"`
+3. **Inline Moderator.** Without calling any tool, adopt the **Moderator Persona**
+   pre-loaded in your context. Evaluate the proposed diff against the artifact content,
+   rubric criteria, and iteration history. Produce a JSON verdict:
+   `{ "accepted": bool, "delta_score": float, "rationale": string }`. Hold this result
+   in working memory.
 
 4. Parse the Moderator JSON. If `[PARSE_WARNING]` prefix is present, treat as
    `{ "accepted": false, "delta_score": 0.0, "rationale": "Moderator parse failure" }`.
@@ -150,13 +116,11 @@ sources. Do not call `verify_rubrics` with a partial list.
 This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
 `{{no_review}}` is the exact string `"true"`.
 
-Call `query_agent` with:
-- `role`: `"qa-architect"`
-- `prompt`: Provide the paths and contents of all artifacts produced in this run,
-  the accumulated StepMetrics as JSON, and the active specification's full `## Rubric`
-  section. Instruct the QA Architect to return a ReviewSignalReport JSON as defined
-  in `qa-architect.role.md`.
-- `expected_response_type`: `"json"`
+Without calling any tool, adopt the **QA Architect Persona** pre-loaded in your context.
+Evaluate the paths and contents of all artifacts produced in this run, the accumulated
+StepMetrics as JSON, and the active specification's full `## Rubric` section. Produce a
+ReviewSignalReport JSON matching the schema defined in the QA Architect Persona. Hold
+the result in working memory and continue with parsing and signal processing below.
 
 If `[PARSE_WARNING]` prefix is present in the response, treat it as a Critical error
 signal: append a signal with title "QA Architect response parse failure" and

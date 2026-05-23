@@ -61,6 +61,9 @@ impl ToolHandler for StartRunTool {
         let role_name = crate::skills::extract_role_name(&spec_content)
             .unwrap_or_else(|| "run".to_string());
         let role_content = crate::skills::load_role(&moeb_dir, &role_name);
+        let reviewer_role = crate::skills::load_role(&moeb_dir, "reviewer");
+        let moderator_role = crate::skills::load_role(&moeb_dir, "moderator");
+        let qa_architect_role = crate::skills::load_role(&moeb_dir, "qa-architect");
 
         let command_rubrics = build_run_rubrics(&moeb_dir);
 
@@ -82,7 +85,10 @@ impl ToolHandler for StartRunTool {
             .replace("{{command_rubrics}}", &command_rubrics)
             .replace("{{no_review}}", no_review_value)
             .replace("{{metrics_window}}", &metrics_window_str)
-            .replace("{{metrics_degradation_margin}}", &metrics_margin_str);
+            .replace("{{metrics_degradation_margin}}", &metrics_margin_str)
+            .replace("{{reviewer_role_content}}", &reviewer_role)
+            .replace("{{moderator_role_content}}", &moderator_role)
+            .replace("{{qa_architect_role_content}}", &qa_architect_role);
 
         Ok(prompt)
     }

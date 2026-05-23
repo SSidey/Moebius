@@ -61,6 +61,9 @@ impl ToolHandler for StartSpecTool {
 
         let skill_content = crate::skills::load_skill(&moeb_dir, "spec");
         let role_content = crate::skills::load_role(&moeb_dir, "spec");
+        let reviewer_role = crate::skills::load_role(&moeb_dir, "reviewer");
+        let moderator_role = crate::skills::load_role(&moeb_dir, "moderator");
+        let qa_architect_role = crate::skills::load_role(&moeb_dir, "qa-architect");
 
         let command_rubrics = build_spec_rubrics(&moeb_dir);
 
@@ -71,7 +74,10 @@ impl ToolHandler for StartSpecTool {
             .replace("{{rubrics_content}}", &rubrics_content)
             .replace("{{skill_content}}", &skill_content)
             .replace("{{command_rubrics}}", &command_rubrics)
-            .replace("{{input}}", requirement);
+            .replace("{{input}}", requirement)
+            .replace("{{reviewer_role_content}}", &reviewer_role)
+            .replace("{{moderator_role_content}}", &moderator_role)
+            .replace("{{qa_architect_role_content}}", &qa_architect_role);
 
         Ok(prompt)
     }

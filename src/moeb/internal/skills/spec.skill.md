@@ -90,27 +90,21 @@ Skip this sub-loop entirely if `{{no_review}}` is `"true"`.
 
 After writing the spec file in Phase 4:
 
-1. **Reviewer call.** Call `query_agent` with:
-   - `role`: `"reviewer"`
-   - `prompt`: Provide the spec file path, its current content, the specification title
-     and description as step intent, the full `## Rubric / ### Structured` table as
-     rubric criteria, and `[]` as iteration history.
-     Instruct the Reviewer: "Propose a unified diff of improvements if any are needed.
-     Return an empty string if the artifact fully satisfies all criteria."
-   - `expected_response_type`: `"diff"`
+1. **Inline Reviewer.** Without calling any tool, adopt the **Reviewer Persona**
+   pre-loaded in your context. Evaluate the spec file against its `## Rubric / ###
+   Structured` criteria and the specification title and description as step intent.
+   Produce a unified diff if improvements are needed, or an empty string if the
+   artifact fully satisfies all criteria. Hold this result in working memory.
 
 2. If the returned diff is empty or whitespace: terminate sub-loop. Record StepMetric
    with `step_id: "spec-file"`, `iteration_count = 0`, `acceptance_rate = 1.0`,
    `delta_scores = []`.
 
-3. **Moderator call.** Call `query_agent` with:
-   - `role`: `"moderator"`
-   - `prompt`: Provide the spec file content, the proposed diff, the rubric criteria,
-     and the iteration history as JSON.
-     Instruct the Moderator: "Score the expected quality improvement from this diff on
-     a scale 0.0–1.0. Accept only if the change is a genuine, measurable improvement.
-     Return JSON: { \"accepted\": bool, \"delta_score\": float, \"rationale\": string }"
-   - `expected_response_type`: `"json"`
+3. **Inline Moderator.** Without calling any tool, adopt the **Moderator Persona**
+   pre-loaded in your context. Evaluate the proposed diff against the spec content,
+   rubric criteria, and iteration history. Produce a JSON verdict:
+   `{ "accepted": bool, "delta_score": float, "rationale": string }`. Hold this result
+   in working memory.
 
 4. Parse the Moderator JSON. If `[PARSE_WARNING]` prefix is present, treat as
    `{ "accepted": false, "delta_score": 0.0, "rationale": "Moderator parse failure" }`.
@@ -152,23 +146,20 @@ Skip this sub-loop entirely if `{{no_review}}` is `"true"`.
 
 After patching `.moeb/README.md`:
 
-1. **Reviewer call.** Call `query_agent` with:
-   - `role`: `"reviewer"`
-   - `prompt`: Provide the README path, its current content, step intent
-     "README index row for <title> added to ### <domain> section", empty rubric
-     criteria, and `[]` as iteration history.
-     Instruct the Reviewer: "Propose a unified diff if the row is incorrectly formatted
-     or missing. Return an empty string if the row is correct."
-   - `expected_response_type`: `"diff"`
+1. **Inline Reviewer.** Without calling any tool, adopt the **Reviewer Persona**
+   pre-loaded in your context. Evaluate the README patch for correctness: the row must
+   be correctly formatted and present in the right `### <domain>` section. Produce a
+   unified diff if the row is incorrectly formatted or missing, or an empty string if
+   the row is correct. Hold this result in working memory.
 
 2. If the returned diff is empty or whitespace: terminate sub-loop. Record StepMetric
    with `step_id: "readme-link"`.
 
-3. **Moderator call.** Call `query_agent` with:
-   - `role`: `"moderator"`
-   - `prompt`: Provide the README content, proposed diff, rubric criteria, and iteration
-     history. Instruct the Moderator to score and return JSON.
-   - `expected_response_type`: `"json"`
+3. **Inline Moderator.** Without calling any tool, adopt the **Moderator Persona**
+   pre-loaded in your context. Evaluate the proposed diff against the README content,
+   rubric criteria, and iteration history. Produce a JSON verdict:
+   `{ "accepted": bool, "delta_score": float, "rationale": string }`. Hold this result
+   in working memory.
 
 4. Parse Moderator JSON. Apply diff via `patch_file` if `accepted = true` and
    `delta_score >= 0.01` and `iteration_count < 2`. Record StepMetric for
@@ -182,12 +173,11 @@ After patching `.moeb/README.md`:
 
 Skip this phase entirely if `{{no_review}}` is `"true"`.
 
-Call `query_agent` with:
-- `role`: `"qa-architect"`
-- `prompt`: Provide the spec file path, README.md path, their contents, and the
-  accumulated StepMetrics as JSON. Instruct the QA Architect to return a
-  ReviewSignalReport JSON as defined in `qa-architect.role.md`.
-- `expected_response_type`: `"json"`
+Without calling any tool, adopt the **QA Architect Persona** pre-loaded in your context.
+Evaluate the spec file, README.md, their contents, and the accumulated StepMetrics as
+JSON. Produce a ReviewSignalReport JSON matching the schema defined in the QA Architect
+Persona. Hold the result in working memory and continue with parsing and signal processing
+below.
 
 If `[PARSE_WARNING]` prefix is present in the response, treat it as a Critical error
 signal: append a signal with title "QA Architect response parse failure" and description

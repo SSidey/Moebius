@@ -1,0 +1,21 @@
+{
+  "run_id": "spec-moeb-inline-persona-review-20260523",
+  "timestamp": "2026-05-23T00:00:00Z",
+  "rubric_score": 1.0,
+  "step_metrics": [
+    {
+      "step_id": "spec-file",
+      "iteration_count": 0,
+      "acceptance_rate": 1.0,
+      "delta_scores": []
+    },
+    {
+      "step_id": "readme-link",
+      "iteration_count": 0,
+      "acceptance_rate": 1.0,
+      "delta_scores": []
+    }
+  ],
+  "end_review_error_count": 0,
+  "wall_time_ms": 600000
+}
