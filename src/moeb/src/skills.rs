@@ -1,33 +1,80 @@
 use std::path::Path;
 
-/// Resolves and returns the content of the named skill file.
+/// Returns the body of a skill file with YAML frontmatter stripped.
+fn strip_skill_frontmatter(content: &str) -> String {
+    if let Some(body) = content.strip_prefix("---\n") {
+        if let Some(end) = body.find("\n---\n") {
+            return body[end + 5..].to_string();
+        }
+        if let Some(end) = body.find("\n---") {
+            let rest = &body[end + 4..];
+            if rest.is_empty() || rest.starts_with('\n') {
+                return rest.trim_start_matches('\n').to_string();
+            }
+        }
+    }
+    content.to_string()
+}
+
+/// Extracts the `review:` bool from skill file frontmatter. Returns `true` when absent.
+pub fn extract_review_flag(content: &str) -> bool {
+    let body = match content.strip_prefix("---\n") {
+        Some(b) => b,
+        None => return true,
+    };
+    let end = match body.find("\n---") {
+        Some(e) => e,
+        None => return true,
+    };
+    let yaml_str = &body[..end];
+    for line in yaml_str.lines() {
+        if let Some(val) = line.strip_prefix("review:") {
+            return val.trim() != "false";
+        }
+    }
+    true
+}
+
+/// Resolves and returns the body of the named skill file (frontmatter stripped).
 ///
 /// Resolution order:
 ///   1. {moeb_dir}/skills/{name}.skill.md  (project-local override)
 ///   2. Binary-bundled asset skills/{name}.skill.md
 ///   3. Empty string with a stderr warning
 pub fn load_skill(moeb_dir: &Path, name: &str) -> String {
-    // 1. Project-local override
     let local_path = moeb_dir.join("skills").join(format!("{}.skill.md", name));
     if let Ok(content) = std::fs::read_to_string(&local_path) {
-        return content;
+        return strip_skill_frontmatter(&content);
     }
 
-    // 2. Bundled binary asset
     let asset_key = format!("skills/{}.skill.md", name);
     if let Some(asset) = crate::assets::Internal::get(&asset_key) {
         if let Ok(content) = std::str::from_utf8(asset.data.as_ref()) {
-            return content.to_string();
+            return strip_skill_frontmatter(content);
         }
     }
 
-    // 3. Fallback
     eprintln!(
         "moeb: warning: skill '{}' not found in .moeb/skills/ or binary assets; \
          workflow section will be empty.",
         name
     );
     String::new()
+}
+
+/// Returns the `review:` flag for the named skill (true = review enabled, false = opt-out).
+pub fn load_skill_review_flag(moeb_dir: &Path, name: &str) -> bool {
+    let local_path = moeb_dir.join("skills").join(format!("{}.skill.md", name));
+    if let Ok(content) = std::fs::read_to_string(&local_path) {
+        return extract_review_flag(&content);
+    }
+    let asset_key = format!("skills/{}.skill.md", name);
+    if let Some(asset) = crate::assets::Internal::get(&asset_key) {
+        if let Ok(content) = std::str::from_utf8(asset.data.as_ref()) {
+            return extract_review_flag(content);
+        }
+    }
+    true
 }
 
 /// Extracts the value of the `skill:` key from a spec's YAML frontmatter.
@@ -123,5 +170,35 @@ mod tests {
     fn extract_role_name_returns_none_when_absent() {
         let spec = "---\ndomain: moeb\nslug: test\nstatus: active\n---\n# Title\n";
         assert_eq!(extract_role_name(spec), None);
+    }
+
+    #[test]
+    fn extract_review_flag_defaults_true_when_absent() {
+        let content = "# Skill body without frontmatter";
+        assert!(extract_review_flag(content));
+    }
+
+    #[test]
+    fn extract_review_flag_returns_true_when_set() {
+        let content = "---\nreview: true\n---\n# Skill body";
+        assert!(extract_review_flag(content));
+    }
+
+    #[test]
+    fn extract_review_flag_returns_false_when_disabled() {
+        let content = "---\nreview: false\n---\n# Skill body";
+        assert!(!extract_review_flag(content));
+    }
+
+    #[test]
+    fn strip_skill_frontmatter_removes_block() {
+        let content = "---\nreview: true\n---\n# Skill body\nMore content";
+        assert_eq!(strip_skill_frontmatter(content), "# Skill body\nMore content");
+    }
+
+    #[test]
+    fn strip_skill_frontmatter_noop_without_frontmatter() {
+        let content = "# Skill body\nMore content";
+        assert_eq!(strip_skill_frontmatter(content), content);
     }
 }

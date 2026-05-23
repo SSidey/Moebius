@@ -1,3 +1,6 @@
+---
+review: true
+---
 The harness README, specification schema, and rubrics catalogue are already in your
 context. Do not re-read any of them.
 
@@ -81,6 +84,24 @@ Write the authored specification to disk:
   complete specification document as content.
   The content must begin with `---` (the YAML opening delimiter) as its very first characters.
 
+### Per-Step Review Sub-Loop (spec file)
+
+Skip this sub-loop entirely if `{{no_review}}` is `"true"`.
+
+After writing the spec file in Phase 4, execute the review sub-loop:
+
+1. Call `review_artifact` with:
+   - `artifact_path`: the path of the spec file just written
+   - `step_id`: `"spec-file"`
+   - `step_intent`: the specification title and description verbatim
+   - `rubric_criteria`: the full `## Rubric / ### Structured` table from the spec
+   - `iteration_history`: `[]` initially; append `{ delta_score, accepted }` per call
+
+2. If `accepted: true`: apply `proposed_changes` via `patch_file` and repeat up to 2 iterations
+   (stop when `delta_score < 0.01` or iterations exhausted).
+
+3. Record a StepMetric for `step_id: "spec-file"`.
+
 ## Phase 5 — Branch
 
 After the file is written, call `create_branch` with `domain` and `slug` extracted from
@@ -98,6 +119,57 @@ absent). Append a new table row for this specification using `patch_file` on `.m
 
 Use `patch_file` with a minimal unified diff targeting only the insertion point. The
 table row must include the Status column with value `active`.
+
+### Per-Step Review Sub-Loop (README patch)
+
+Skip this sub-loop entirely if `{{no_review}}` is `"true"`.
+
+After patching `.moeb/README.md`, execute the review sub-loop for the README patch:
+
+1. Call `review_artifact` with `artifact_path: ".moeb/README.md"`, `step_id: "readme-link"`,
+   and `step_intent`: "README index row for <title> added to ### <domain> section".
+2. Apply accepted proposals via `patch_file`; record StepMetric.
+
+## Phase — End-of-Skill Review
+
+Skip this phase entirely if `{{no_review}}` is `"true"`.
+
+1. Spawn a QA Architect sub-agent using `spawn_agent` with role `qa-architect`.
+   Provide the spec file path, README.md path, their contents, and the accumulated
+   StepMetrics as JSON.
+
+2. Parse the returned `ReviewSignalReport` JSON.
+
+3. For each signal with `severity = "Critical"`:
+   a. If `auto_generated` is set in the run context, skip `start_spec` calls entirely
+      (recursion guard — resolution specs do not generate further resolution specs).
+   b. Otherwise call `start_spec` with `proposed_resolution` as the requirement and
+      record the resulting spec path in the signal as `auto_spec_path`.
+
+4. Assign `signal_id`, `run_id`, `timestamp` to each signal.
+
+5. Write signals to `.moeb/signals/<run_id>.signals.json`.
+
+6. Continue to Metrics Recording regardless of critical signal presence.
+
+## Phase — Metrics Recording
+
+1. Assemble `RunMetrics`:
+   - `run_id`: the current run identifier
+   - `timestamp`: ISO 8601 run-start time
+   - `rubric_score`: 1.0 (spec runs succeed or are retried; no rubric scoring)
+   - `step_metrics`: all StepMetric records from spec-file and readme-link steps
+   - `end_review_error_count`: count of Critical signals (0 when `{{no_review}}` is `"true"`)
+   - `wall_time_ms`: elapsed milliseconds since run start
+
+2. Write to `.moeb/metrics/<run_id>.metrics.json`.
+
+3. Load last `{{metrics_window}}` metrics files. If fewer than 2 exist, skip regression detection.
+
+4. If `rubric_score < rolling_avg * (1 - {{metrics_degradation_margin}})`: append a
+   DegradationSignal to the signals file.
+
+5. Emit `MetricsEvent { metrics: <RunMetrics> }` to the trace.
 
 ## Phase 7 — Commit
 

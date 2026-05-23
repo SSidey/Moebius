@@ -35,13 +35,13 @@ impl AdapterManagementPort for CliAdapter {
 }
 
 impl SpecPort for CliAdapter {
-    fn run(&self, input: &str, file_content_mode: FileContentMode) -> Result<()> {
-        SpecService::from_config().run(input, file_content_mode)
+    fn run(&self, input: &str, file_content_mode: FileContentMode, no_review: bool) -> Result<()> {
+        SpecService::from_config().run(input, file_content_mode, no_review)
     }
 }
 
 impl RunPort for CliAdapter {
-    fn run(&self, spec: &str, file_content_mode: FileContentMode) -> Result<()> {
-        RunService::from_config().run(spec, file_content_mode)
+    fn run(&self, spec: &str, file_content_mode: FileContentMode, no_review: bool) -> Result<()> {
+        RunService::from_config().run(spec, file_content_mode, no_review)
     }
 }

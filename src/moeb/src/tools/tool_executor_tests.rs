@@ -31,7 +31,7 @@
     #[test]
     fn standard_registry_has_ten_tools() {
         let state = new_shared_run_state();
-        assert_eq!(ToolRegistry::standard(state).definitions().len(), 15);
+        assert_eq!(ToolRegistry::standard(state).definitions().len(), 16);
     }
 
     #[test]

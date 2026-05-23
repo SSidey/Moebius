@@ -20,6 +20,9 @@ const SPEC_CONTENT_TOKEN: &str = "{{spec_content}}";
 const SKILL_CONTENT_TOKEN: &str = "{{skill_content}}";
 const ROLE_CONTENT_TOKEN: &str = "{{role_content}}";
 const COMMAND_RUBRICS_TOKEN: &str = "{{command_rubrics}}";
+const NO_REVIEW_TOKEN: &str = "{{no_review}}";
+const METRICS_WINDOW_TOKEN: &str = "{{metrics_window}}";
+const METRICS_MARGIN_TOKEN: &str = "{{metrics_degradation_margin}}";
 const SPECS_DIR: &str = ".moeb/specifications";
 const README_PATH: &str = ".moeb/README.md";
 const MOEB_DIR: &str = ".moeb";
@@ -52,7 +55,7 @@ impl RunService {
         }
     }
 
-    pub fn run(&self, spec: &str, file_content_mode: FileContentMode) -> Result<()> {
+    pub fn run(&self, spec: &str, file_content_mode: FileContentMode, no_review: bool) -> Result<()> {
         let harness = Path::new(SPECS_DIR);
         if !harness.exists() {
             anyhow::bail!(".moeb/specifications/ not found. Run `moeb init` first.");
@@ -96,15 +99,14 @@ impl RunService {
         let skill_name = crate::skills::extract_skill_name(&spec_content)
             .unwrap_or_else(|| "run".to_string());
         let skill_content = crate::skills::load_skill(moeb_dir, &skill_name);
+        let skill_review_enabled = crate::skills::load_skill_review_flag(moeb_dir, &skill_name);
         let role_name = crate::skills::extract_role_name(&spec_content)
             .unwrap_or_else(|| "run".to_string());
         let role_content = crate::skills::load_role(moeb_dir, &role_name);
 
         let command_rubrics = {
             let binary_layers: Vec<String> = [
-                // Layer 1: global-baseline (binary)
                 "rubrics/global.rubrics.md",
-                // Layer 2: command-baseline (binary)
                 "rubrics/run.rubrics.md",
             ].iter()
                 .filter_map(|asset| {
@@ -114,7 +116,6 @@ impl RunService {
                 })
                 .collect();
 
-            // Layer 3: global-project (project file, optional)
             let global_project_path = Path::new(".moeb/rubrics/global.rubrics.md");
             let global_project = if global_project_path.exists() {
                 std::fs::read_to_string(global_project_path).unwrap_or_default()
@@ -122,7 +123,6 @@ impl RunService {
                 String::new()
             };
 
-            // Layer 4: command-project (project file, optional)
             let command_project_path = Path::new(".moeb/rubrics/run.rubrics.md");
             let command_project = if command_project_path.exists() {
                 std::fs::read_to_string(command_project_path).unwrap_or_default()
@@ -136,20 +136,28 @@ impl RunService {
             combined.join("\n\n")
         };
 
+        let cfg = MoebConfig::load().unwrap_or_default();
+        let effective_no_review = no_review || !skill_review_enabled;
+        let no_review_str = if effective_no_review { "true" } else { "false" };
+        let metrics_window_str = cfg.effective_metrics_window().to_string();
+        let metrics_margin_str = format!("{:.2}", cfg.effective_metrics_degradation_margin());
+
         let prompt = template
             .replace(ROLE_CONTENT_TOKEN, &role_content)
             .replace(SPEC_TOKEN, &rel_path)
             .replace(README_TOKEN, &readme_content)
             .replace(SPEC_CONTENT_TOKEN, &spec_content)
             .replace(SKILL_CONTENT_TOKEN, &skill_content)
-            .replace(COMMAND_RUBRICS_TOKEN, &command_rubrics);
+            .replace(COMMAND_RUBRICS_TOKEN, &command_rubrics)
+            .replace(NO_REVIEW_TOKEN, no_review_str)
+            .replace(METRICS_WINDOW_TOKEN, &metrics_window_str)
+            .replace(METRICS_MARGIN_TOKEN, &metrics_margin_str);
 
         let spec_slug = spec_path
             .file_stem()
             .map(|s| s.to_string_lossy().to_string())
             .unwrap_or_else(|| spec.to_string());
 
-        let cfg = MoebConfig::load().unwrap_or_default();
         let adapter_name = cfg.active_adapter.clone().unwrap_or_default();
         let adapter_cfg = cfg.adapter_config(&adapter_name);
         let model = adapter_cfg.effective_model("unknown");
@@ -284,7 +292,7 @@ mod tests {
         });
 
         let service = RunService::new(stub.clone() as Arc<dyn AiPort>);
-        service.run("test.spec", crate::trace::FileContentMode::Embed).expect("run should succeed");
+        service.run("test.spec", crate::trace::FileContentMode::Embed, false).expect("run should succeed");
 
         let captured = stub.captured.lock().unwrap();
         let prompt = captured.as_ref().expect("prompt should have been captured");

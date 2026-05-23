@@ -1,3 +1,6 @@
+---
+review: true
+---
 IMPORTANT — DO NOT narrate, plan, or summarise before calling tools. Your FIRST action
 must be a tool call. Do not write "let me start", "I will now", "here is my plan", or
 any equivalent preamble. Never produce a unified diff or patch file — always use
@@ -63,6 +66,42 @@ For each task in your task list, in order:
    in this run.
 4. Call `update_task` with `status: "done"`.
 
+### Per-Step Review Sub-Loop
+
+Skip this sub-loop entirely if `{{no_review}}` is `"true"`.
+
+After every `write_file` or `patch_file` call within a step, execute the following:
+
+1. Call `review_artifact` with:
+   - `artifact_path`: the path just written or patched
+   - `step_id`: a short identifier for the current step (e.g., the step title slug)
+   - `step_intent`: the current step's title and description verbatim
+   - `rubric_criteria`: the rows from the active specification's `## Rubric / ### Structured`
+     table whose Pass Condition is relevant to this artifact (empty string if none apply)
+   - `iteration_history`: the array of prior review decisions for this step (empty array
+     initially; append each result as `{ delta_score, accepted }` after each call)
+
+2. If the result has `accepted: true`:
+   a. Apply `proposed_changes` to the artifact using `patch_file`.
+   b. Append `{ "delta_score": <result.delta_score>, "accepted": true }` to
+      `iteration_history`.
+   c. If `iteration_history` length < 2 and `result.delta_score >= 0.01`:
+      go to step 1 (repeat review).
+   d. Otherwise: terminate sub-loop.
+
+3. If `accepted: false` or `proposed_changes` is null: terminate sub-loop immediately.
+
+4. Record a StepMetric for this step:
+   - `step_id`: as above
+   - `iteration_count`: length of `iteration_history`
+   - `acceptance_rate`: if `iteration_history` is empty, `1.0`; otherwise count of
+     entries where `accepted = true` divided by total entries
+   - `delta_scores`: `[entry.delta_score for each entry in iteration_history]`
+
+5. If the active specification's rubric contains criteria evaluable against this
+   artifact now, evaluate those criteria immediately and note the outcome before
+   proceeding to the next step.
+
 Continue until all tasks are marked done.
 
 ## Phase 4 — Verify
@@ -84,6 +123,75 @@ For each criterion, evaluate pass, fail, or na:
 
 Call `verify_rubrics` with the complete list of verdicts covering all criteria from both
 sources. Do not call `verify_rubrics` with a partial list.
+
+## Phase — End-of-Skill Review
+
+Skip this phase entirely if `{{no_review}}` is `"true"`.
+
+1. Spawn a QA Architect sub-agent using `spawn_agent` with role `qa-architect`.
+   Provide:
+   - The paths and full contents of every artifact produced during this run.
+   - The accumulated StepMetrics from all steps (as JSON).
+   - The active specification's full `## Rubric` section.
+
+2. Parse the returned `ReviewSignalReport` JSON (schema defined in
+   `qa-architect.role.md`).
+
+3. For each signal with `severity = "Critical"`:
+   a. Call `start_spec` with `proposed_resolution` (or the signal's `description` if
+      `proposed_resolution` is null) as the requirement.
+   b. Record the resulting spec path in the signal as `auto_spec_path`.
+   c. Do not call `start_spec` if the current run was itself produced by an
+      auto-generated resolution spec (guard: check if `auto_generated` is set in run
+      context; if so, skip auto-spec generation).
+
+4. Assign each signal:
+   - `signal_id`: a fresh UUID v4
+   - `run_id`: the current run identifier
+   - `timestamp`: ISO 8601 current time
+
+5. Write the complete array of signals to `.moeb/signals/<run_id>.signals.json`.
+
+6. Do not fail or abort the skill if critical signals are present. Continue to the
+   Metrics Recording phase.
+
+## Phase — Metrics Recording
+
+1. Assemble `RunMetrics`:
+   - `run_id`: the current run identifier
+   - `timestamp`: ISO 8601 run-start time
+   - `rubric_score`: mean of per-criterion pass fractions from `verify_rubrics` output
+     (each passing criterion contributes 1.0 / total_criteria; failing contributes 0.0)
+   - `step_metrics`: all StepMetric records accumulated across steps
+   - `end_review_error_count`: count of signals with `severity = "Critical"` from the
+     end-of-skill review (0 when `{{no_review}}` is `"true"`)
+   - `wall_time_ms`: elapsed milliseconds since run start
+
+2. Write the `RunMetrics` object to `.moeb/metrics/<run_id>.metrics.json` as JSON.
+
+3. Load the last `{{metrics_window}}` `.metrics.json` files from `.moeb/metrics/`
+   ordered by `timestamp` ascending (most recent last). If fewer than 2 files exist,
+   skip regression detection (insufficient baseline).
+
+4. Compute `rolling_avg = mean(rubric_score for each loaded file)`.
+
+5. If `rubric_score < rolling_avg * (1 - {{metrics_degradation_margin}})`:
+   Append a DegradationSignal to `.moeb/signals/<run_id>.signals.json`:
+   ```json
+   {
+     "signal_id": "<fresh UUID v4>",
+     "run_id": "<run_id>",
+     "timestamp": "<ISO 8601>",
+     "category": "Error",
+     "severity": "Critical",
+     "title": "Rubric score degraded below rolling baseline",
+     "description": "Current rubric_score is more than {{metrics_degradation_margin}}% below the rolling average.",
+     "proposed_resolution": "Revert to the git tag preceding this run, create a diagnostic spec identifying the regression cause, and branch from the pre-regression version.",
+     "gating_condition": "NoCandidateBranch"
+   }
+   ```
+
+6. Emit a `MetricsEvent { metrics: <RunMetrics> }` to the trace.
 
 ## Phase 5 — Commit
 

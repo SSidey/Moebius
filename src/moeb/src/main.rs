@@ -47,6 +47,9 @@ enum Commands {
         /// Force hash-only file content in trace (overrides LOG_FILE_CONTENT)
         #[arg(long)]
         hash_files: bool,
+        /// Disable the per-step review sub-loop and end-of-skill review for this invocation.
+        #[arg(long, default_value_t = false)]
+        no_review: bool,
     },
     /// Run the next implementation step for a specification
     Run {
@@ -57,6 +60,9 @@ enum Commands {
         /// Force hash-only file content in trace (overrides LOG_FILE_CONTENT)
         #[arg(long)]
         hash_files: bool,
+        /// Disable the per-step review sub-loop and end-of-skill review for this invocation.
+        #[arg(long, default_value_t = false)]
+        no_review: bool,
     },
     /// List all adapters and their configured state
     Adapters,
@@ -120,19 +126,19 @@ fn main() -> anyhow::Result<()> {
     match cli.command {
         Commands::Init => InitPort::run(&adapter),
         Commands::Use { adapter: name } => UseAdapterPort::run(&adapter, &name),
-        Commands::Spec { input, embed_files, hash_files } => {
+        Commands::Spec { input, embed_files, hash_files, no_review } => {
             if embed_files && hash_files {
                 anyhow::bail!("--embed-files and --hash-files are mutually exclusive.");
             }
             let file_content_mode = resolve_file_content_mode(embed_files, hash_files);
-            SpecPort::run(&adapter, &input.join(" "), file_content_mode)
+            SpecPort::run(&adapter, &input.join(" "), file_content_mode, no_review)
         }
-        Commands::Run { spec, embed_files, hash_files } => {
+        Commands::Run { spec, embed_files, hash_files, no_review } => {
             if embed_files && hash_files {
                 anyhow::bail!("--embed-files and --hash-files are mutually exclusive.");
             }
             let file_content_mode = resolve_file_content_mode(embed_files, hash_files);
-            RunPort::run(&adapter, &spec, file_content_mode)
+            RunPort::run(&adapter, &spec, file_content_mode, no_review)
         }
         Commands::Adapters => ListAdaptersPort::run(&adapter),
         Commands::Adapter { name, action: AdapterAction::Config { key, value } } => {

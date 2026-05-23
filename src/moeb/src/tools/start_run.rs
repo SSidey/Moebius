@@ -59,6 +59,10 @@ impl ToolHandler for StartRunTool {
 
         let command_rubrics = build_run_rubrics(&moeb_dir);
 
+        let cfg = crate::config::MoebConfig::load().unwrap_or_default();
+        let metrics_window_str = cfg.effective_metrics_window().to_string();
+        let metrics_margin_str = format!("{:.2}", cfg.effective_metrics_degradation_margin());
+
         let asset = Prompts::get("run.prompt")
             .ok_or_else(|| anyhow::anyhow!("start_run: run.prompt not found in binary"))?;
         let template = std::str::from_utf8(asset.data.as_ref())
@@ -70,7 +74,10 @@ impl ToolHandler for StartRunTool {
             .replace("{{readme_content}}", &readme_content)
             .replace("{{spec_content}}", &spec_content)
             .replace("{{skill_content}}", &skill_content)
-            .replace("{{command_rubrics}}", &command_rubrics);
+            .replace("{{command_rubrics}}", &command_rubrics)
+            .replace("{{no_review}}", "false")
+            .replace("{{metrics_window}}", &metrics_window_str)
+            .replace("{{metrics_degradation_margin}}", &metrics_margin_str);
 
         Ok(prompt)
     }

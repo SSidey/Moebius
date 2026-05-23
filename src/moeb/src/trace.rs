@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 use sha2::Digest;
 
+use crate::domain::RunMetrics;
+
 // ── Enums ──────────────────────────────────────────────────────────────────────
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -142,6 +144,7 @@ pub enum TraceEvent {
     AgentFinished(AgentFinishedEvent),
     CacheUsage(CacheUsageEvent),
     Compaction(CompactionEvent),
+    MetricsEvent { metrics: RunMetrics },
 }
 
 // ── Envelope ──────────────────────────────────────────────────────────────────

@@ -88,8 +88,37 @@ pub fn run_configure(key: &str, value: &str) -> Result<()> {
             cfg.save()?;
             println!("COMPACTION_KEEP_TURNS set to {}.", parsed);
         }
+        "METRICS_WINDOW" => {
+            let parsed: u32 = value.parse().map_err(|_| {
+                anyhow::anyhow!(
+                    "METRICS_WINDOW requires a positive integer value. Got: \"{}\"",
+                    value
+                )
+            })?;
+            let mut cfg = MoebConfig::load()?;
+            cfg.metrics_window = Some(parsed);
+            cfg.save()?;
+            println!("METRICS_WINDOW set to {}.", parsed);
+        }
+        "METRICS_DEGRADATION_MARGIN" => {
+            let parsed: f32 = value.parse().map_err(|_| {
+                anyhow::anyhow!(
+                    "METRICS_DEGRADATION_MARGIN requires a float value (e.g. 0.10). Got: \"{}\"",
+                    value
+                )
+            })?;
+            if !(0.0..=1.0).contains(&parsed) {
+                anyhow::bail!("METRICS_DEGRADATION_MARGIN must be between 0.0 and 1.0.");
+            }
+            let mut cfg = MoebConfig::load()?;
+            cfg.metrics_degradation_margin = Some(parsed);
+            cfg.save()?;
+            println!("METRICS_DEGRADATION_MARGIN set to {}.", parsed);
+        }
         other => anyhow::bail!(
-            "Unknown configuration key \"{}\". Valid keys: RUN_RETENTION, LOG_FILE_CONTENT, PROMPT_CACHE, COMPACTION_ENABLED, COMPACTION_THRESHOLD, COMPACTION_KEEP_TURNS",
+            "Unknown configuration key \"{}\". Valid keys: RUN_RETENTION, LOG_FILE_CONTENT, \
+             PROMPT_CACHE, COMPACTION_ENABLED, COMPACTION_THRESHOLD, COMPACTION_KEEP_TURNS, \
+             METRICS_WINDOW, METRICS_DEGRADATION_MARGIN",
             other
         ),
     }
@@ -104,51 +133,51 @@ pub fn run_list() -> Result<()> {
     let compaction_enabled = cfg.effective_compaction_enabled();
     let compaction_threshold = cfg.effective_compaction_threshold();
     let compaction_keep_turns = cfg.effective_compaction_keep_turns();
+    let metrics_window = cfg.effective_metrics_window();
+    let metrics_margin = cfg.effective_metrics_degradation_margin();
     println!(
-        "{:<20} {:<8} {:<10} {}",
+        "{:<28} {:<8} {:<10} {}",
         "KEY", "VALUE", "DEFAULT", "DESCRIPTION"
     );
     println!(
-        "{:<20} {:<8} {:<10} {}",
-        "RUN_RETENTION",
-        retention,
-        "-1",
+        "{:<28} {:<8} {:<10} {}",
+        "RUN_RETENTION", retention, "-1",
         "Trace retention per spec (-1=unlimited, 0=disabled, N=keep N)"
     );
     println!(
-        "{:<20} {:<8} {:<10} {}",
-        "LOG_FILE_CONTENT",
-        log_content,
-        "true",
+        "{:<28} {:<8} {:<10} {}",
+        "LOG_FILE_CONTENT", log_content, "true",
         "Embed file content in traces (false=hash-only, disables replay)"
     );
     println!(
-        "{:<20} {:<8} {:<10} {}",
-        "PROMPT_CACHE",
-        prompt_cache,
-        "true",
+        "{:<28} {:<8} {:<10} {}",
+        "PROMPT_CACHE", prompt_cache, "true",
         "Enable Anthropic prompt caching (cache_control on system prompt)"
     );
     println!(
-        "{:<20} {:<8} {:<10} {}",
-        "COMPACTION_ENABLED",
-        compaction_enabled,
-        "true",
+        "{:<28} {:<8} {:<10} {}",
+        "COMPACTION_ENABLED", compaction_enabled, "true",
         "Enable history compaction before adapter.send()"
     );
     println!(
-        "{:<20} {:<8} {:<10} {}",
-        "COMPACTION_THRESHOLD",
-        compaction_threshold,
-        "80000",
+        "{:<28} {:<8} {:<10} {}",
+        "COMPACTION_THRESHOLD", compaction_threshold, "80000",
         "ToolResult character threshold that triggers compaction"
     );
     println!(
-        "{:<20} {:<8} {:<10} {}",
-        "COMPACTION_KEEP_TURNS",
-        compaction_keep_turns,
-        "3",
+        "{:<28} {:<8} {:<10} {}",
+        "COMPACTION_KEEP_TURNS", compaction_keep_turns, "3",
         "Number of most recent tool-call turns kept verbatim"
+    );
+    println!(
+        "{:<28} {:<8} {:<10} {}",
+        "METRICS_WINDOW", metrics_window, "5",
+        "Number of recent runs used to compute rolling-average rubric score"
+    );
+    println!(
+        "{:<28} {:<8} {:<10} {}",
+        "METRICS_DEGRADATION_MARGIN", metrics_margin, "0.10",
+        "Fraction below rolling average that triggers a DegradationSignal"
     );
     Ok(())
 }

@@ -28,6 +28,9 @@ const RUBRICS_TOKEN: &str = "{{rubrics_content}}";
 const SKILL_CONTENT_TOKEN: &str = "{{skill_content}}";
 const ROLE_CONTENT_TOKEN: &str = "{{role_content}}";
 const COMMAND_RUBRICS_TOKEN: &str = "{{command_rubrics}}";
+const NO_REVIEW_TOKEN: &str = "{{no_review}}";
+const METRICS_WINDOW_TOKEN: &str = "{{metrics_window}}";
+const METRICS_MARGIN_TOKEN: &str = "{{metrics_degradation_margin}}";
 const RUBRICS_PATH: &str = "rubrics/catalogue.rubrics.md";
 
 pub struct SpecService {
@@ -58,14 +61,14 @@ impl SpecService {
         }
     }
 
-    pub fn run(&self, input: &str, _file_content_mode: FileContentMode) -> Result<()> {
+    pub fn run(&self, input: &str, _file_content_mode: FileContentMode, no_review: bool) -> Result<()> {
         let working_dir = Path::new(".moeb");
         if !working_dir.exists() {
             bail!(".moeb/ not found. Run `moeb init` first.");
         }
         let cfg = MoebConfig::load().unwrap_or_default();
         let limit = cfg.effective_spec_retry_limit();
-        self.run_in(input, working_dir, limit, _file_content_mode)
+        self.run_in(input, working_dir, limit, _file_content_mode, no_review)
     }
 
     pub(crate) fn run_in(
@@ -74,6 +77,7 @@ impl SpecService {
         working_dir: &Path,
         retry_limit: u32,
         file_content_mode: FileContentMode,
+        no_review: bool,
     ) -> Result<()> {
         let asset = Prompts::get(PROMPT_FILE)
             .context("Embedded prompt template 'spec.prompt' not found in binary")?;
@@ -100,6 +104,7 @@ impl SpecService {
             });
 
         let skill_content = crate::skills::load_skill(working_dir, "spec");
+        let skill_review_enabled = crate::skills::load_skill_review_flag(working_dir, "spec");
         let role_content = crate::skills::load_role(working_dir, "spec");
 
         let command_rubrics = {
@@ -135,6 +140,12 @@ impl SpecService {
             combined.join("\n\n")
         };
 
+        let cfg = MoebConfig::load().unwrap_or_default();
+        let effective_no_review = no_review || !skill_review_enabled;
+        let no_review_str = if effective_no_review { "true" } else { "false" };
+        let metrics_window_str = cfg.effective_metrics_window().to_string();
+        let metrics_margin_str = format!("{:.2}", cfg.effective_metrics_degradation_margin());
+
         let prompt = template
             .replace(ROLE_CONTENT_TOKEN, &role_content)
             .replace(INPUT_TOKEN, input)
@@ -142,11 +153,13 @@ impl SpecService {
             .replace(SPEC_SCHEMA_TOKEN, &spec_schema_content)
             .replace(RUBRICS_TOKEN, &rubrics_content)
             .replace(SKILL_CONTENT_TOKEN, &skill_content)
-            .replace(COMMAND_RUBRICS_TOKEN, &command_rubrics);
+            .replace(COMMAND_RUBRICS_TOKEN, &command_rubrics)
+            .replace(NO_REVIEW_TOKEN, no_review_str)
+            .replace(METRICS_WINDOW_TOKEN, &metrics_window_str)
+            .replace(METRICS_MARGIN_TOKEN, &metrics_margin_str);
 
         eprintln!("[moeb] generating specification (up to {} attempt(s))...", retry_limit);
 
-        let cfg = MoebConfig::load().unwrap_or_default();
         let adapter_name = cfg.active_adapter.clone().unwrap_or_default();
         let adapter_cfg = cfg.adapter_config(&adapter_name);
         let model = adapter_cfg.effective_model("unknown");

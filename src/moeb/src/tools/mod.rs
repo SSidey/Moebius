@@ -10,6 +10,7 @@ pub mod patch_file;
 pub mod read_file;
 pub mod read_file_range;
 pub mod read_files;
+pub mod review_artifact;
 pub mod search_files;
 pub mod spawn_agent;
 pub mod start_run;
@@ -68,7 +69,7 @@ impl ToolRegistry {
         Self { handlers: HashMap::new() }
     }
 
-    /// Register the thirteen standard tools (eight file tools + three task-list tools + two VCS tools).
+    /// Register the standard tools (file tools + task-list tools + VCS tools + review_artifact).
     pub fn standard(state: SharedRunState) -> Self {
         let mut r = Self::new();
         r.register(Box::new(read_file::ReadFileTool));
@@ -86,10 +87,11 @@ impl ToolRegistry {
         r.register(Box::new(git_commit::GitCommitTool));
         r.register(Box::new(bump_version::BumpVersionTool));
         r.register(Box::new(create_candidate_tag::CreateCandidateTagTool));
+        r.register(Box::new(review_artifact::ReviewArtifactTool { adapter: None }));
         r
     }
 
-    /// Register the eight sub-agent tools (six read tools + task-list, no write/patch/spawn).
+    /// Register the sub-agent tools (read tools + task-list, no write/patch/spawn/review).
     pub fn sub_agent(state: SharedRunState) -> Self {
         let mut r = Self::new();
         r.register(Box::new(read_file::ReadFileTool));
@@ -112,10 +114,11 @@ impl ToolRegistry {
         r
     }
 
-    /// Register the twelve coordinator tools (eleven standard tools + spawn_agent).
+    /// Register the coordinator tools (standard tools + spawn_agent + review_artifact with adapter).
     pub fn with_spawn_agent(state: SharedRunState, adapter: std::sync::Arc<dyn crate::ports::AiPort>) -> Self {
         let mut r = Self::standard(std::sync::Arc::clone(&state));
-        r.register(Box::new(spawn_agent::SpawnAgentTool { adapter }));
+        r.register(Box::new(spawn_agent::SpawnAgentTool { adapter: std::sync::Arc::clone(&adapter) }));
+        r.register(Box::new(review_artifact::ReviewArtifactTool { adapter: Some(adapter) }));
         r
     }
 
@@ -147,6 +150,7 @@ impl ToolRegistry {
             "create_task_list", "update_task", "verify_rubrics",
             "create_branch", "git_commit",
             "bump_version", "create_candidate_tag",
+            "review_artifact",
             "spawn_agent", "start_run", "start_spec", "get_run_status",
         ];
         order.iter()

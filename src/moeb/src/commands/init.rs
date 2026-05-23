@@ -28,6 +28,12 @@ pub fn run() -> Result<()> {
         copy_rubric_asset(name, &rubrics_dst)?;
     }
 
+    let signals_dst = moeb.join("signals");
+    fs::create_dir_all(&signals_dst).context("Failed to create .moeb/signals/")?;
+
+    let metrics_dst = moeb.join("metrics");
+    fs::create_dir_all(&metrics_dst).context("Failed to create .moeb/metrics/")?;
+
     let specs_src = Path::new("specifications");
     let specs_dst = moeb.join("specifications");
     if specs_src.exists() {

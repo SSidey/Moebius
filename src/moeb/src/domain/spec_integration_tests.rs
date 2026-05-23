@@ -60,7 +60,7 @@
             AgentResponse::Text("Done.".to_string()),
         ]);
         let result = SpecService::new(ai)
-            .run_in("rotate tokens", tmp.path(), 1, FileContentMode::Embed);
+            .run_in("rotate tokens", tmp.path(), 1, FileContentMode::Embed, false);
         assert!(result.is_ok(), "run_in must succeed: {:?}", result);
     }
 
@@ -77,7 +77,7 @@
             AgentResponse::Text("Done.".to_string()),
         ]);
         let result = SpecService::new(ai)
-            .run_in("rotate tokens", tmp.path(), 1, FileContentMode::Embed);
+            .run_in("rotate tokens", tmp.path(), 1, FileContentMode::Embed, false);
         assert!(result.is_ok(), "run_in must succeed: {:?}", result);
     }
 
@@ -94,7 +94,7 @@
             AgentResponse::Text("Done.".to_string()),
         ]);
         let result = SpecService::new(ai)
-            .run_in("rotate tokens", tmp.path(), 2, FileContentMode::Embed);
+            .run_in("rotate tokens", tmp.path(), 2, FileContentMode::Embed, false);
         assert!(result.is_ok(), "run_in must succeed: {:?}", result);
     }
 
@@ -111,7 +111,7 @@
             AgentResponse::Text("Done.".to_string()),
         ]);
         let result = SpecService::new(ai)
-            .run_in("rotate tokens", tmp.path(), 2, FileContentMode::Embed);
+            .run_in("rotate tokens", tmp.path(), 2, FileContentMode::Embed, false);
         assert!(result.is_ok(), "run_in must succeed: {:?}", result);
     }
 
@@ -127,7 +127,7 @@
             AgentResponse::Text("No frontmatter — attempt 2.".to_string()),
         ]);
         let err = SpecService::new(ai)
-            .run_in("rotate tokens", tmp.path(), 2, FileContentMode::Embed)
+            .run_in("rotate tokens", tmp.path(), 2, FileContentMode::Embed, false)
             .unwrap_err();
         let msg = err.to_string();
         assert!(

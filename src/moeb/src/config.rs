@@ -61,6 +61,10 @@ pub struct MoebConfig {
     pub compaction_threshold: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub compaction_keep_turns: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub metrics_window: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub metrics_degradation_margin: Option<f32>,
     #[serde(default, skip_serializing_if = "HashMap::is_empty")]
     pub adapters: HashMap<String, AdapterConfig>,
 }
@@ -92,6 +96,14 @@ impl MoebConfig {
 
     pub fn effective_compaction_keep_turns(&self) -> u32 {
         self.compaction_keep_turns.unwrap_or(3)
+    }
+
+    pub fn effective_metrics_window(&self) -> u32 {
+        self.metrics_window.unwrap_or(5)
+    }
+
+    pub fn effective_metrics_degradation_margin(&self) -> f32 {
+        self.metrics_degradation_margin.unwrap_or(0.10)
     }
 
     pub fn adapter_config(&self, name: &str) -> AdapterConfig {
