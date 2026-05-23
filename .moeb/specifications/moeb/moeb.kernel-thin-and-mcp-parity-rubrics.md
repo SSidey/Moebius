@@ -23,51 +23,66 @@ two related concerns:
 
 ## Description
 
-The binary-bundled `global.rubrics.md` carries a coarse `kernel-thin-and-parity` criterion
-that fires on every command in every project. That baseline criterion is deliberately broad;
-it cannot encode project-specific test conditions or nuanced pass/fail definitions without
-coupling the binary to the project.
+This specification makes three changes to the rubric system for the moeb project.
 
-This specification adds two targeted entries to the project-specific
-`.moeb/rubrics/catalogue.rubrics.md` to complement that baseline with precise, testable
-criteria:
+**Correction: misplaced `kernel-thin-and-parity` criterion.** The `moeb.query-agent-tool`
+spec added `kernel-thin-and-parity` to `src/moeb/assets/rubrics/global.rubrics.md`. That
+file is the template that `moeb init` copies into newly initialised user projects — it is
+not the right home for a moeb-design-specific criterion. The criterion does not apply to
+arbitrary moeb-governed projects; it applies only when moeb is being developed against
+itself. It must be removed from `assets/rubrics/global.rubrics.md` and placed instead in
+`.moeb/rubrics/global.rubrics.md` (the project-scope Layer 3 file, which governs all
+commands run against this project only). This file does not currently exist and must be
+created.
 
-- **`thin-kernel`** — a trait-keyed criterion (trait: `kernel-change`) selected whenever a
-  spec adds or modifies Rust in `tools/`, `commands/`, or `domain/`. It requires that any
-  new Rust code be either a primitive operation wrapper (filesystem, git, HTTP) or a thin
-  dispatcher with zero workflow branching. If the same result can be achieved by updating a
-  skill file, doing so is mandatory. Applies at both `spec` (design check) and `run`
-  (implementation check).
+**Policy: internal binary rubrics go to `src/moeb/internal/rubrics/`, not `src/moeb/assets/rubrics/`.** The
+repository has two distinct rubric-bearing directories under `src/moeb/`:
 
-- **`mcp-cli-behavioural-parity`** — a trait-keyed criterion (trait: `mcp-surface`) selected
-  whenever a spec touches the MCP or serve surface. It requires that the observable outcome
+- `src/moeb/assets/rubrics/` — templates materialised into user projects during
+  `moeb init`. Content here is project-initialisation boilerplate, not moeb-specific logic.
+- `src/moeb/internal/rubrics/` — binary-bundled baseline rubrics loaded by the kernel at
+  runtime and injected via `{{command_rubrics}}`. These apply to all moeb-governed projects
+  and are never copied during init.
+
+Future specifications that add binary-bundled baseline criteria must target
+`src/moeb/internal/rubrics/`, not `src/moeb/assets/rubrics/`.
+
+**Two new project-scope catalogue entries.** Two trait-keyed criteria are added to
+`.moeb/rubrics/catalogue.rubrics.md` to provide precise, testable rubric coverage
+complementing the project-global `kernel-thin-and-parity`:
+
+- **`thin-kernel`** — trait `kernel-change`, applies at `spec, run`. Selected whenever a
+  spec adds or modifies Rust in `tools/`, `commands/`, or `domain/`. Requires that any new
+  Rust code be either a primitive operation wrapper (filesystem, git, HTTP) or a thin
+  dispatcher with zero workflow branching. If the capability can be achieved by updating a
+  skill file, that path is mandatory.
+
+- **`mcp-cli-behavioural-parity`** — trait `mcp-surface`, applies at `run`. Selected
+  whenever a spec touches the MCP or serve surface. Requires that the observable outcome
   of every operation is identical whether invoked through the CLI agent loop or the MCP
-  server: same file mutations, same tool result format, same rendered prompt. Applies at
-  `run` (implementation check).
-
-Both catalogue entries are additive and do not supersede the binary-bundled
-`kernel-thin-and-parity` global baseline.
+  server: same file mutations, same tool result format, same rendered prompt.
 
 ```mermaid
 flowchart TD
-    subgraph BinaryBaseline ["Binary-bundled global.rubrics.md (Layer 1)"]
-        KTP["kernel-thin-and-parity\n(coarse, always active)"]
+    subgraph InternalBinary ["src/moeb/internal/rubrics/ (Layer 1 — binary-bundled, all projects)"]
+        IB["(future binary-only criteria go here)"]
     end
 
-    subgraph ProjectCatalogue [".moeb/rubrics/catalogue.rubrics.md (Layer 5)"]
+    subgraph AssetTemplate ["src/moeb/assets/rubrics/ (moeb init template — NOT moeb-specific)"]
+        AT["project-initialisation boilerplate only"]
+    end
+
+    subgraph ProjectGlobal [".moeb/rubrics/global.rubrics.md (Layer 3 — all commands, this project)"]
+        KTP["kernel-thin-and-parity\n(moved from assets — moeb-project scope)"]
+    end
+
+    subgraph ProjectCatalogue [".moeb/rubrics/catalogue.rubrics.md (Layer 5 — trait-keyed)"]
         TK["thin-kernel\ntrait: kernel-change\napplies at: spec, run"]
         MP["mcp-cli-behavioural-parity\ntrait: mcp-surface\napplies at: run"]
     end
 
-    subgraph SpecAgent ["Spec agent (trait detection)"]
-        D1{spec touches\ntools/ commands/\nor domain/?}
-        D2{spec touches\nMCP or serve\nsurface?}
-    end
-
-    D1 -->|yes| TK
-    D2 -->|yes| MP
-    KTP -->|always injected| D1
-    KTP -->|always injected| D2
+    KTP -->|always active on this project| TK
+    KTP -->|always active on this project| MP
 ```
 
 ## Backlinks
@@ -78,18 +93,53 @@ flowchart TD
 |-------|------|---------|
 | Harness README | .moeb/README.md | Root index |
 | Rubric System Rationalisation | specifications/harness/harness.rubric-index-rationalisation.md | Defines five-layer model and catalogue format |
-| Query Agent Tool | specifications/moeb/moeb.query-agent-tool.md | Introduced kernel-thin-and-parity binary baseline this spec complements |
+| Moeb Init Rubric Storage Boundary | specifications/harness/harness.init-rubric-storage-boundary.md | Defines init rubric layout; assets/ vs internal/ boundary established here |
+| Query Agent Tool | specifications/moeb/moeb.query-agent-tool.md | Added kernel-thin-and-parity to wrong location (assets); this spec corrects that |
 | MCP Serve / CLI Parity | specifications/moeb/moeb.serve-cli-parity.md | Established the parity requirement this spec formalises as a rubric |
 
 ## Steps
 
-### Step 1 — Append `thin-kernel` and `mcp-cli-behavioural-parity` to `.moeb/rubrics/catalogue.rubrics.md`
+### Step 1 — Create `.moeb/rubrics/global.rubrics.md` with `kernel-thin-and-parity`
+
+Create the file `.moeb/rubrics/global.rubrics.md` using `write_file`. This is the
+project-scope Layer 3 rubric file for the moeb project; it does not currently exist.
+
+Content:
+
+```markdown
+## Project global rubric criteria
+
+The following criteria apply to every `moeb` command executed in this project. Include them
+in your `verify_rubrics` call along with any criteria in the specification's own `## Rubric`
+section.
+
+| Name | Description | Threshold | Pass Condition |
+|------|-------------|-----------|----------------|
+| `kernel-thin-and-parity` | No domain-specific or workflow-specific coordination logic may be placed in kernel Rust code when it can live in skill markdown or role files. Every tool registered in the CLI tool registry must also be registered in the MCP stdio server tool list. | Zero violations | Spec review: no proposed step places review/coordination logic in Rust; Run review: grep confirms no skill-specific logic in kernel tools; tool lists in tools/mod.rs and the MCP server match exactly |
+```
+
+### Step 2 — Remove `kernel-thin-and-parity` from `src/moeb/assets/rubrics/global.rubrics.md`
+
+Read `src/moeb/assets/rubrics/global.rubrics.md`. The file currently contains only the
+`kernel-thin-and-parity` row in the criteria table. Remove that row using `patch_file`,
+leaving the table header and separator intact so the file remains structurally valid.
+
+After patching the file must contain:
+
+```markdown
+| Name | Description | Threshold | Pass Condition |
+|------|-------------|-----------|----------------|
+```
+
+**Verification:** Read `src/moeb/assets/rubrics/global.rubrics.md` after patching and
+confirm the `kernel-thin-and-parity` row is absent and the table header remains.
+
+### Step 3 — Append `thin-kernel` and `mcp-cli-behavioural-parity` to `.moeb/rubrics/catalogue.rubrics.md`
 
 Read `.moeb/rubrics/catalogue.rubrics.md`. Append two rows to the `## Criteria` table
-using `patch_file`. Both rows must be appended in a single `patch_file` call to keep the
-diff minimal.
+using `patch_file`. Both rows must be appended in a single `patch_file` call.
 
-The rows to append are:
+The rows to append:
 
 ```
 | `thin-kernel` | New Rust code in tools/, commands/, or domain/ must be either (a) a primitive operation wrapper (filesystem, git, or HTTP with no domain logic) or (b) a thin dispatcher that calls into skills, tools, or agents and returns the result unchanged. Workflow logic — sequencing, conditionals, review loops, retry strategy, branching decisions — must live in skill markdown or role files, not in compiled Rust. If the same capability can be achieved by updating a skill file, that path is mandatory. | Zero workflow-logic functions in new Rust | Spec review: no Step proposes placing sequencing or conditional workflow logic in Rust when a skill-file change would suffice; Run review: every new function in tools/ or commands/ either wraps a single OS/VCS/HTTP call or contains no domain-specific branching | `moeb` | `kernel-change` | `spec, run` | active |
@@ -97,12 +147,57 @@ The rows to append are:
 ```
 
 **Verification:** After patching, read `.moeb/rubrics/catalogue.rubrics.md` and confirm
-both rows are present and the table remains well-formed (header row + separator + existing
-row + two new rows).
+both rows are present and the table remains well-formed (header + separator + existing row
++ two new rows).
 
 ## Decisions
 
-### Decision 1 — Catalogue entries, not additions to the project-level run rubric
+### Decision 1 — `kernel-thin-and-parity` moves to project scope, not to `internal/rubrics/`
+
+**Rationale:** `kernel-thin-and-parity` enforces a design principle specific to moeb's own
+architecture. It has no meaning for a project that uses moeb as a tool — a Rails app
+governed by moeb has no kernel, no skill files, and no MCP server of its own. Placing it
+in `internal/rubrics/global.rubrics.md` (binary-bundled, all projects) would inject an
+irrelevant criterion into every project that runs moeb. Placing it in
+`.moeb/rubrics/global.rubrics.md` (project scope, Layer 3) confines it to executions
+against moeb itself, which is the correct scope.
+
+**Rejected alternatives:**
+- Retain it in `assets/rubrics/global.rubrics.md`: this file is copied into user projects
+  during `moeb init` and is not the right vehicle for runtime-injected criteria at all;
+  the placement in assets was itself the bug being corrected.
+- Move it to `internal/rubrics/global.rubrics.md`: would apply to all moeb-governed
+  projects, not just moeb's own development; violates the moeb-specificity of the
+  criterion.
+- Move it to `.moeb/rubrics/run.rubrics.md` (run-only): the criterion applies at both
+  `spec` authoring time (catch kernel-heavy designs early) and `run` time; a run-only
+  file would lose the spec-time gate.
+
+**Consequences:** Future work on other moeb-governed projects will not see
+`kernel-thin-and-parity` injected into their rubric set. Any moeb-project that needs a
+comparable criterion must add it to its own `.moeb/rubrics/global.rubrics.md`.
+
+### Decision 2 — Binary-bundled internal rubrics belong in `src/moeb/internal/rubrics/`, not `src/moeb/assets/rubrics/`
+
+**Rationale:** The `assets/` directory serves one purpose: providing template files that
+`moeb init` materialises into a new user project. Putting runtime-injected criteria there
+was a category error — the files are treated as init templates by the kernel, not as
+runtime-injected rubric layers. `internal/` is the correct home for binary-bundled files
+that the kernel reads at runtime without copying them to the user's project. This
+distinction is load-bearing: criteria placed in `assets/` end up in every new project's
+`.moeb/rubrics/` as project-editable files, undermining the binary-baseline layer model.
+
+**Rejected alternatives:**
+- Keep using `assets/` for binary-bundled criteria: perpetuates the category error and
+  causes every `moeb init` to seed user projects with criteria that may be irrelevant or
+  wrong for their context.
+
+**Consequences:** All future specifications that add binary-bundled baseline rubric
+criteria (Layer 1 global or Layer 2 command) must target `src/moeb/internal/rubrics/`,
+not `src/moeb/assets/rubrics/`. The harness README and spec-schema documentation should
+be updated to reflect this when next revised.
+
+### Decision 3 — Catalogue entries for `thin-kernel` and `mcp-cli-behavioural-parity`, not additions to the project run rubric
 
 **Rationale:** The project-level `run.rubrics.md` applies to every `moeb run` execution
 in this project regardless of what the spec concerns. Adding `thin-kernel` and
@@ -114,56 +209,30 @@ to avoid this: a spec touching `tools/` gains `thin-kernel` automatically; a spe
 spec gains neither.
 
 **Rejected alternatives:**
-- Add both to `run.rubrics.md`: always active, noisy on irrelevant specs, cannot be
-  suppressed without editing the project rubric file.
-- Add both to `global.rubrics.md` (binary): couples the binary to project-specific pass
-  conditions; binary rubrics should be universally applicable across all moeb projects.
-- Add a single combined entry: combining distinct concerns into one criterion makes
-  pass/fail ambiguous when one concern passes and the other fails.
+- Add both to `run.rubrics.md`: always active, noisy on irrelevant specs.
+- Fold both into the project-global `kernel-thin-and-parity` row: a single row mixing
+  two distinct concerns makes pass/fail ambiguous when one passes and the other fails.
 
 **Consequences:** Spec agents must detect `kernel-change` and `mcp-surface` traits from
-the requirement and include the relevant catalogue entries in the active rubric set. If an
-agent fails to detect the trait, the criterion is not applied — this is the accepted
-trade-off of a trait-driven catalogue versus always-active rules.
+the requirement and include the relevant catalogue entries in the active rubric set.
 
-### Decision 2 — `thin-kernel` applies at both `spec` and `run`; `mcp-cli-behavioural-parity` applies at `run` only
+### Decision 4 — `thin-kernel` applies at both `spec` and `run`; `mcp-cli-behavioural-parity` applies at `run` only
 
 **Rationale:** The thin-kernel principle is a design constraint: a spec that proposes
 placing workflow logic in Rust should be corrected before implementation begins. Catching
-it at spec-authoring time (`spec`) prevents wasted implementation effort. Parity, by
-contrast, is an implementation outcome — it cannot be verified until the code exists — so
-it belongs only at `run` time.
+it at spec-authoring time (`spec`) prevents wasted implementation effort. Parity is an
+implementation outcome — it cannot be verified until code exists — so it belongs only at
+`run` time.
 
 **Rejected alternatives:**
 - Both at `run` only: misses the opportunity to catch kernel-heavy designs at authoring
-  time before implementation.
-- Both at `spec` and `run`: applying `mcp-cli-behavioural-parity` at spec time would
-  produce vacuous checks against a spec that has not yet produced any code.
+  time.
+- `mcp-cli-behavioural-parity` at `spec` and `run`: applying it at spec time produces
+  vacuous checks against a spec that has not yet produced any code.
 
-**Consequences:** Spec agents applying `thin-kernel` at authoring time must evaluate
-proposed Steps against the criterion, not the resulting code. The pass condition for the
-`spec` context is necessarily design-level: "no Step proposes workflow logic in Rust."
-
-### Decision 3 — `mcp-surface` and `kernel-change` as the trait identifiers
-
-**Rationale:** Trait names are free-form strings matched by the spec agent. Short,
-hyphenated, lowercase identifiers following the pattern already established by `ai-adapter`
-(from the existing catalogue entry) are easiest to match and remember. `mcp-surface`
-precisely identifies specs that expose new surface area via the MCP server. `kernel-change`
-identifies specs that modify compiled Rust in the orchestration layer.
-
-**Rejected alternatives:**
-- `mcp`: too broad; could match unrelated MCP documentation specs.
-- `rust-kernel`: redundant ("kernel" already implies Rust in this project context);
-  `kernel-change` is more action-oriented and matches "a spec that *changes* the kernel."
-- A single shared trait for both entries: the two criteria have independent applicability
-  (a spec can touch the kernel without touching MCP, and vice versa); a shared trait would
-  conflate them.
-
-**Consequences:** Spec agents must be able to infer `kernel-change` from requirements
-that mention adding tools, commands, or domain logic; and `mcp-surface` from requirements
-that mention serve, MCP, Claude Desktop, or tool registration. This is the same inference
-the spec agent already performs for `ai-adapter`.
+**Consequences:** Spec agents applying `thin-kernel` at authoring time evaluate proposed
+Steps against the criterion, not the resulting code. The pass condition at `spec` context
+is design-level: "no Step proposes workflow logic in Rust."
 
 ## Rubric
 
@@ -173,8 +242,10 @@ the spec agent already performs for `ai-adapter`.
 |------|-------------|-----------|----------------|
 | `no-drift` | The specification does not violate any decision recorded in a linked parent specification | Zero contradictions | Manual review of every decision in every parent spec listed in Backlinks |
 | `spec-schema-compliance` | All required frontmatter fields and body sections are present and correctly ordered | 100% of required fields and sections | Validation in domain/spec.rs exits 0 during moeb spec |
-| `catalogue-well-formed` | After Step 1, catalogue.rubrics.md contains valid table rows with all seven required columns (id, Name, Description, Threshold, Pass Condition, Domain, Traits, Applies At, Status) populated for both new entries | Both rows complete and parseable | Read file after patch; confirm header + separator + all rows present; no column missing |
-| `additive-only` | This spec adds rows to catalogue.rubrics.md and modifies no other file | Zero other files modified | grep_files and write_file call list confirm only catalogue.rubrics.md was written |
+| `project-global-created` | `.moeb/rubrics/global.rubrics.md` is created with kernel-thin-and-parity as its sole criterion row | File exists with correct table structure | Read file after Step 1; header + separator + exactly one data row containing kernel-thin-and-parity |
+| `assets-global-cleaned` | `kernel-thin-and-parity` row is absent from `src/moeb/assets/rubrics/global.rubrics.md` after Step 2 | Zero data rows in that file | Read file after Step 2; only header and separator remain |
+| `catalogue-well-formed` | After Step 3, catalogue.rubrics.md contains valid table rows for both new entries with all required columns populated | Both rows complete and parseable | Read file after patch; confirm header + separator + all rows present; no column missing |
+| `files-changed` | Exactly three files are written: `.moeb/rubrics/global.rubrics.md` (created), `src/moeb/assets/rubrics/global.rubrics.md` (patched), `.moeb/rubrics/catalogue.rubrics.md` (patched) | Exactly three files | write_file and patch_file call list matches this set; no other file modified |
 
 ### Qualitative
 
@@ -185,5 +256,5 @@ the spec agent already performs for `ai-adapter`.
   adapter name, review verdict) is not.
 - The `mcp-cli-behavioural-parity` pass condition is verifiable by inspection of the two
   registry sites (`tools/mod.rs` and the MCP server) without running the binary.
-- Neither new entry contradicts the binary-bundled `kernel-thin-and-parity` baseline; they
-  narrow and operationalise it for specific spec contexts.
+- After this spec is implemented, `grep_files` for `kernel-thin-and-parity` in
+  `src/moeb/assets/` returns zero matches.
