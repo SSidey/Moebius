@@ -110,6 +110,26 @@ impl ToolRegistry {
         r
     }
 
+    /// Register the MCP tools (standard tools + start_run + start_spec + get_run_status)
+    /// with an eagerly wired query_agent adapter.
+    pub fn mcp_with_adapter(
+        state: SharedRunState,
+        adapter: std::sync::Arc<dyn crate::ports::AiPort>,
+        read_paths: Arc<Mutex<HashSet<String>>>,
+    ) -> Self {
+        let mut r = Self::with_query_agent(
+            std::sync::Arc::clone(&state),
+            std::sync::Arc::clone(&adapter),
+            Arc::clone(&read_paths),
+        );
+        r.register(Box::new(start_run::StartRunTool));
+        r.register(Box::new(start_spec::StartSpecTool));
+        r.register(Box::new(get_run_status::GetRunStatusTool {
+            state: std::sync::Arc::clone(&state),
+        }));
+        r
+    }
+
     /// Register the coordinator tools (standard tools + query_agent with adapter).
     pub fn with_query_agent(state: SharedRunState, adapter: std::sync::Arc<dyn crate::ports::AiPort>, read_paths: Arc<Mutex<HashSet<String>>>) -> Self {
         let mut r = Self::standard(std::sync::Arc::clone(&state), Arc::clone(&read_paths));
@@ -160,47 +180,41 @@ pub struct RealToolExecutor {
 }
 
 impl RealToolExecutor {
+    fn from_registry(state: SharedRunState, registry: ToolRegistry, read_paths: Arc<Mutex<HashSet<String>>>) -> Self {
+        Self { registry, cache: Mutex::new(HashMap::new()), read_paths, state }
+    }
+
     pub fn new(state: SharedRunState) -> Self {
-        let read_paths = Arc::new(Mutex::new(HashSet::new()));
-        Self {
-            registry: ToolRegistry::standard(std::sync::Arc::clone(&state), Arc::clone(&read_paths)),
-            cache: Mutex::new(HashMap::new()),
-            read_paths,
-            state,
-        }
+        let rp = Arc::new(Mutex::new(HashSet::new()));
+        let reg = ToolRegistry::standard(Arc::clone(&state), Arc::clone(&rp));
+        Self::from_registry(state, reg, rp)
     }
 
     pub fn new_sub_agent(state: SharedRunState) -> Self {
-        Self {
-            registry: ToolRegistry::sub_agent(std::sync::Arc::clone(&state)),
-            cache: Mutex::new(HashMap::new()),
-            read_paths: Arc::new(Mutex::new(HashSet::new())),
-            state,
-        }
+        let rp = Arc::new(Mutex::new(HashSet::new()));
+        let reg = ToolRegistry::sub_agent(Arc::clone(&state));
+        Self::from_registry(state, reg, rp)
     }
 
     pub fn new_mcp(state: SharedRunState) -> Self {
-        let read_paths = Arc::new(Mutex::new(HashSet::new()));
-        Self {
-            registry: ToolRegistry::mcp(std::sync::Arc::clone(&state), Arc::clone(&read_paths)),
-            cache: Mutex::new(HashMap::new()),
-            read_paths,
-            state,
-        }
+        let rp = Arc::new(Mutex::new(HashSet::new()));
+        let reg = ToolRegistry::mcp(Arc::clone(&state), Arc::clone(&rp));
+        Self::from_registry(state, reg, rp)
+    }
+
+    pub fn new_mcp_with_adapter(
+        state: SharedRunState,
+        adapter: std::sync::Arc<dyn crate::ports::AiPort>,
+    ) -> Self {
+        let rp = Arc::new(Mutex::new(HashSet::new()));
+        let reg = ToolRegistry::mcp_with_adapter(Arc::clone(&state), adapter, Arc::clone(&rp));
+        Self::from_registry(state, reg, rp)
     }
 
     pub fn new_coordinator(state: SharedRunState, adapter: std::sync::Arc<dyn crate::ports::AiPort>) -> Self {
-        let read_paths = Arc::new(Mutex::new(HashSet::new()));
-        Self {
-            registry: ToolRegistry::with_query_agent(
-                std::sync::Arc::clone(&state),
-                std::sync::Arc::clone(&adapter),
-                Arc::clone(&read_paths),
-            ),
-            cache: Mutex::new(HashMap::new()),
-            read_paths,
-            state,
-        }
+        let rp = Arc::new(Mutex::new(HashSet::new()));
+        let reg = ToolRegistry::with_query_agent(Arc::clone(&state), adapter, Arc::clone(&rp));
+        Self::from_registry(state, reg, rp)
     }
 }
 

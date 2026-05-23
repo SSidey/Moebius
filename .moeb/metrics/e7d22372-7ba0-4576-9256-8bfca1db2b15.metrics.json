@@ -1,0 +1,13 @@
+{
+  "run_id": "e7d22372-7ba0-4576-9256-8bfca1db2b15",
+  "timestamp": "2026-05-23T00:00:00Z",
+  "rubric_score": 1.0,
+  "step_metrics": [
+    {"step_id": "1", "iteration_count": 0, "acceptance_rate": 1.0, "delta_scores": []},
+    {"step_id": "2", "iteration_count": 0, "acceptance_rate": 1.0, "delta_scores": []},
+    {"step_id": "3", "iteration_count": 0, "acceptance_rate": 1.0, "delta_scores": []},
+    {"step_id": "4", "iteration_count": 0, "acceptance_rate": 1.0, "delta_scores": []}
+  ],
+  "end_review_error_count": 1,
+  "wall_time_ms": 0
+}

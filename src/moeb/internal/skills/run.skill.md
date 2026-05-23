@@ -70,7 +70,8 @@ For each task in your task list, in order:
 
 ### Per-Step Review Sub-Loop
 
-Skip this sub-loop entirely if `{{no_review}}` is `"true"`.
+This sub-loop runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
+`{{no_review}}` is the exact string `"true"`.
 
 After every `write_file` or `patch_file` call within a step:
 
@@ -140,7 +141,8 @@ sources. Do not call `verify_rubrics` with a partial list.
 
 ## Phase — End-of-Skill Review
 
-Skip this phase entirely if `{{no_review}}` is `"true"`.
+This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
+`{{no_review}}` is the exact string `"true"`.
 
 Call `query_agent` with:
 - `role`: `"qa-architect"`

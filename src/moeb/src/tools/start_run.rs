@@ -53,6 +53,11 @@ impl ToolHandler for StartRunTool {
             .unwrap_or_else(|| "run".to_string());
         let skill_content = crate::skills::load_skill(&moeb_dir, &skill_name);
 
+        let skill_review_enabled =
+            crate::skills::load_skill_review_flag(&moeb_dir, &skill_name);
+        let effective_no_review = !skill_review_enabled;
+        let no_review_value = if effective_no_review { "true" } else { "false" };
+
         let role_name = crate::skills::extract_role_name(&spec_content)
             .unwrap_or_else(|| "run".to_string());
         let role_content = crate::skills::load_role(&moeb_dir, &role_name);
@@ -75,7 +80,7 @@ impl ToolHandler for StartRunTool {
             .replace("{{spec_content}}", &spec_content)
             .replace("{{skill_content}}", &skill_content)
             .replace("{{command_rubrics}}", &command_rubrics)
-            .replace("{{no_review}}", "false")
+            .replace("{{no_review}}", no_review_value)
             .replace("{{metrics_window}}", &metrics_window_str)
             .replace("{{metrics_degradation_margin}}", &metrics_margin_str);
 
