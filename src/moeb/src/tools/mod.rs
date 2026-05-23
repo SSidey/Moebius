@@ -3,6 +3,7 @@ pub mod create_candidate_tag;
 pub mod create_branch;
 pub mod create_task_list;
 pub mod get_run_status;
+pub mod get_version;
 pub mod git_commit;
 pub mod grep_files;
 pub mod list_directory;
@@ -81,6 +82,7 @@ impl ToolRegistry {
         r.register(Box::new(git_commit::GitCommitTool));
         r.register(Box::new(bump_version::BumpVersionTool));
         r.register(Box::new(create_candidate_tag::CreateCandidateTagTool));
+        r.register(Box::new(get_version::GetVersionTool));
         r.register(Box::new(query_agent::QueryAgentTool { adapter: None, read_paths }));
         r
     }
@@ -137,7 +139,7 @@ impl ToolRegistry {
             "create_task_list", "update_task", "verify_rubrics",
             "create_branch", "git_commit",
             "bump_version", "create_candidate_tag",
-            "query_agent", "start_run", "start_spec", "get_run_status",
+            "get_version", "query_agent", "start_run", "start_spec", "get_run_status",
         ];
         order.iter()
             .filter_map(|name| self.handlers.get(name).map(|h| h.definition()))
