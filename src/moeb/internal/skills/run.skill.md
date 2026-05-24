@@ -178,13 +178,32 @@ Parse the returned `ReviewSignalReport` JSON:
 
 2. Write the `RunMetrics` object to `.moeb/metrics/{{run_id}}.metrics.json` as JSON.
 
-3. Load the last `{{metrics_window}}` `.metrics.json` files from `.moeb/metrics/`
+3. Write the run file to `{{run_file_path}}` with the following JSON content:
+
+   ```json
+   {
+     "run_id": "{{run_id}}",
+     "timestamp": "<ISO 8601 start time>",
+     "command": "run",
+     "spec_path": "<path of the spec file being executed>",
+     "signals_path": ".moeb/signals/{{run_id}}.signals.json",
+     "metrics_path": ".moeb/metrics/{{run_id}}.metrics.json",
+     "rubric_score": <from verify_rubrics output>,
+     "end_review_error_count": <count of Critical signals>
+   }
+   ```
+
+   Use `write_file` with path `{{run_file_path}}`. The `spec_path` is the spec file
+   path as provided in the prompt context. The timestamp is the session start time (the
+   time at which this run began, not the time this file is written).
+
+4. Load the last `{{metrics_window}}` `.metrics.json` files from `.moeb/metrics/`
    ordered by `timestamp` ascending (most recent last). If fewer than 2 files exist,
    skip regression detection (insufficient baseline).
 
-4. Compute `rolling_avg = mean(rubric_score for each loaded file)`.
+5. Compute `rolling_avg = mean(rubric_score for each loaded file)`.
 
-5. If `rubric_score < rolling_avg * (1 - {{metrics_degradation_margin}})`:
+6. If `rubric_score < rolling_avg * (1 - {{metrics_degradation_margin}})`:
    Append a DegradationSignal to `.moeb/signals/{{run_id}}.signals.json`:
    ```json
    {
@@ -200,7 +219,7 @@ Parse the returned `ReviewSignalReport` JSON:
    }
    ```
 
-6. Emit a `MetricsEvent { metrics: <RunMetrics> }` to the trace.
+7. Emit a `MetricsEvent { metrics: <RunMetrics> }` to the trace.
 
 ## Phase 5 — Commit
 

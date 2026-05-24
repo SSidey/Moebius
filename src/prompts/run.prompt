@@ -2,6 +2,7 @@
 
 Session context:
 - run_id: {{run_id}}
+- run_file_path: {{run_file_path}}
 
 The following files have been provided to you as context — do not call read_file for them:
 

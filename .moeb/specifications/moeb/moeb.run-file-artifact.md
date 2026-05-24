@@ -8,7 +8,7 @@ status: active
 
 ## Raw Requirement
 
-Every completed command operation (`moeb run` or `moeb spec`) must produce a run file
+Every completed command operation (`moeb run` or `moeb spec` and any future operations) must produce a run file
 that ties together all artifacts produced during that operation: the spec file, signals
 file, metrics file, and identifying metadata. The run file serves as the primary index
 for a command execution — a reader can locate all related artifacts from it alone.

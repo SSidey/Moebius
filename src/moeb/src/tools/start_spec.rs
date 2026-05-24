@@ -7,6 +7,7 @@ use crate::assets::{Internal, Prompts};
 use super::ToolHandler;
 
 const RUN_ID_TOKEN: &str = "{{run_id}}";
+const RUN_FILE_PATH_TOKEN: &str = "{{run_file_path}}";
 
 pub struct StartSpecTool;
 
@@ -71,6 +72,18 @@ impl ToolHandler for StartSpecTool {
 
         let run_id = uuid::Uuid::new_v4().to_string();
 
+        let input_slug: String = requirement
+            .chars()
+            .map(|c| if c.is_alphanumeric() || c == '-' { c } else { '-' })
+            .collect::<String>()
+            .trim_matches('-')
+            .to_string()
+            .chars()
+            .take(40)
+            .collect();
+        let run_ts = chrono::Utc::now().format("%Y%m%dT%H%M%SZ").to_string();
+        let run_file_path = format!(".moeb/runs/{}_spec_{}.json", run_ts, input_slug);
+
         let prompt = template
             .replace("{{role_content}}", &role_content)
             .replace("{{readme_content}}", &readme_content)
@@ -80,6 +93,7 @@ impl ToolHandler for StartSpecTool {
             .replace("{{command_rubrics}}", &command_rubrics)
             .replace("{{input}}", requirement)
             .replace(RUN_ID_TOKEN, &run_id)
+            .replace(RUN_FILE_PATH_TOKEN, &run_file_path)
             .replace("{{reviewer_role_content}}", &reviewer_role)
             .replace("{{moderator_role_content}}", &moderator_role)
             .replace("{{qa_architect_role_content}}", &qa_architect_role);

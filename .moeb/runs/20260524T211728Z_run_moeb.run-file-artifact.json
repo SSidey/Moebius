@@ -1,0 +1,10 @@
+{
+  "run_id": "5e63ee0b-af80-4e70-97bc-19156ba494b4",
+  "timestamp": "2026-05-24T21:17:28Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.run-file-artifact.md",
+  "signals_path": ".moeb/signals/5e63ee0b-af80-4e70-97bc-19156ba494b4.signals.json",
+  "metrics_path": ".moeb/metrics/5e63ee0b-af80-4e70-97bc-19156ba494b4.metrics.json",
+  "rubric_score": 0.923,
+  "end_review_error_count": 0
+}

@@ -24,6 +24,7 @@ const NO_REVIEW_TOKEN: &str = "{{no_review}}";
 const METRICS_WINDOW_TOKEN: &str = "{{metrics_window}}";
 const METRICS_MARGIN_TOKEN: &str = "{{metrics_degradation_margin}}";
 const RUN_ID_TOKEN: &str = "{{run_id}}";
+const RUN_FILE_PATH_TOKEN: &str = "{{run_file_path}}";
 const SPECS_DIR: &str = ".moeb/specifications";
 const README_PATH: &str = ".moeb/README.md";
 const MOEB_DIR: &str = ".moeb";
@@ -128,6 +129,9 @@ impl RunService {
         let adapter_cfg = cfg.adapter_config(&adapter_name);
         let model = adapter_cfg.effective_model("unknown");
 
+        let run_ts = chrono::Utc::now().format("%Y%m%dT%H%M%SZ").to_string();
+        let run_file_path = format!(".moeb/runs/{}_run_{}.json", run_ts, spec_slug);
+
         let trace = Arc::new(TraceContext::new(TraceConfig {
             command: TraceCommand::Run,
             spec: spec_slug,
@@ -148,7 +152,8 @@ impl RunService {
             .replace(NO_REVIEW_TOKEN, no_review_str)
             .replace(METRICS_WINDOW_TOKEN, &metrics_window_str)
             .replace(METRICS_MARGIN_TOKEN, &metrics_margin_str)
-            .replace(RUN_ID_TOKEN, &run_id);
+            .replace(RUN_ID_TOKEN, &run_id)
+            .replace(RUN_FILE_PATH_TOKEN, &run_file_path);
 
         let ai = self.factory.build(Arc::clone(&trace))?;
         let working_dir = Path::new(".");
@@ -183,7 +188,7 @@ impl RunService {
         if let Err(e) = trace.finalize(outcome, err_msg) {
             eprintln!("[moeb] warning: trace could not be saved: {}", e);
         }
-        check_run_outputs(&run_id);
+        check_run_outputs(&run_id, &run_file_path, "run");
         let result = run_result?;
         if !result.is_empty() { println!("{}", result); }
         Ok(())
@@ -197,7 +202,7 @@ fn make_critical_signal(run_id: &str, title: &str, desc: String) -> serde_json::
         "proposed_resolution": null, "auto_spec_path": null, "gating_condition": null})
 }
 
-fn check_run_outputs(run_id: &str) {
+fn check_run_outputs(run_id: &str, run_file_path: &str, command: &str) {
     let signals_path = format!(".moeb/signals/{}.signals.json", run_id);
     let metrics_path = format!(".moeb/metrics/{}.metrics.json", run_id);
     let signals_missing = !std::path::Path::new(&signals_path).exists();
@@ -227,7 +232,24 @@ fn check_run_outputs(run_id: &str) {
         let _ = std::fs::write(&metrics_path,
             serde_json::to_string_pretty(&stub).unwrap_or_else(|_| "{}".to_string()));
     }
+    if !std::path::Path::new(run_file_path).exists() {
+        eprintln!("[moeb] warning: run file not written by agent — writing fallback stub");
+        let _ = std::fs::create_dir_all(".moeb/runs");
+        let stub = serde_json::json!({
+            "run_id": run_id,
+            "timestamp": chrono::Utc::now().to_rfc3339(),
+            "command": command,
+            "signals_path": format!(".moeb/signals/{}.signals.json", run_id),
+            "metrics_path": format!(".moeb/metrics/{}.metrics.json", run_id),
+            "rubric_score": 0.0,
+            "end_review_error_count": 0,
+            "kernel_fallback": true
+        });
+        let _ = std::fs::write(run_file_path, serde_json::to_string_pretty(&stub)
+            .unwrap_or_else(|_| "{}".to_string()));
+    }
 }
+
 fn find_specs(harness: &Path, query: &str) -> Result<Vec<PathBuf>> {
     let mut matches = Vec::new();
     visit_dir(harness, query, &mut matches)?;
@@ -249,52 +271,7 @@ fn visit_dir(dir: &Path, query: &str, matches: &mut Vec<PathBuf>) -> Result<()> 
     }
     Ok(())
 }
+
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::adapters::{AgentResponse, Message, ToolDef};
-    use crate::config::tests::CWD_LOCK;
-    use crate::ports::AiPort;
-    use std::sync::{Arc, Mutex};
-    use tempfile::TempDir;
-
-    struct CapturingStub { captured: Mutex<Option<String>> }
-
-    impl AiPort for CapturingStub {
-        fn send(&self, messages: &[Message], _tools: &[ToolDef]) -> Result<AgentResponse> {
-            let mut captured = self.captured.lock().unwrap();
-            if captured.is_none() {
-                if let Some(Message::User(text)) = messages.first() {
-                    *captured = Some(text.clone());
-                }
-            }
-            Ok(AgentResponse::Text(String::new()))
-        }
-    }
-
-    fn setup() -> (TempDir, std::sync::MutexGuard<'static, ()>) {
-        let guard = CWD_LOCK.lock().unwrap_or_else(|e| e.into_inner());
-        let dir = tempfile::tempdir().expect("tempdir");
-        std::env::set_current_dir(dir.path()).expect("set_current_dir");
-        (dir, guard)
-    }
-
-    #[test]
-    fn run_substitutes_readme_and_spec_content() {
-        let (_dir, _guard) = setup();
-        fs::create_dir_all(".moeb/specifications/moeb").expect("create spec dir");
-        fs::write(".moeb/README.md", "readme-body").expect("write README");
-        fs::write(".moeb/specifications/moeb/test.spec.md", "spec-body").expect("write spec");
-
-        let stub = Arc::new(CapturingStub { captured: Mutex::new(None) });
-        let service = RunService::new(stub.clone() as Arc<dyn AiPort>);
-        service.run("test.spec", crate::trace::FileContentMode::Embed, false).expect("run should succeed");
-
-        let captured = stub.captured.lock().unwrap();
-        let prompt = captured.as_ref().expect("prompt should have been captured");
-        assert!(prompt.contains("readme-body"), "prompt must contain README content");
-        assert!(prompt.contains("spec-body"), "prompt must contain spec content");
-        assert!(!prompt.contains("{{readme_content}}"), "{{readme_content}} token must be replaced");
-        assert!(!prompt.contains("{{spec_content}}"), "{{spec_content}} token must be replaced");
-    }
-}
+#[path = "run_tests.rs"]
+mod tests;

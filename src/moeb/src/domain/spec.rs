@@ -32,6 +32,7 @@ const NO_REVIEW_TOKEN: &str = "{{no_review}}";
 const METRICS_WINDOW_TOKEN: &str = "{{metrics_window}}";
 const METRICS_MARGIN_TOKEN: &str = "{{metrics_degradation_margin}}";
 const RUN_ID_TOKEN: &str = "{{run_id}}";
+const RUN_FILE_PATH_TOKEN: &str = "{{run_file_path}}";
 const RUBRICS_PATH: &str = "rubrics/catalogue.rubrics.md";
 
 pub struct SpecService {
@@ -50,16 +51,12 @@ impl AdapterFactoryPort for FixedAdapterFactory {
 
 impl SpecService {
     pub fn from_config() -> Self {
-        Self {
-            factory: Arc::new(crate::adapters::DefaultAdapterFactory),
-        }
+        Self { factory: Arc::new(crate::adapters::DefaultAdapterFactory) }
     }
 
     #[cfg(test)]
     pub fn new(ai: Arc<dyn AiPort>) -> Self {
-        Self {
-            factory: Arc::new(FixedAdapterFactory(ai)),
-        }
+        Self { factory: Arc::new(FixedAdapterFactory(ai)) }
     }
 
     pub fn run(&self, input: &str, _file_content_mode: FileContentMode, no_review: bool) -> Result<()> {
@@ -151,6 +148,9 @@ impl SpecService {
         let adapter_cfg = cfg.adapter_config(&adapter_name);
         let model = adapter_cfg.effective_model("unknown");
 
+        let run_ts = chrono::Utc::now().format("%Y%m%dT%H%M%SZ").to_string();
+        let run_file_path = format!(".moeb/runs/{}_spec_{}.json", run_ts, sanitize_slug(input));
+
         let trace_config = TraceConfig {
             command: TraceCommand::Spec,
             spec: format!("spec-{}", sanitize_slug(input)),
@@ -173,7 +173,8 @@ impl SpecService {
             .replace(NO_REVIEW_TOKEN, no_review_str)
             .replace(METRICS_WINDOW_TOKEN, &metrics_window_str)
             .replace(METRICS_MARGIN_TOKEN, &metrics_margin_str)
-            .replace(RUN_ID_TOKEN, &run_id);
+            .replace(RUN_ID_TOKEN, &run_id)
+            .replace(RUN_FILE_PATH_TOKEN, &run_file_path);
 
         eprintln!("[moeb] generating specification (up to {} attempt(s))...", retry_limit);
 
@@ -213,7 +214,7 @@ impl SpecService {
                     if let Err(e) = trace.finalize(TraceOutcome::Success, None) {
                         eprintln!("[moeb] warning: trace could not be saved: {}", e);
                     }
-                    check_run_outputs(&run_id);
+                    check_run_outputs(&run_id, &run_file_path, "spec");
                     return Ok(());
                 }
                 Err(e) => {
@@ -227,7 +228,7 @@ impl SpecService {
         if let Err(e) = trace.finalize(TraceOutcome::Failure, Some(last_err.to_string())) {
             eprintln!("[moeb] warning: trace could not be saved: {}", e);
         }
-        check_run_outputs(&run_id);
+        check_run_outputs(&run_id, &run_file_path, "spec");
         bail!(
             "spec generation failed after {} attempt(s). Last error: {}",
             retry_limit,
@@ -243,7 +244,7 @@ fn make_critical_signal(run_id: &str, title: &str, desc: String) -> serde_json::
         "proposed_resolution": null, "auto_spec_path": null, "gating_condition": null})
 }
 
-fn check_run_outputs(run_id: &str) {
+fn check_run_outputs(run_id: &str, run_file_path: &str, command: &str) {
     let signals_path = format!(".moeb/signals/{}.signals.json", run_id);
     let metrics_path = format!(".moeb/metrics/{}.metrics.json", run_id);
     let signals_missing = !std::path::Path::new(&signals_path).exists();
@@ -272,6 +273,16 @@ fn check_run_outputs(run_id: &str) {
             "wall_time_ms": 0, "kernel_fallback": true});
         let _ = std::fs::write(&metrics_path,
             serde_json::to_string_pretty(&stub).unwrap_or_else(|_| "{}".to_string()));
+    }
+    if !std::path::Path::new(run_file_path).exists() {
+        eprintln!("[moeb] warning: run file not written by agent — writing fallback stub");
+        let _ = std::fs::create_dir_all(".moeb/runs");
+        let stub = serde_json::json!({"run_id": run_id, "timestamp": chrono::Utc::now().to_rfc3339(),
+            "command": command, "signals_path": format!(".moeb/signals/{}.signals.json", run_id),
+            "metrics_path": format!(".moeb/metrics/{}.metrics.json", run_id),
+            "rubric_score": 0.0, "end_review_error_count": 0, "kernel_fallback": true});
+        let _ = std::fs::write(run_file_path, serde_json::to_string_pretty(&stub)
+            .unwrap_or_else(|_| "{}".to_string()));
     }
 }
 

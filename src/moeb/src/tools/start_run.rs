@@ -7,6 +7,7 @@ use crate::assets::{Internal, Prompts};
 use super::ToolHandler;
 
 const RUN_ID_TOKEN: &str = "{{run_id}}";
+const RUN_FILE_PATH_TOKEN: &str = "{{run_file_path}}";
 
 pub struct StartRunTool;
 
@@ -75,6 +76,13 @@ impl ToolHandler for StartRunTool {
 
         let run_id = uuid::Uuid::new_v4().to_string();
 
+        let run_ts = chrono::Utc::now().format("%Y%m%dT%H%M%SZ").to_string();
+        let spec_stem = abs_spec_path
+            .file_stem()
+            .map(|s| s.to_string_lossy().to_string())
+            .unwrap_or_else(|| spec_path_arg.to_string());
+        let run_file_path = format!(".moeb/runs/{}_run_{}.json", run_ts, spec_stem);
+
         let asset = Prompts::get("run.prompt")
             .ok_or_else(|| anyhow::anyhow!("start_run: run.prompt not found in binary"))?;
         let template = std::str::from_utf8(asset.data.as_ref())
@@ -91,6 +99,7 @@ impl ToolHandler for StartRunTool {
             .replace("{{metrics_window}}", &metrics_window_str)
             .replace("{{metrics_degradation_margin}}", &metrics_margin_str)
             .replace(RUN_ID_TOKEN, &run_id)
+            .replace(RUN_FILE_PATH_TOKEN, &run_file_path)
             .replace("{{reviewer_role_content}}", &reviewer_role)
             .replace("{{moderator_role_content}}", &moderator_role)
             .replace("{{qa_architect_role_content}}", &qa_architect_role);
