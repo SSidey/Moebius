@@ -159,7 +159,7 @@ Parse the returned `ReviewSignalReport` JSON:
    - `run_id`: the current run identifier
    - `timestamp`: ISO 8601 current time
 
-2. Write the complete array of signals to `.moeb/signals/<run_id>.signals.json`.
+2. Write the complete array of signals to `.moeb/signals/{{run_id}}.signals.json`.
 
 3. Do not fail or abort the skill if critical signals are present. Continue to the
    Metrics Recording phase.
@@ -176,7 +176,7 @@ Parse the returned `ReviewSignalReport` JSON:
      end-of-skill review (0 when `{{no_review}}` is `"true"`)
    - `wall_time_ms`: elapsed milliseconds since run start
 
-2. Write the `RunMetrics` object to `.moeb/metrics/<run_id>.metrics.json` as JSON.
+2. Write the `RunMetrics` object to `.moeb/metrics/{{run_id}}.metrics.json` as JSON.
 
 3. Load the last `{{metrics_window}}` `.metrics.json` files from `.moeb/metrics/`
    ordered by `timestamp` ascending (most recent last). If fewer than 2 files exist,
@@ -185,11 +185,11 @@ Parse the returned `ReviewSignalReport` JSON:
 4. Compute `rolling_avg = mean(rubric_score for each loaded file)`.
 
 5. If `rubric_score < rolling_avg * (1 - {{metrics_degradation_margin}})`:
-   Append a DegradationSignal to `.moeb/signals/<run_id>.signals.json`:
+   Append a DegradationSignal to `.moeb/signals/{{run_id}}.signals.json`:
    ```json
    {
      "signal_id": "<fresh UUID v4>",
-     "run_id": "<run_id>",
+     "run_id": "{{run_id}}",
      "timestamp": "<ISO 8601>",
      "category": "Error",
      "severity": "Critical",

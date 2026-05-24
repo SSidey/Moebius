@@ -31,6 +31,7 @@ const COMMAND_RUBRICS_TOKEN: &str = "{{command_rubrics}}";
 const NO_REVIEW_TOKEN: &str = "{{no_review}}";
 const METRICS_WINDOW_TOKEN: &str = "{{metrics_window}}";
 const METRICS_MARGIN_TOKEN: &str = "{{metrics_degradation_margin}}";
+const RUN_ID_TOKEN: &str = "{{run_id}}";
 const RUBRICS_PATH: &str = "rubrics/catalogue.rubrics.md";
 
 pub struct SpecService {
@@ -146,20 +147,6 @@ impl SpecService {
         let metrics_window_str = cfg.effective_metrics_window().to_string();
         let metrics_margin_str = format!("{:.2}", cfg.effective_metrics_degradation_margin());
 
-        let prompt = template
-            .replace(ROLE_CONTENT_TOKEN, &role_content)
-            .replace(INPUT_TOKEN, input)
-            .replace(README_TOKEN, &readme_content)
-            .replace(SPEC_SCHEMA_TOKEN, &spec_schema_content)
-            .replace(RUBRICS_TOKEN, &rubrics_content)
-            .replace(SKILL_CONTENT_TOKEN, &skill_content)
-            .replace(COMMAND_RUBRICS_TOKEN, &command_rubrics)
-            .replace(NO_REVIEW_TOKEN, no_review_str)
-            .replace(METRICS_WINDOW_TOKEN, &metrics_window_str)
-            .replace(METRICS_MARGIN_TOKEN, &metrics_margin_str);
-
-        eprintln!("[moeb] generating specification (up to {} attempt(s))...", retry_limit);
-
         let adapter_name = cfg.active_adapter.clone().unwrap_or_default();
         let adapter_cfg = cfg.adapter_config(&adapter_name);
         let model = adapter_cfg.effective_model("unknown");
@@ -173,6 +160,23 @@ impl SpecService {
             file_content_mode,
         };
         let trace = Arc::new(TraceContext::new(trace_config));
+        let run_id = trace.run_id().to_string();
+
+        let prompt = template
+            .replace(ROLE_CONTENT_TOKEN, &role_content)
+            .replace(INPUT_TOKEN, input)
+            .replace(README_TOKEN, &readme_content)
+            .replace(SPEC_SCHEMA_TOKEN, &spec_schema_content)
+            .replace(RUBRICS_TOKEN, &rubrics_content)
+            .replace(SKILL_CONTENT_TOKEN, &skill_content)
+            .replace(COMMAND_RUBRICS_TOKEN, &command_rubrics)
+            .replace(NO_REVIEW_TOKEN, no_review_str)
+            .replace(METRICS_WINDOW_TOKEN, &metrics_window_str)
+            .replace(METRICS_MARGIN_TOKEN, &metrics_margin_str)
+            .replace(RUN_ID_TOKEN, &run_id);
+
+        eprintln!("[moeb] generating specification (up to {} attempt(s))...", retry_limit);
+
         let ai = self.factory.build(Arc::clone(&trace))?;
 
         let mut last_err: anyhow::Error = anyhow::anyhow!("no attempts made");
@@ -209,6 +213,7 @@ impl SpecService {
                     if let Err(e) = trace.finalize(TraceOutcome::Success, None) {
                         eprintln!("[moeb] warning: trace could not be saved: {}", e);
                     }
+                    check_run_outputs(&run_id);
                     return Ok(());
                 }
                 Err(e) => {
@@ -222,11 +227,51 @@ impl SpecService {
         if let Err(e) = trace.finalize(TraceOutcome::Failure, Some(last_err.to_string())) {
             eprintln!("[moeb] warning: trace could not be saved: {}", e);
         }
+        check_run_outputs(&run_id);
         bail!(
             "spec generation failed after {} attempt(s). Last error: {}",
             retry_limit,
             last_err
         );
+    }
+}
+
+fn make_critical_signal(run_id: &str, title: &str, desc: String) -> serde_json::Value {
+    serde_json::json!({"signal_id": uuid::Uuid::new_v4().to_string(), "run_id": run_id,
+        "timestamp": chrono::Utc::now().to_rfc3339(), "category": "Error",
+        "severity": "Critical", "title": title, "description": desc,
+        "proposed_resolution": null, "auto_spec_path": null, "gating_condition": null})
+}
+
+fn check_run_outputs(run_id: &str) {
+    let signals_path = format!(".moeb/signals/{}.signals.json", run_id);
+    let metrics_path = format!(".moeb/metrics/{}.metrics.json", run_id);
+    let signals_missing = !std::path::Path::new(&signals_path).exists();
+    let metrics_missing = !std::path::Path::new(&metrics_path).exists();
+    let mut absent: Vec<serde_json::Value> = Vec::new();
+    if signals_missing {
+        eprintln!("[moeb] critical: signals file not written by agent — {}", signals_path);
+        absent.push(make_critical_signal(run_id, "Signals file not written by agent",
+            format!("End-of-Skill Review phase did not complete. Expected: {}", signals_path)));
+    }
+    if metrics_missing {
+        eprintln!("[moeb] critical: metrics file not written by agent — {}", metrics_path);
+        absent.push(make_critical_signal(run_id, "Metrics file not written by agent",
+            format!("Metrics Recording phase did not complete. Expected: {}", metrics_path)));
+    }
+    if signals_missing {
+        let _ = std::fs::create_dir_all(".moeb/signals");
+        let _ = std::fs::write(&signals_path,
+            serde_json::to_string_pretty(&absent).unwrap_or_else(|_| "[]".to_string()));
+    }
+    if metrics_missing {
+        let _ = std::fs::create_dir_all(".moeb/metrics");
+        let stub = serde_json::json!({"run_id": run_id,
+            "timestamp": chrono::Utc::now().to_rfc3339(), "rubric_score": 0.0,
+            "step_metrics": [], "end_review_error_count": absent.len() as u32,
+            "wall_time_ms": 0, "kernel_fallback": true});
+        let _ = std::fs::write(&metrics_path,
+            serde_json::to_string_pretty(&stub).unwrap_or_else(|_| "{}".to_string()));
     }
 }
 

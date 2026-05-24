@@ -1,0 +1,18 @@
+{
+  "run_id": "cde590c6-295b-49dd-960a-53938850f3f7",
+  "timestamp": "2026-05-24T00:00:00Z",
+  "spec": "moeb.run-id-injection-and-output-guarantee",
+  "rubric_score": 0.83,
+  "step_metrics": [
+    { "step": "Plan",      "status": "pass", "notes": "All 9 implementation tasks identified upfront" },
+    { "step": "Scope",     "status": "pass", "notes": "5 Rust files, 2 prompts, 2 skill files" },
+    { "step": "Implement", "status": "pass", "notes": "All tasks completed; 3 patch_file errors recovered via write_file" },
+    { "step": "Verify",    "status": "pass", "notes": "202/202 tests pass; cargo build --release clean; all files ≤300 lines after refactor" },
+    { "step": "Commit",    "status": "pending", "notes": "" },
+    { "step": "Version",   "status": "pending", "notes": "" },
+    { "step": "Complete",  "status": "pending", "notes": "" }
+  ],
+  "end_review_error_count": 0,
+  "wall_time_ms": 0,
+  "kernel_fallback": false
+}

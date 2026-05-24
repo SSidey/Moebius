@@ -36,13 +36,9 @@ pub enum AgentFinishReason {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub enum FileContentMode {
-    Embed,
-    Hash,
-}
+pub enum FileContentMode { Embed, Hash }
 
 // ── Event structs ─────────────────────────────────────────────────────────────
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TurnStartEvent {
     pub attempt: u32,
@@ -131,7 +127,6 @@ pub struct CompactionEvent {
 }
 
 // ── Tagged union ──────────────────────────────────────────────────────────────
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum TraceEvent {
@@ -152,6 +147,7 @@ pub enum TraceEvent {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TraceEnvelope {
     pub version: u32,
+    pub run_id: String,
     pub command: TraceCommand,
     pub spec: String,
     pub adapter: String,
@@ -166,7 +162,6 @@ pub struct TraceEnvelope {
 }
 
 // ── Config ────────────────────────────────────────────────────────────────────
-
 pub struct TraceConfig {
     pub command: TraceCommand,
     pub spec: String,
@@ -180,6 +175,7 @@ pub struct TraceConfig {
 
 pub struct TraceContext {
     config: TraceConfig,
+    run_id: String,
     started_at: chrono::DateTime<chrono::Utc>,
     events: std::sync::Mutex<Vec<TraceEvent>>,
     total_attempts: std::sync::Mutex<u32>,
@@ -193,12 +189,17 @@ impl TraceContext {
     pub fn new(config: TraceConfig) -> Self {
         Self {
             config,
+            run_id: uuid::Uuid::new_v4().to_string(),
             started_at: chrono::Utc::now(),
             events: std::sync::Mutex::new(Vec::new()),
             total_attempts: std::sync::Mutex::new(1),
             current_turn: std::sync::atomic::AtomicU32::new(1),
             current_attempt: std::sync::atomic::AtomicU32::new(1),
         }
+    }
+
+    pub fn run_id(&self) -> &str {
+        &self.run_id
     }
 
     pub fn push(&self, event: TraceEvent) {
@@ -222,6 +223,7 @@ impl TraceContext {
         let total_attempts = *self.total_attempts.lock().unwrap();
         let envelope = TraceEnvelope {
             version: 1,
+            run_id: self.run_id.clone(),
             command: self.config.command.clone(),
             spec: self.config.spec.clone(),
             adapter: self.config.adapter.clone(),
@@ -293,7 +295,6 @@ pub fn apply_content_policy(
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
-
 #[cfg(test)]
 #[path = "trace_tests.rs"]
 mod tests;

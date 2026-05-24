@@ -7,6 +7,7 @@ use crate::trace::{
 fn make_envelope_with_hash_tool_call() -> TraceEnvelope {
     TraceEnvelope {
         version: 1,
+        run_id: "test-run-id".to_string(),
         command: TraceCommand::Run,
         spec: "test.spec".to_string(),
         adapter: "anthropic".to_string(),

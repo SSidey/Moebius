@@ -1,5 +1,8 @@
 {{role_content}}
 
+Session context:
+- run_id: {{run_id}}
+
 The following files have been pre-loaded as context — do not call read_file for them:
 
 === README.md ===

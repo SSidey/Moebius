@@ -23,6 +23,7 @@ const COMMAND_RUBRICS_TOKEN: &str = "{{command_rubrics}}";
 const NO_REVIEW_TOKEN: &str = "{{no_review}}";
 const METRICS_WINDOW_TOKEN: &str = "{{metrics_window}}";
 const METRICS_MARGIN_TOKEN: &str = "{{metrics_degradation_margin}}";
+const RUN_ID_TOKEN: &str = "{{run_id}}";
 const SPECS_DIR: &str = ".moeb/specifications";
 const README_PATH: &str = ".moeb/README.md";
 const MOEB_DIR: &str = ".moeb";
@@ -118,17 +119,6 @@ impl RunService {
         let metrics_window_str = cfg.effective_metrics_window().to_string();
         let metrics_margin_str = format!("{:.2}", cfg.effective_metrics_degradation_margin());
 
-        let prompt = template
-            .replace(ROLE_CONTENT_TOKEN, &role_content)
-            .replace(SPEC_TOKEN, &rel_path)
-            .replace(README_TOKEN, &readme_content)
-            .replace(SPEC_CONTENT_TOKEN, &spec_content)
-            .replace(SKILL_CONTENT_TOKEN, &skill_content)
-            .replace(COMMAND_RUBRICS_TOKEN, &command_rubrics)
-            .replace(NO_REVIEW_TOKEN, no_review_str)
-            .replace(METRICS_WINDOW_TOKEN, &metrics_window_str)
-            .replace(METRICS_MARGIN_TOKEN, &metrics_margin_str);
-
         let spec_slug = spec_path
             .file_stem()
             .map(|s| s.to_string_lossy().to_string())
@@ -146,6 +136,19 @@ impl RunService {
             retention: cfg.effective_run_retention(),
             file_content_mode,
         }));
+        let run_id = trace.run_id().to_string();
+
+        let prompt = template
+            .replace(ROLE_CONTENT_TOKEN, &role_content)
+            .replace(SPEC_TOKEN, &rel_path)
+            .replace(README_TOKEN, &readme_content)
+            .replace(SPEC_CONTENT_TOKEN, &spec_content)
+            .replace(SKILL_CONTENT_TOKEN, &skill_content)
+            .replace(COMMAND_RUBRICS_TOKEN, &command_rubrics)
+            .replace(NO_REVIEW_TOKEN, no_review_str)
+            .replace(METRICS_WINDOW_TOKEN, &metrics_window_str)
+            .replace(METRICS_MARGIN_TOKEN, &metrics_margin_str)
+            .replace(RUN_ID_TOKEN, &run_id);
 
         let ai = self.factory.build(Arc::clone(&trace))?;
         let working_dir = Path::new(".");
@@ -180,13 +183,51 @@ impl RunService {
         if let Err(e) = trace.finalize(outcome, err_msg) {
             eprintln!("[moeb] warning: trace could not be saved: {}", e);
         }
-
+        check_run_outputs(&run_id);
         let result = run_result?;
         if !result.is_empty() { println!("{}", result); }
         Ok(())
     }
 }
 
+fn make_critical_signal(run_id: &str, title: &str, desc: String) -> serde_json::Value {
+    serde_json::json!({"signal_id": uuid::Uuid::new_v4().to_string(), "run_id": run_id,
+        "timestamp": chrono::Utc::now().to_rfc3339(), "category": "Error",
+        "severity": "Critical", "title": title, "description": desc,
+        "proposed_resolution": null, "auto_spec_path": null, "gating_condition": null})
+}
+
+fn check_run_outputs(run_id: &str) {
+    let signals_path = format!(".moeb/signals/{}.signals.json", run_id);
+    let metrics_path = format!(".moeb/metrics/{}.metrics.json", run_id);
+    let signals_missing = !std::path::Path::new(&signals_path).exists();
+    let metrics_missing = !std::path::Path::new(&metrics_path).exists();
+    let mut absent: Vec<serde_json::Value> = Vec::new();
+    if signals_missing {
+        eprintln!("[moeb] critical: signals file not written by agent — {}", signals_path);
+        absent.push(make_critical_signal(run_id, "Signals file not written by agent",
+            format!("End-of-Skill Review phase did not complete. Expected: {}", signals_path)));
+    }
+    if metrics_missing {
+        eprintln!("[moeb] critical: metrics file not written by agent — {}", metrics_path);
+        absent.push(make_critical_signal(run_id, "Metrics file not written by agent",
+            format!("Metrics Recording phase did not complete. Expected: {}", metrics_path)));
+    }
+    if signals_missing {
+        let _ = std::fs::create_dir_all(".moeb/signals");
+        let _ = std::fs::write(&signals_path,
+            serde_json::to_string_pretty(&absent).unwrap_or_else(|_| "[]".to_string()));
+    }
+    if metrics_missing {
+        let _ = std::fs::create_dir_all(".moeb/metrics");
+        let stub = serde_json::json!({"run_id": run_id,
+            "timestamp": chrono::Utc::now().to_rfc3339(), "rubric_score": 0.0,
+            "step_metrics": [], "end_review_error_count": absent.len() as u32,
+            "wall_time_ms": 0, "kernel_fallback": true});
+        let _ = std::fs::write(&metrics_path,
+            serde_json::to_string_pretty(&stub).unwrap_or_else(|_| "{}".to_string()));
+    }
+}
 fn find_specs(harness: &Path, query: &str) -> Result<Vec<PathBuf>> {
     let mut matches = Vec::new();
     visit_dir(harness, query, &mut matches)?;
@@ -208,7 +249,6 @@ fn visit_dir(dir: &Path, query: &str, matches: &mut Vec<PathBuf>) -> Result<()> 
     }
     Ok(())
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;

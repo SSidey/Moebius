@@ -225,7 +225,7 @@ Parse the returned `ReviewSignalReport` JSON:
 
 1. Assign `signal_id`, `run_id`, `timestamp` to each signal.
 
-2. Write signals to `.moeb/signals/<run_id>.signals.json`.
+2. Write signals to `.moeb/signals/{{run_id}}.signals.json`.
 
 3. Continue to Metrics Recording regardless of critical signal presence.
 
@@ -239,7 +239,7 @@ Parse the returned `ReviewSignalReport` JSON:
    - `end_review_error_count`: count of Critical signals (0 when `{{no_review}}` is `"true"`)
    - `wall_time_ms`: elapsed milliseconds since run start
 
-2. Write to `.moeb/metrics/<run_id>.metrics.json`.
+2. Write to `.moeb/metrics/{{run_id}}.metrics.json`.
 
 3. Load last `{{metrics_window}}` metrics files. If fewer than 2 exist, skip regression detection.
 

@@ -6,6 +6,8 @@ use crate::adapters::ToolDef;
 use crate::assets::{Internal, Prompts};
 use super::ToolHandler;
 
+const RUN_ID_TOKEN: &str = "{{run_id}}";
+
 pub struct StartSpecTool;
 
 impl ToolHandler for StartSpecTool {
@@ -67,6 +69,8 @@ impl ToolHandler for StartSpecTool {
 
         let command_rubrics = build_spec_rubrics(&moeb_dir);
 
+        let run_id = uuid::Uuid::new_v4().to_string();
+
         let prompt = template
             .replace("{{role_content}}", &role_content)
             .replace("{{readme_content}}", &readme_content)
@@ -75,6 +79,7 @@ impl ToolHandler for StartSpecTool {
             .replace("{{skill_content}}", &skill_content)
             .replace("{{command_rubrics}}", &command_rubrics)
             .replace("{{input}}", requirement)
+            .replace(RUN_ID_TOKEN, &run_id)
             .replace("{{reviewer_role_content}}", &reviewer_role)
             .replace("{{moderator_role_content}}", &moderator_role)
             .replace("{{qa_architect_role_content}}", &qa_architect_role);
