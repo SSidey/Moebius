@@ -49,6 +49,15 @@ This sub-loop runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
 
 After every `write_file` or `patch_file` call within a step:
 
+0. **Error preflight.** If the tool call immediately preceding this sub-loop invocation
+   was a file-modification tool (`write_file` or `patch_file`) and its result indicates
+   a failure (the result string contains "failed", "error", or "could not"):
+   - Record StepMetric with `iteration_count = 0`, `acceptance_rate = 1.0`, `delta_scores = []`.
+   - Do NOT call `complete_review` for this path.
+   - Proceed to the next task. The kernel-injected `tool-errors` criterion records
+     a Fail for this call when `verify_rubrics` is invoked.
+   Skip steps 1–9 below for this invocation.
+
 1. **Inline Reviewer.** Without calling any tool, adopt the **Reviewer Persona**
    pre-loaded in your context. Evaluate the artifact against the step intent and the
    applicable rubric criteria. Produce a unified diff if improvements are needed, or
@@ -69,8 +78,11 @@ After every `write_file` or `patch_file` call within a step:
 
 5. If `accepted = true` and `delta_score >= 0.01` and `iteration_count < 2`:
    - Apply the diff: `patch_file` with the proposed diff on the artifact path.
-   - Append `{ "delta_score": <score>, "accepted": true }` to iteration history.
-   - Return to step 1.
+   - If `patch_file` returns an error result, terminate the sub-loop immediately —
+     do not return to step 1. Append `{ "delta_score": 0.0, "accepted": false }` to
+     iteration history and proceed to step 6. The kernel records this as a tool error.
+   - Otherwise append `{ "delta_score": <score>, "accepted": true }` to iteration
+     history and return to step 1.
 
 6. Otherwise: terminate sub-loop.
 
@@ -105,6 +117,20 @@ For each criterion, evaluate pass, fail, or na:
   implementation file exceeds 300 lines, or any `*_tests.rs` companion file exceeds
   400 lines, refactor it to meet the budget before assigning a verdict. This criterion
   is never `na`.
+
+- `tool-errors`: This criterion is injected by the kernel from `RunState.tool_errors`.
+  Do not supply a verdict — any agent-supplied entry is silently overridden. You may
+  include it for completeness; the kernel replaces it.
+
+- `rubric-qualification`: This criterion is injected by the kernel from the
+  `acknowledged_failures` fields in your verdict objects. Do not supply this criterion
+  directly — any agent-supplied entry is silently overridden. When you observe a failure
+  but judge it acceptable for a Pass verdict, you MUST populate `acknowledged_failures`
+  with a brief description of each failure. The kernel reads this field and produces the
+  `rubric-qualification` verdict; the QA Architect surfaces it as a Critical signal.
+  Do not leave `acknowledged_failures` empty when a failure was observed — omission is
+  treated as "no failures observed" and the qualification will not be surfaced.
+
 - All other criteria: apply the stated Pass Condition. Mark `na` only when the criterion
   genuinely does not apply to this specification's scope.
 
@@ -128,22 +154,14 @@ description containing the raw response, then continue.
 
 Parse the returned `ReviewSignalReport` JSON:
 
-1. For each signal with `severity = "Critical"`:
-   a. Call `start_spec` with `proposed_resolution` (or the signal's `description` if
-      `proposed_resolution` is null) as the requirement.
-   b. Record the resulting spec path in the signal as `auto_spec_path`.
-   c. Do not call `start_spec` if the current run was itself produced by an
-      auto-generated resolution spec (guard: check if `auto_generated` is set in run
-      context; if so, skip auto-spec generation).
-
-2. Assign each signal:
+1. Assign each signal:
    - `signal_id`: a fresh UUID v4
    - `run_id`: the current run identifier
    - `timestamp`: ISO 8601 current time
 
-3. Write the complete array of signals to `.moeb/signals/<run_id>.signals.json`.
+2. Write the complete array of signals to `.moeb/signals/<run_id>.signals.json`.
 
-4. Do not fail or abort the skill if critical signals are present. Continue to the
+3. Do not fail or abort the skill if critical signals are present. Continue to the
    Metrics Recording phase.
 
 ## Phase — Metrics Recording

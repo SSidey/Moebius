@@ -287,7 +287,14 @@ impl ToolExecutorPort for RealToolExecutor {
             }
         }
 
-        Ok((tool_result?, false))
+        match tool_result {
+            Ok(content) => Ok((content, false)),
+            Err(e) => {
+                let msg = e.to_string();
+                self.state.lock().unwrap().record_tool_error(name, &msg);
+                Ok((format!("{}: {}", name, msg), false))
+            }
+        }
     }
 }
 

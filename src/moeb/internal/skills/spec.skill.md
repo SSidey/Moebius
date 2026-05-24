@@ -90,6 +90,14 @@ Skip this sub-loop entirely if `{{no_review}}` is `"true"`.
 
 After writing the spec file in Phase 4:
 
+0. **Error preflight.** If the `write_file` call immediately preceding this sub-loop
+   returned an error result (result string contains "failed", "error", or "could not"):
+   - Record StepMetric with `step_id: "spec-file"`, `iteration_count = 0`,
+     `acceptance_rate = 1.0`, `delta_scores = []`.
+   - Do NOT call `complete_review` for this path.
+   - Proceed to Phase 5. The error is recorded in RunState.tool_errors.
+   Skip steps 1–8 below for this invocation.
+
 1. **Inline Reviewer.** Without calling any tool, adopt the **Reviewer Persona**
    pre-loaded in your context. Evaluate the spec file against its `## Rubric / ###
    Structured` criteria and the specification title and description as step intent.
@@ -111,8 +119,11 @@ After writing the spec file in Phase 4:
 
 5. If `accepted = true` and `delta_score >= 0.01` and `iteration_count < 2`:
    - Apply the diff: `patch_file` with the proposed diff on the spec file path.
-   - Append `{ "delta_score": <score>, "accepted": true }` to iteration history.
-   - Return to step 1.
+   - If `patch_file` returns an error result, terminate the sub-loop immediately —
+     do not return to step 1. Append `{ "delta_score": 0.0, "accepted": false }` to
+     iteration history and proceed to step 6. The error is recorded in RunState.tool_errors.
+   - Otherwise append `{ "delta_score": <score>, "accepted": true }` to iteration
+     history and return to step 1.
 
 6. Otherwise: terminate sub-loop.
 
@@ -146,6 +157,16 @@ Skip this sub-loop entirely if `{{no_review}}` is `"true"`.
 
 After patching `.moeb/README.md`:
 
+0. **Error preflight.** If the `patch_file` call on `.moeb/README.md` immediately
+   preceding this sub-loop returned an error result (result string contains "failed",
+   "error", or "could not"):
+   - Record StepMetric with `step_id: "readme-link"`, `iteration_count = 0`,
+     `acceptance_rate = 1.0`, `delta_scores = []`.
+   - Call `complete_review` with `.moeb/README.md` (no-op at kernel level; included for
+     symmetry).
+   - Proceed to Phase — End-of-Skill Review. The error is recorded in RunState.tool_errors.
+   Skip steps 1–5 below for this invocation.
+
 1. **Inline Reviewer.** Without calling any tool, adopt the **Reviewer Persona**
    pre-loaded in your context. Evaluate the README patch for correctness: the row must
    be correctly formatted and present in the right `### <domain>` section. Produce a
@@ -161,9 +182,15 @@ After patching `.moeb/README.md`:
    `{ "accepted": bool, "delta_score": float, "rationale": string }`. Hold this result
    in working memory.
 
-4. Parse Moderator JSON. Apply diff via `patch_file` if `accepted = true` and
-   `delta_score >= 0.01` and `iteration_count < 2`. Record StepMetric for
-   `step_id: "readme-link"`.
+4. Parse Moderator JSON. If `accepted = true` and `delta_score >= 0.01` and
+   `iteration_count < 2`:
+   - Apply the diff: `patch_file` on `.moeb/README.md` with the proposed diff.
+   - If `patch_file` returns an error result, terminate the sub-loop immediately.
+     Append `{ "delta_score": 0.0, "accepted": false }` to iteration history.
+     The error is recorded in RunState.tool_errors. Proceed to step 5.
+   - Otherwise append `{ "delta_score": <score>, "accepted": true }` to iteration
+     history and return to step 1.
+   Record StepMetric for `step_id: "readme-link"` when the loop terminates.
 
 5. Call `complete_review` with `.moeb/README.md`.
    This is a no-op at the kernel level (path starts with `.moeb/`) but makes the review
@@ -179,23 +206,28 @@ JSON. Produce a ReviewSignalReport JSON matching the schema defined in the QA Ar
 Persona. Hold the result in working memory and continue with parsing and signal processing
 below.
 
+When issuing a Pass verdict for a criterion where failures were observed but judged
+acceptable, populate `acknowledged_failures` with a brief description of each failure:
+
+  "acknowledged_failures": ["cargo test: 2 failures in pre-existing suite", "..."]
+
+Do not leave this field empty when a failure was observed. The QA Architect scans
+verdict objects in context for Pass entries with non-empty `acknowledged_failures` and
+raises a Critical signal for each. This mechanism replaces qualification language in
+`note` as the surface for declared-but-passing failures — the note field should remain
+a criterion evaluation; failure acknowledgement goes in `acknowledged_failures`.
+
 If `[PARSE_WARNING]` prefix is present in the response, treat it as a Critical error
 signal: append a signal with title "QA Architect response parse failure" and description
 containing the raw response, then continue.
 
 Parse the returned `ReviewSignalReport` JSON:
 
-1. For each signal with `severity = "Critical"`:
-   a. If `auto_generated` is set in the run context, skip `start_spec` calls entirely
-      (recursion guard — resolution specs do not generate further resolution specs).
-   b. Otherwise call `start_spec` with `proposed_resolution` as the requirement and
-      record the resulting spec path in the signal as `auto_spec_path`.
+1. Assign `signal_id`, `run_id`, `timestamp` to each signal.
 
-2. Assign `signal_id`, `run_id`, `timestamp` to each signal.
+2. Write signals to `.moeb/signals/<run_id>.signals.json`.
 
-3. Write signals to `.moeb/signals/<run_id>.signals.json`.
-
-4. Continue to Metrics Recording regardless of critical signal presence.
+3. Continue to Metrics Recording regardless of critical signal presence.
 
 ## Phase — Metrics Recording
 

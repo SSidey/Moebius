@@ -29,11 +29,18 @@ pub struct RubricVerification {
     pub note: Option<String>,
 }
 
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct ToolError {
+    pub tool_name: String,
+    pub message: String,
+}
+
 #[derive(Debug, Default)]
 pub struct RunState {
     pub tasks: Vec<Task>,
     pub rubric_verifications: Vec<RubricVerification>,
     pub pending_reviews: HashSet<String>,
+    pub tool_errors: Vec<ToolError>,
 }
 
 impl RunState {
@@ -55,6 +62,13 @@ impl RunState {
 
     pub fn acknowledge_review(&mut self, path: &str) -> bool {
         self.pending_reviews.remove(path)
+    }
+
+    pub fn record_tool_error(&mut self, tool_name: &str, message: &str) {
+        self.tool_errors.push(ToolError {
+            tool_name: tool_name.to_string(),
+            message: message.to_string(),
+        });
     }
 }
 

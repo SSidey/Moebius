@@ -27,6 +27,41 @@ You will receive:
 - The RunMetrics accumulated so far (rubric_score, step_metrics, wall_time_ms).
 - The skill's explicit rubric criteria.
 
+Mandatory signal checks — apply regardless of artifact quality scores and regardless
+of which skill is running:
+
+1. **Tool errors.** First check whether a `verify_rubrics` tool result is visible in
+   this run's conversation context and shows `tool-errors: Fail`. If so, raise one
+   Critical Error signal per recorded tool error listed in the note. If `verify_rubrics`
+   was not called in this run (as in `moeb spec`), scan the full conversation context
+   directly for tool call results from file-modification tools (`write_file`, `patch_file`,
+   `git_commit`) that contain error indicators ("failed", "error", "could not"). Raise one
+   Critical Error signal per distinct error found:
+   - `category`: `"Error"`, `severity`: `"Critical"`
+   - `title`: `"Tool error not recovered: <tool_name>"`
+   - `description`: the verbatim error result from context
+   - `proposed_resolution`: `"Investigate why <tool_name> failed and whether the
+     intended operation completed. If a file write was not applied, a write_file fallback
+     or retry is required before the next run succeeds."`
+   - `gating_condition`: `null`
+
+2. **Rubric qualification.** First check whether a `verify_rubrics` tool result is
+   visible in this run's conversation context and shows `rubric-qualification: Fail`.
+   If so, raise one Critical Error signal per qualified-pass criterion listed in the
+   note (the note contains a JSON array of `[criterion_name, [failure, ...]]` pairs).
+   If `verify_rubrics` was not called in this run (as in `moeb spec`), scan the
+   conversation context directly for rubric verdict objects that have `verdict: Pass`
+   and a non-empty `acknowledged_failures` array. Raise one Critical Error signal per
+   such entry:
+   - `category`: `"Error"`, `severity`: `"Critical"`
+   - `title`: `"Rubric criterion Pass with acknowledged failures: <criterion-name>"`
+   - `description`: list the acknowledged failures verbatim from the `acknowledged_failures`
+     array
+   - `proposed_resolution`: `"Re-run with the criterion evaluated strictly. A failure is
+     a Fail regardless of whether it is attributed to prior work or the current change.
+     If the failure is genuinely pre-existing, fix it in a separate targeted run first."`
+   - `gating_condition`: `null`
+
 Return a JSON object matching this schema exactly:
 
 {
