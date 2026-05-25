@@ -1,0 +1,10 @@
+{
+  "run_id": "e73226b3-685c-48aa-b830-c8c61873357d",
+  "timestamp": "2026-05-25T18:47:01Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.signal-fix-command.md",
+  "signals_path": ".moeb/signals/e73226b3-685c-48aa-b830-c8c61873357d.signals.json",
+  "metrics_path": ".moeb/metrics/e73226b3-685c-48aa-b830-c8c61873357d.metrics.json",
+  "rubric_score": 0,
+  "end_review_error_count": 2
+}

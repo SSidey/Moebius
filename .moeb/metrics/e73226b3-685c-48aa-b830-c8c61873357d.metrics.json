@@ -1,0 +1,19 @@
+{
+  "run_id": "e73226b3-685c-48aa-b830-c8c61873357d",
+  "timestamp": "2026-05-25T18:47:01Z",
+  "step_metrics": [
+    {
+      "step_id": "spec-file",
+      "iteration_count": 0,
+      "acceptance_rate": 1.0,
+      "delta_scores": []
+    },
+    {
+      "step_id": "readme-link",
+      "iteration_count": 1,
+      "acceptance_rate": 0.0,
+      "delta_scores": [{"delta_score": 0.0, "accepted": false}]
+    }
+  ],
+  "wall_time_ms": 3600000
+}
