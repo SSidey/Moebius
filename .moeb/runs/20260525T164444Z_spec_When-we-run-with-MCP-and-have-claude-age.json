@@ -1,0 +1,8 @@
+{
+  "run_id": "48c74510-8c23-44ac-8ac8-af6122e25f89",
+  "timestamp": "2026-05-25T16:44:44Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.moeb-tool-origin-rubric.md",
+  "signals_path": ".moeb/signals/48c74510-8c23-44ac-8ac8-af6122e25f89.signals.json",
+  "metrics_path": ".moeb/metrics/48c74510-8c23-44ac-8ac8-af6122e25f89.metrics.json"
+}

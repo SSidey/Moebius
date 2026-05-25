@@ -4,6 +4,24 @@ review: true
 The harness README, specification schema, and rubrics catalogue are already in your
 context. Do not re-read any of them.
 
+## Tool Origin Policy
+
+Prefer moeb tools for every operation during this run. The complete list of available moeb tools is visible in your tool schema (read_file, read_files, read_file_range, write_file, patch_file, grep_files, list_directory, search_files, create_task_list, update_task, verify_rubrics, complete_review, query_agent, git_commit, tag_run, create_branch, bump_version, get_version). If you need an operation and no moeb tool exists for it:
+
+1. Use the external tool (e.g. Bash, Edit, Read) to complete the operation.
+2. Immediately after the external call, buffer a MissingMoebTool signal entry to be incorporated into the signals file during the End-of-Skill Review phase:
+
+```json
+{
+  "category": "NewCapability",
+  "severity": "Major",
+  "title": "Missing moeb tool: <external_tool_name>",
+  "description": "Used <external_tool_name> to perform <description of operation>. No moeb equivalent exists.",
+  "proposed_resolution": "Run moeb spec to introduce a moeb equivalent of <external_tool_name> covering <operation>.",
+  "gating_condition": null
+}
+```
+
 ## Phase 1 — Contradiction check
 
 Before authoring, verify that the proposed specification does not contradict any active
@@ -211,6 +229,7 @@ For each criterion, evaluate pass, fail, or na:
 - `rubric-qualification`: kernel-authoritative — do not supply a verdict.
 - `kernel-thin-and-parity`: verify no proposed step places workflow logic in Rust;
   verify any new tool is registered in both CLI and MCP server lists.
+- `moeb-tool-origin`: Review this conversation for tool calls to non-moeb tools (tools whose names are not in the moeb tool schema, such as Bash, Edit, Write, Read, Glob, Grep, WebFetch, or WebSearch). If no external tool calls appear in the conversation, supply Pass. If external tool calls appear and MissingMoebTool signals were buffered for each one, supply Fail with `acknowledged_failures` listing each signal title. If external tool calls appear without corresponding buffered signals, supply Fail and list the unlogged tool names in the note field.
 - All other criteria from the spec's own `## Rubric / ### Structured` table: apply the
   stated Pass Condition. Mark `na` only when the criterion genuinely does not apply.
 
