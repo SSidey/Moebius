@@ -1,0 +1,27 @@
+{
+  "run_id": "a74648d9-03a1-45cd-b516-1083fdade19a",
+  "timestamp": "2026-05-25T14:59:45Z",
+  "spec": "moeb.ai-first-artifact-refinement",
+  "rubric_score": 0.9545,
+  "step_metrics": [
+    { "step_id": "spec-schema-yaml",      "iteration_count": 1, "acceptance_rate": 1.0, "delta_scores": [] },
+    { "step_id": "run-skill-md",          "iteration_count": 1, "acceptance_rate": 1.0, "delta_scores": [] },
+    { "step_id": "spec-skill-md",         "iteration_count": 1, "acceptance_rate": 1.0, "delta_scores": [] },
+    { "step_id": "reviewer-role-md",      "iteration_count": 2, "acceptance_rate": 1.0, "delta_scores": [] },
+    { "step_id": "moderator-role-md",     "iteration_count": 1, "acceptance_rate": 1.0, "delta_scores": [] },
+    { "step_id": "qa-architect-role-md",  "iteration_count": 1, "acceptance_rate": 1.0, "delta_scores": [] },
+    { "step_id": "skill-template-md",     "iteration_count": 1, "acceptance_rate": 1.0, "delta_scores": [] },
+    { "step_id": "global-rubrics-md",     "iteration_count": 2, "acceptance_rate": 1.0, "delta_scores": [] },
+    { "step_id": "catalogue-rubrics-md",  "iteration_count": 2, "acceptance_rate": 1.0, "delta_scores": [] },
+    { "step_id": "tag-run-rs-and-mod",    "iteration_count": 3, "acceptance_rate": 1.0, "delta_scores": [] }
+  ],
+  "end_review_error_count": 4,
+  "wall_time_ms": 0,
+  "kernel_fallback": false,
+  "regression_check": {
+    "current_score": 0.9545,
+    "rolling_avg": 0.9297,
+    "window_size": 5,
+    "degraded": false
+  }
+}

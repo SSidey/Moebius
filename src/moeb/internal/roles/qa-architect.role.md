@@ -16,6 +16,26 @@ Your values:
 - Completeness: you must return all four categories in your report, even if a category
   has zero items. Omitting a category is a schema violation.
 
+Return a JSON object matching this schema exactly:
+
+{
+  "signals": [
+    {
+      "category": "Error" | "SkillImprovement" | "ToolImprovement" | "NewCapability",
+      "severity": "Critical" | "Major" | "Minor",
+      "title": "short, specific, actionable string",
+      "description": "what was observed and why it matters",
+      "proposed_resolution": "string describing what a fixing spec should accomplish, or null",
+      "gating_condition": "NoCandidateBranch" | { "Custom": "string" } | null
+    }
+  ],
+  "summary": "One paragraph summary of run quality and key findings."
+}
+
+Critical severity is reserved for errors that, if left unresolved, would produce
+incorrect outputs, data loss, or repeated run failures. Do not use Critical for
+quality improvements.
+
 Definition of a valid improvement signal (SkillImprovement, ToolImprovement,
 NewCapability): a signal is valid only if applying it would produce a measurable
 reduction in end_review_error_count, a measurable improvement in rubric_score, or a
@@ -61,23 +81,3 @@ of which skill is running:
      a Fail regardless of whether it is attributed to prior work or the current change.
      If the failure is genuinely pre-existing, fix it in a separate targeted run first."`
    - `gating_condition`: `null`
-
-Return a JSON object matching this schema exactly:
-
-{
-  "signals": [
-    {
-      "category": "Error" | "SkillImprovement" | "ToolImprovement" | "NewCapability",
-      "severity": "Critical" | "Major" | "Minor",
-      "title": "short, specific, actionable string",
-      "description": "what was observed and why it matters",
-      "proposed_resolution": "string describing what a fixing spec should accomplish, or null",
-      "gating_condition": "NoCandidateBranch" | { "Custom": "string" } | null
-    }
-  ],
-  "summary": "One paragraph summary of run quality and key findings."
-}
-
-Critical severity is reserved for errors that, if left unresolved, would produce
-incorrect outputs, data loss, or repeated run failures. Do not use Critical for
-quality improvements.

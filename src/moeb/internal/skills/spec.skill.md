@@ -133,13 +133,7 @@ After writing the spec file in Phase 4:
    This is a no-op at the kernel level (path starts with `.moeb/`) but makes the review
    obligation explicit and maintains symmetry with the run skill.
 
-## Phase 5 — Branch
-
-After the file is written, call `create_branch` with `domain` and `slug` extracted from
-the frontmatter. The tool creates the `feat/<domain>-<slug>` branch per Conventional
-Branch 1.0.0.
-
-## Phase 6 — Link README
+## Phase 5 — Link README
 
 Read `.moeb/README.md` using `read_file`. Locate the `### <domain>` section (create it if
 absent). Append a new table row for this specification using `patch_file` on `.moeb/README.md`:
@@ -164,7 +158,7 @@ After patching `.moeb/README.md`:
      `acceptance_rate = 1.0`, `delta_scores = []`.
    - Call `complete_review` with `.moeb/README.md` (no-op at kernel level; included for
      symmetry).
-   - Proceed to Phase — End-of-Skill Review. The error is recorded in RunState.tool_errors.
+   - Proceed to Phase 6 — Verify. The error is recorded in RunState.tool_errors.
    Skip steps 1–5 below for this invocation.
 
 1. **Inline Reviewer.** Without calling any tool, adopt the **Reviewer Persona**
@@ -196,7 +190,33 @@ After patching `.moeb/README.md`:
    This is a no-op at the kernel level (path starts with `.moeb/`) but makes the review
    obligation explicit and maintains symmetry with the run skill.
 
-## Phase — End-of-Skill Review
+## Phase 6 — Verify
+
+Collect all rubric criteria from two sources:
+
+1. The injected `{{command_rubrics}}` section. Every row is mandatory and must receive
+   a verdict.
+2. The `## Rubric / ### Structured` table of the specification authored in Phase 2.
+   Every row is mandatory.
+
+For each criterion, evaluate pass, fail, or na:
+
+- `spec-schema-compliance`: verify the authored spec has all required frontmatter fields
+  (domain, slug, status) and all required body sections in the correct order.
+- `no-drift`: verify the authored spec does not contradict any decision in its linked
+  parent specifications.
+- `ai-first-org`: verify the spec's Steps prescribe file layouts, naming, and helper
+  placement consistent with the four AI-First principles.
+- `tool-errors`: kernel-authoritative — do not supply a verdict.
+- `rubric-qualification`: kernel-authoritative — do not supply a verdict.
+- `kernel-thin-and-parity`: verify no proposed step places workflow logic in Rust;
+  verify any new tool is registered in both CLI and MCP server lists.
+- All other criteria from the spec's own `## Rubric / ### Structured` table: apply the
+  stated Pass Condition. Mark `na` only when the criterion genuinely does not apply.
+
+Call `verify_rubrics` with the complete list of verdicts. Do not call with a partial list.
+
+## Phase 7 — End-of-Skill Review
 
 Skip this phase entirely if `{{no_review}}` is `"true"`.
 
@@ -229,7 +249,9 @@ Parse the returned `ReviewSignalReport` JSON:
 
 3. Continue to Metrics Recording regardless of critical signal presence.
 
-## Phase — Metrics Recording
+## Phase 8 — Metrics Recording
+
+### Part A — Record
 
 1. Assemble `RunMetrics`:
    - `run_id`: the current run identifier
@@ -261,6 +283,8 @@ Parse the returned `ReviewSignalReport` JSON:
    derived from frontmatter). The timestamp is the session start time (the time at which
    this run began, not the time this file is written).
 
+### Part B — Regression Detection
+
 4. Load last `{{metrics_window}}` metrics files. If fewer than 2 exist, skip regression detection.
 
 5. If `rubric_score < rolling_avg * (1 - {{metrics_degradation_margin}})`: append a
@@ -268,9 +292,30 @@ Parse the returned `ReviewSignalReport` JSON:
 
 6. Emit `MetricsEvent { metrics: <RunMetrics> }` to the trace.
 
-## Phase 7 — Commit
+## Phase 9 — Commit
 
 Call `git_commit` with:
 - `spec_path`: `.moeb/specifications/<domain>/<domain>.<slug>.md`
 - `readme_path`: `.moeb/README.md`
 - `domain` and `slug` from frontmatter.
+
+## Phase 10 — Tag
+
+Call `tag_run` with:
+- `run_id`: the current run identifier (`{{run_id}}`)
+- `domain`: the value of the `domain` field from the spec frontmatter
+- `slug`: the value of the `slug` field from the spec frontmatter
+
+The tool creates an annotated git tag `run/{{run_id}}` with annotation body
+`moeb <domain>/<slug> @ <ISO 8601 timestamp>`.
+
+## Phase 11 — Branch
+
+After the file is written, call `create_branch` with `domain` and `slug` extracted from
+the frontmatter. The tool creates the `feat/<domain>-<slug>` branch per Conventional
+Branch 1.0.0. This branch is created after the spec commit so that it points to the
+committed spec, making the implementation branch derivable from the spec's git history.
+
+## Phase 12 — Complete
+
+Respond with a concise summary of every file created or updated during this run.

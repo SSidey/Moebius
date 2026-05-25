@@ -1,0 +1,9 @@
+{
+  "run_id": "42186c78-2795-4e84-975b-992cd05f9027",
+  "timestamp": "2026-05-25T14:35:15Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.ai-first-artifact-refinement.md",
+  "signals_path": ".moeb/signals/42186c78-2795-4e84-975b-992cd05f9027.signals.json",
+  "metrics_path": ".moeb/metrics/42186c78-2795-4e84-975b-992cd05f9027.metrics.json",
+  "end_review_error_count": 0
+}

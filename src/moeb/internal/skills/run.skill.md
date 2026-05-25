@@ -137,7 +137,7 @@ For each criterion, evaluate pass, fail, or na:
 Call `verify_rubrics` with the complete list of verdicts covering all criteria from both
 sources. Do not call `verify_rubrics` with a partial list.
 
-## Phase — End-of-Skill Review
+## Phase 5 — End-of-Skill Review
 
 This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
 `{{no_review}}` is the exact string `"true"`.
@@ -164,7 +164,9 @@ Parse the returned `ReviewSignalReport` JSON:
 3. Do not fail or abort the skill if critical signals are present. Continue to the
    Metrics Recording phase.
 
-## Phase — Metrics Recording
+## Phase 6 — Metrics Recording
+
+### Part A — Record
 
 1. Assemble `RunMetrics`:
    - `run_id`: the current run identifier
@@ -195,6 +197,8 @@ Parse the returned `ReviewSignalReport` JSON:
    path as provided in the prompt context. The timestamp is the session start time (the
    time at which this run began, not the time this file is written).
 
+### Part B — Regression Detection
+
 4. Load the last `{{metrics_window}}` `.metrics.json` files from `.moeb/metrics/`
    ordered by `timestamp` ascending (most recent last). If fewer than 2 files exist,
    skip regression detection (insufficient baseline).
@@ -219,7 +223,7 @@ Parse the returned `ReviewSignalReport` JSON:
 
 7. Emit a `MetricsEvent { metrics: <RunMetrics> }` to the trace.
 
-## Phase 5 — Commit
+## Phase 7 — Commit
 
 Extract `domain` and `slug` from the YAML frontmatter at the top of the active
 specification (the content between the opening `---` and closing `---` markers). Call
@@ -232,7 +236,19 @@ Do not pass `spec_path` or `readme_path` — they are not used for run commits. 
 stages all working-tree changes and commits with the message
 `feat(<domain>): execute <slug> specification`.
 
-## Phase 6 — Version and Tag
+## Phase 8 — Tag
+
+Call `tag_run` with:
+- `run_id`: the current run identifier (`{{run_id}}`)
+- `domain`: the value of the `domain` field from the spec frontmatter
+- `slug`: the value of the `slug` field from the spec frontmatter
+
+The tool creates an annotated git tag `run/{{run_id}}` with annotation body
+`moeb <domain>/<slug> @ <ISO 8601 timestamp>`. This tag is independent of semantic
+versioning and provides per-run traceability: any commit produced by moeb can be
+identified by its run tag.
+
+## Phase 9 — Version and Tag
 
 Classify the change implemented in Phases 1–3 as one of `"major"`, `"minor"`, or
 `"patch"` using SemVer 2.0.0 semantics:
@@ -262,6 +278,6 @@ correctly.
    { "domain": "<domain>", "slug": "<slug>", "force": true }
    ```
 
-## Phase 7 — Complete
+## Phase 10 — Complete
 
 Respond with a concise summary of every file created or updated.
