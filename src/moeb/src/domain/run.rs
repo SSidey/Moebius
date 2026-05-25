@@ -158,6 +158,7 @@ impl RunService {
         let ai = self.factory.build(Arc::clone(&trace))?;
         let working_dir = Path::new(".");
         let state = crate::run_state::new_shared_run_state();
+        state.lock().unwrap().set_run_id(run_id.clone());
         let executor = crate::tools::RealToolExecutor::new_coordinator(
             std::sync::Arc::clone(&state),
             std::sync::Arc::clone(&ai),
@@ -189,6 +190,16 @@ impl RunService {
             eprintln!("[moeb] warning: trace could not be saved: {}", e);
         }
         check_run_outputs(&run_id, &run_file_path, "run");
+        {
+            let locked = executor.state.lock().unwrap();
+            if let (Some(score), Some(err_count)) = (locked.rubric_score, locked.end_review_error_count) {
+                drop(locked);
+                let metrics_path = format!(".moeb/metrics/{}.metrics.json", run_id);
+                if let Err(e) = kernel_write_metrics_fields(&metrics_path, score, err_count, &run_id) {
+                    eprintln!("moeb: warn: failed to write kernel metrics fields: {}", e);
+                }
+            }
+        }
         let result = run_result?;
         if !result.is_empty() { println!("{}", result); }
         Ok(())
@@ -200,6 +211,18 @@ fn make_critical_signal(run_id: &str, title: &str, desc: String) -> serde_json::
         "timestamp": chrono::Utc::now().to_rfc3339(), "category": "Error",
         "severity": "Critical", "title": title, "description": desc,
         "proposed_resolution": null, "auto_spec_path": null, "gating_condition": null})
+}
+
+fn kernel_write_metrics_fields(path: &str, rubric_score: f32, end_review_error_count: u32, run_id: &str) -> anyhow::Result<()> {
+    let p = std::path::Path::new(path);
+    let mut obj: serde_json::Value = if p.exists() {
+        serde_json::from_str(&std::fs::read_to_string(p)?)
+            .unwrap_or_else(|_| serde_json::json!({"run_id": run_id}))
+    } else { serde_json::json!({"run_id": run_id}) };
+    obj["rubric_score"] = serde_json::json!(rubric_score);
+    obj["end_review_error_count"] = serde_json::json!(end_review_error_count);
+    std::fs::write(p, serde_json::to_string_pretty(&obj)?)?;
+    Ok(())
 }
 
 fn check_run_outputs(run_id: &str, run_file_path: &str, command: &str) {

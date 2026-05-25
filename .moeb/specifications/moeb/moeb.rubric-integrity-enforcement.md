@@ -42,6 +42,13 @@ Fixes:
 - A tamper-evident `.moeb/rubric-audit/<run_id>.audit.json` is written by the kernel
   after every `verify_rubrics` call.
 
+**Non-termination invariant (absolute):** A moeb invocation must never exit early,
+abort, or return an error to the caller due to a rubric failure, a kernel override,
+or an IO error in the integrity enforcement path (signal write, audit write, metrics
+write). All kernel writes in this spec are best-effort: IO failures log to stderr and
+the run continues. Rubric failures are observations to be surfaced, never gates that
+stop execution.
+
 ## Description
 
 The `verify_rubrics` tool is extended to enforce three invariants at the kernel level
@@ -172,20 +179,23 @@ override block runs), add a signal-writing block. For every criterion whose fina
            }
        ),
        proposed_resolution: Some(format!(
-           "Investigate and resolve the failure in criterion '{}' before \
-            committing this run's changes.", criterion.name
+           "Investigate and resolve the failure in criterion '{}' in a \
+            follow-on invocation.", criterion.name
        )),
        auto_spec_path: None,
        gating_condition: None,
    }
    ```
 
-3. Append the signal to `.moeb/signals/<run_id>.signals.json`:
+3. Append the signal to `.moeb/signals/<run_id>.signals.json` using best-effort IO:
    - If the file does not exist: create it with `[<signal>]`
    - If the file exists: read its JSON array, append the new signal, write back
    - If the file is malformed: overwrite with `[<signal>]` and log a stderr warning
+   - If any IO error occurs at any point: log to stderr (`eprintln!("moeb: warn: failed
+     to write signal: {}", e)`) and continue — the run must not abort.
 
-Collect all written `signal_id` values into a `Vec<String>` for use in Step 4.
+Collect all written `signal_id` values into a `Vec<String>` for use in Step 4. IDs
+for signals that failed to write are omitted from this list (they could not be recorded).
 
 ### Step 3 — Compute `rubric_score` and `end_review_error_count` in kernel; store in `RunState`
 
@@ -235,10 +245,13 @@ Audit file schema:
 }
 ```
 
-Write this file from the kernel unconditionally after every `verify_rubrics` call.
-Do not overwrite if the file already exists for this run_id (a second `verify_rubrics`
-call in the same run appends to `signals_written` and `kernel_overrides`; handle by
-reading and merging if the file exists).
+Write this file from the kernel unconditionally after every `verify_rubrics` call using
+best-effort IO: if the write fails for any reason, log to stderr
+(`eprintln!("moeb: warn: failed to write rubric audit: {}", e)`) and continue — the
+run must not abort. Do not overwrite if the file already exists for this run_id (a
+second `verify_rubrics` call in the same run appends to `signals_written` and
+`kernel_overrides`; handle by reading and merging if the file exists; treat a read
+failure as an absent file and overwrite).
 
 ### Step 5 — Kernel writes `rubric_score` and `end_review_error_count` to metrics at run completion
 
@@ -255,7 +268,10 @@ if let (Some(rubric_score), Some(error_count)) = (
     // Read existing metrics JSON if present (agent may have written step_metrics
     // and wall_time_ms already), then set/overwrite rubric_score and
     // end_review_error_count with kernel values regardless of what agent wrote.
-    kernel_write_metrics_fields(&metrics_path, rubric_score, error_count)?;
+    // Best-effort: IO failure logs to stderr and the run continues.
+    if let Err(e) = kernel_write_metrics_fields(&metrics_path, rubric_score, error_count) {
+        eprintln!("moeb: warn: failed to write kernel metrics fields: {}", e);
+    }
 }
 ```
 
@@ -389,6 +405,31 @@ the signals file and in the QA Architect's report. An agent that honestly report
 **Consequences:** The QA Architect and any downstream signal consumer can distinguish
 honest failures from kernel-overridden ones by inspecting the severity field.
 
+### Decision 6 — All kernel writes in the integrity enforcement path are non-fatal
+
+**Rationale:** A moeb invocation must never exit early, abort, or return an error to
+the caller due to a rubric failure, a kernel override, or an IO error arising from
+signal, audit, or metrics writes. Rubric failures are observations to be surfaced, not
+gates that stop execution. An IO failure writing a signal or audit file is worse than
+a rubric failure, but it is still not a reason to terminate the run — the agent's
+principal task must complete.
+
+**Rejected alternatives:**
+- Propagate IO errors with `?` from kernel writes: any filesystem problem (disk full,
+  permission denied, concurrent write) would silently abort the run mid-task, losing
+  all work the agent had completed. This would make the integrity enforcement code
+  itself a source of silent failures.
+- Panic on IO failure: same consequence as propagation; panics in tool handlers are
+  caught by the MCP server loop and returned as error responses, which still breaks
+  the run from the agent's perspective.
+
+**Consequences:** Every kernel write in Steps 2, 4, and 5 uses an
+`unwrap_or_else(|e| eprintln!(...))` or `if let Err(e) = ... { eprintln!(...) }`
+pattern. No `?` or `.unwrap()` appears on IO operations in the integrity path.
+`kernel_write_metrics_fields` returns `Result<(), E>` so its callers can apply the
+log-and-continue pattern; it does not itself log (caller logs so the call-site is
+visible in the stderr stream without needing to read the function body).
+
 ## Rubric
 
 ### Structured
@@ -403,6 +444,7 @@ honest failures from kernel-overridden ones by inspecting the severity field.
 | `kernel-metrics-overwrite` | rubric_score and end_review_error_count in metrics file reflect kernel-computed values regardless of what the agent wrote | Kernel values present after run completion | Read .moeb/metrics/<run_id>.metrics.json after a run with known criteria; confirm rubric_score matches pass_count/total_count from kernel computation |
 | `audit-file-written` | .moeb/rubric-audit/<run_id>.audit.json is written by the kernel after every verify_rubrics call | File present with all required fields | After any moeb run, confirm audit file exists with agent_supplied, kernel_overrides, final_verdicts, rubric_score, signals_written fields populated |
 | `skill-files-updated` | run.skill.md and spec.skill.md contain no instruction for the agent to compute or write rubric_score or end_review_error_count | Zero such instructions in either file | grep_files for rubric_score in assets/skills/ returns no write instructions; only "do NOT write this field" references |
+| `non-terminating` | No code path through verify_rubrics or the run completion metrics write causes early process exit, panic, or error propagation to the caller due to signal, audit, or metrics write failure | Zero `?` or `.unwrap()` on IO operations in the integrity enforcement path | Code review of verify_rubrics.rs and the run-completion hook: all IO uses log-and-continue pattern; kernel_write_metrics_fields return value is handled with if-let-Err |
 
 ### Qualitative
 

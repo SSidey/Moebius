@@ -41,11 +41,18 @@ pub struct RunState {
     pub rubric_verifications: Vec<RubricVerification>,
     pub pending_reviews: HashSet<String>,
     pub tool_errors: Vec<ToolError>,
+    pub run_id: String,
+    pub rubric_score: Option<f32>,
+    pub end_review_error_count: Option<u32>,
 }
 
 impl RunState {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    pub fn set_run_id(&mut self, run_id: String) {
+        self.run_id = run_id;
     }
 
     pub fn pending_tasks(&self) -> Vec<&Task> {

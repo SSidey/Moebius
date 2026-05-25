@@ -34,6 +34,9 @@ pub fn run() -> Result<()> {
     let metrics_dst = moeb.join("metrics");
     fs::create_dir_all(&metrics_dst).context("Failed to create .moeb/metrics/")?;
 
+    let rubric_audit_dst = moeb.join("rubric-audit");
+    fs::create_dir_all(&rubric_audit_dst).context("Failed to create .moeb/rubric-audit/")?;
+
     let runs_dst = moeb.join("runs");
     fs::create_dir_all(&runs_dst).context("Failed to create .moeb/runs/")?;
 

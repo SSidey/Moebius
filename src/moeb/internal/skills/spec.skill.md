@@ -234,9 +234,9 @@ Parse the returned `ReviewSignalReport` JSON:
 1. Assemble `RunMetrics`:
    - `run_id`: the current run identifier
    - `timestamp`: ISO 8601 run-start time
-   - `rubric_score`: 1.0 (spec runs succeed or are retried; no rubric scoring)
+   - `rubric_score`: written by the kernel from RunState after verify_rubrics completes — do NOT compute or write this field.
    - `step_metrics`: all StepMetric records from spec-file and readme-link steps
-   - `end_review_error_count`: count of Critical signals (0 when `{{no_review}}` is `"true"`)
+   - `end_review_error_count`: written by the kernel from RunState — do NOT compute or write this field.
    - `wall_time_ms`: elapsed milliseconds since run start
 
 2. Write to `.moeb/metrics/{{run_id}}.metrics.json`.
