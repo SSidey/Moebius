@@ -1,0 +1,24 @@
+[
+  {
+    "signal_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "run_id": "e78d53e3-07b4-476e-b222-e9a1fd9d38d7",
+    "timestamp": "2026-05-27T20:23:22Z",
+    "category": "Error",
+    "severity": "Critical",
+    "title": "Tool error not recovered: patch_file",
+    "description": "patch_file failed to apply diff to 'src/moeb/src/tools/tool_executor_tests.rs': error applying hunk #1. The diff context lines did not match the file content. The intended change was subsequently applied successfully via write_file.",
+    "proposed_resolution": "Investigate why patch_file failed and whether the intended operation completed. If a file write was not applied, a write_file fallback or retry is required before the next run succeeds.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+    "run_id": "e78d53e3-07b4-476e-b222-e9a1fd9d38d7",
+    "timestamp": "2026-05-27T20:23:22Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: Bash",
+    "description": "Used Bash to execute `cargo test` to verify tests pass after renaming the test function. No moeb shell-execution tool exists for running arbitrary shell commands.",
+    "proposed_resolution": "Run moeb spec to introduce a moeb shell-execution tool covering running arbitrary shell commands (e.g. cargo test, cargo build --release).",
+    "gating_condition": null
+  }
+]

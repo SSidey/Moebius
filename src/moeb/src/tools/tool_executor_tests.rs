@@ -29,7 +29,7 @@
     }
 
     #[test]
-    fn standard_registry_has_ten_tools() {
+    fn standard_registry_has_expected_tool_count() {
         let state = new_shared_run_state();
         let rp = std::sync::Arc::new(std::sync::Mutex::new(std::collections::HashSet::new()));
         assert_eq!(ToolRegistry::standard(state, rp).definitions().len(), 20);
