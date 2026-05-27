@@ -12,3 +12,6 @@ src/moeb/target/
 
 # roadmap.md is a living document that may contain sensitive information about project plans and timelines. It should not be committed to version control.
 roadmap.md
+
+# Moeb event artifacts — transient orchestration state, not harness artefacts
+.moeb/events/

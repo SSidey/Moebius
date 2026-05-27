@@ -27,18 +27,24 @@ impl ToolHandler for StartSpecTool {
                 "properties": {
                     "requirement": {
                         "type": "string",
-                        "description": "The raw requirement to author a specification for."
+                        "description": "The specification requirement text."
+                    },
+                    "signal_id": {
+                        "type": "string",
+                        "description": "Signal identifier to look up from `.moeb/signals/`; used as requirement source when `requirement` is absent."
                     }
                 },
-                "required": ["requirement"]
+                "required": []
             }),
         }
     }
 
     fn execute(&self, args: &serde_json::Value, working_dir: &Path) -> Result<String> {
-        let requirement = args["requirement"]
-            .as_str()
-            .ok_or_else(|| anyhow::anyhow!("start_spec: 'requirement' must be a string"))?;
+        let requirement = args["requirement"].as_str().unwrap_or("");
+        let signal_id = args["signal_id"].as_str().unwrap_or("");
+
+        let resolved_requirement = resolve_requirement(working_dir, requirement, signal_id)
+            .map_err(|e| anyhow::anyhow!("{}", e))?;
 
         let moeb_dir = working_dir.join(".moeb");
 
@@ -72,7 +78,7 @@ impl ToolHandler for StartSpecTool {
 
         let run_id = uuid::Uuid::new_v4().to_string();
 
-        let input_slug: String = requirement
+        let input_slug: String = resolved_requirement
             .chars()
             .map(|c| if c.is_alphanumeric() || c == '-' { c } else { '-' })
             .collect::<String>()
@@ -91,15 +97,63 @@ impl ToolHandler for StartSpecTool {
             .replace("{{rubrics_content}}", &rubrics_content)
             .replace("{{skill_content}}", &skill_content)
             .replace("{{command_rubrics}}", &command_rubrics)
-            .replace("{{input}}", requirement)
+            .replace("{{input}}", &resolved_requirement)
             .replace(RUN_ID_TOKEN, &run_id)
             .replace(RUN_FILE_PATH_TOKEN, &run_file_path)
             .replace("{{reviewer_role_content}}", &reviewer_role)
             .replace("{{moderator_role_content}}", &moderator_role)
-            .replace("{{qa_architect_role_content}}", &qa_architect_role);
+            .replace("{{qa_architect_role_content}}", &qa_architect_role)
+            .replace("{{signal_id}}", signal_id);
 
         Ok(prompt)
     }
+}
+
+fn resolve_requirement(
+    working_dir: &std::path::Path,
+    requirement: &str,
+    signal_id: &str,
+) -> Result<String, String> {
+    if !requirement.is_empty() {
+        return Ok(requirement.to_string());
+    }
+    if signal_id.is_empty() {
+        return Err("Either 'requirement' or 'signal_id' must be provided".to_string());
+    }
+    let signals_dir = working_dir.join(".moeb/signals");
+    let entries = std::fs::read_dir(&signals_dir)
+        .map_err(|e| format!("Signals directory not found: {}", e))?;
+    for entry in entries.flatten() {
+        let path = entry.path();
+        let name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+        if !name.ends_with(".signals.json") {
+            continue;
+        }
+        let content = match std::fs::read_to_string(&path) {
+            Ok(c) => c,
+            Err(_) => continue,
+        };
+        let signals: serde_json::Value = match serde_json::from_str(&content) {
+            Ok(v) => v,
+            Err(_) => continue,
+        };
+        let arr = match signals.as_array() {
+            Some(a) => a,
+            None => continue,
+        };
+        for signal in arr {
+            if signal["signal_id"].as_str() == Some(signal_id) {
+                let proposed = signal["proposed_resolution"].as_str().unwrap_or("");
+                if !proposed.is_empty() {
+                    return Ok(proposed.to_string());
+                }
+                let title = signal["title"].as_str().unwrap_or("");
+                let description = signal["description"].as_str().unwrap_or("");
+                return Ok(format!("{}. {}", title, description));
+            }
+        }
+    }
+    Err(format!("No signal found with signal_id '{}'", signal_id))
 }
 
 fn build_spec_rubrics(moeb_dir: &Path) -> String {

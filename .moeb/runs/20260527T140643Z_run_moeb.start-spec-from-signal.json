@@ -1,0 +1,10 @@
+{
+  "run_id": "f194f6f4-24c6-45eb-bae8-70dede99c2c8",
+  "timestamp": "2026-05-27T14:06:43Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.start-spec-from-signal.md",
+  "signals_path": ".moeb/signals/f194f6f4-24c6-45eb-bae8-70dede99c2c8.signals.json",
+  "metrics_path": ".moeb/metrics/f194f6f4-24c6-45eb-bae8-70dede99c2c8.metrics.json",
+  "rubric_score": 0.786,
+  "end_review_error_count": 2
+}
