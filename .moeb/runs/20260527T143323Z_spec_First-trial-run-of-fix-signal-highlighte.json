@@ -1,0 +1,9 @@
+{
+  "run_id": "8dd86d80-c353-424a-9551-97158884e6d1",
+  "timestamp": "2026-05-27T14:33:23Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.fix-signal-skill-hardening.md",
+  "signals_path": ".moeb/signals/8dd86d80-c353-424a-9551-97158884e6d1.signals.json",
+  "metrics_path": ".moeb/metrics/8dd86d80-c353-424a-9551-97158884e6d1.metrics.json",
+  "end_review_error_count": 1
+}

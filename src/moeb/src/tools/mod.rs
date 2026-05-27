@@ -18,6 +18,7 @@ pub mod start_run;
 pub mod start_spec;
 pub mod fix_signal;
 pub mod tag_run;
+pub mod tag_signal;
 pub mod update_task;
 pub mod verify_rubrics;
 pub mod write_file;
@@ -88,6 +89,7 @@ impl ToolRegistry {
         r.register(Box::new(create_candidate_tag::CreateCandidateTagTool));
         r.register(Box::new(get_version::GetVersionTool));
         r.register(Box::new(tag_run::TagRunTool));
+        r.register(Box::new(tag_signal::TagSignalTool));
         r.register(Box::new(query_agent::QueryAgentTool { adapter: None, read_paths }));
         r
     }
@@ -166,7 +168,7 @@ impl ToolRegistry {
             "create_task_list", "update_task", "verify_rubrics", "complete_review",
             "create_branch", "git_commit",
             "bump_version", "create_candidate_tag",
-            "get_version", "tag_run", "query_agent", "start_run", "start_spec", "fix_signal", "get_run_status",
+            "get_version", "tag_run", "tag_signal", "query_agent", "start_run", "start_spec", "fix_signal", "get_run_status",
         ];
         order.iter()
             .filter_map(|name| self.handlers.get(name).map(|h| h.definition()))

@@ -9,7 +9,7 @@ must be a tool call.
 Prefer moeb tools for every operation. Available tools: read_file, read_files,
 read_file_range, write_file, patch_file, grep_files, list_directory, search_files,
 create_task_list, update_task, verify_rubrics, complete_review, query_agent, git_commit,
-tag_run, create_branch, bump_version, get_version, start_spec, start_run.
+tag_run, tag_signal, create_branch, bump_version, get_version.
 If an external tool must be used, buffer a MissingMoebTool signal immediately after:
 
 ```json
@@ -56,6 +56,41 @@ new fields after the last existing field of the chosen signal object, before its
 If `patch_file` returns an error, add the two fields in memory and call `write_file` to
 overwrite the source file.
 
+### Per-Step Review Sub-Loop (signal pickup)
+
+0. **Error preflight.** If the preceding write returned an error (result contains
+   "failed", "error", or "could not"): Record StepMetric with `step_id: "signal-pickup"`,
+   `iteration_count = 0`, `acceptance_rate = 1.0`, `delta_scores = []`. Do NOT call
+   `complete_review`. Proceed to Phase 4. Skip steps 1–8.
+
+1. **Inline Reviewer.** Without calling any tool, adopt the Reviewer Persona. Evaluate
+   the signal pickup artifact: `picked_up_at` and `fix_branch` must be present and the
+   `signal_id` must match the selected signal. Produce a unified diff if improvements
+   are needed, or an empty string if correct.
+
+2. If the diff is empty or whitespace: terminate sub-loop. Record StepMetric with
+   `step_id: "signal-pickup"`, `iteration_count = 0`, `acceptance_rate = 1.0`,
+   `delta_scores = []`.
+
+3. **Inline Moderator.** Without calling any tool, adopt the Moderator Persona. Produce
+   JSON: `{ "accepted": bool, "delta_score": float, "rationale": string }`.
+
+4. Parse Moderator JSON. If `[PARSE_WARNING]`: treat as
+   `{ "accepted": false, "delta_score": 0.0, "rationale": "Moderator parse failure" }`.
+
+5. If `accepted = true` and `delta_score >= 0.01` and `iteration_count < 2`:
+   - Call `patch_file` on the signal file path with the proposed diff.
+   - On error: terminate; append `{ "delta_score": 0.0, "accepted": false }` to history;
+     proceed to step 6.
+   - Otherwise: append `{ "delta_score": <score>, "accepted": true }` to history;
+     return to step 1.
+
+6. Otherwise: terminate sub-loop.
+
+7. Record StepMetric with `step_id: "signal-pickup"`.
+
+8. Call `complete_review` with the signal file path.
+
 Record a StepMetric for `step_id: "mark-signal"`.
 
 ## Phase 4 — Branch
@@ -63,48 +98,89 @@ Record a StepMetric for `step_id: "mark-signal"`.
 Call `create_branch` with `domain` and `slug` derived in Phase 3.
 Record a StepMetric for `step_id: "create-branch"`.
 
-## Phase 5 — Spec
+## Phase 5 — Emit Event
 
-Construct the `requirement` string:
-- If `proposed_resolution` is non-null and non-empty: use it as-is.
-- Otherwise: concatenate `title + ". " + description`.
+Generate a UUID v4 `event_id` for this event.
 
-Call `start_spec` with this requirement string. **Follow all returned skill phases
-completely** — including Author, Write, Per-Step Review sub-loops, Link README, Verify,
-End-of-Skill Review, Metrics Recording, Commit, Tag, Branch, and Complete.
+Derive `repo` by calling `read_file` on `.git/config`. Search for the `url =` line
+under a `[remote "origin"]` stanza and extract the value after `= ` (trimmed). If
+`.git/config` cannot be read or no origin URL is found, use the basename of the working
+directory as the fallback value for `repo`.
 
-After the embedded spec workflow concludes, record the spec file path written
-(`.moeb/specifications/<domain>/<domain>.<slug>.md` derived from the spec frontmatter).
+Construct the event object and call `write_file` with path
+`.moeb/events/<signal_id>.event.json`, pretty-printed with 2-space indentation:
 
-## Phase 6 — Run
+```json
+{
+  "type": "signal.accepted",
+  "event_id": "<uuid-v4>",
+  "signal_id": "<signal_id from Phase 2>",
+  "repo": "<repo URL or directory basename>",
+  "branch": "<fix_branch from Phase 3>",
+  "timestamp": "<current ISO 8601 timestamp>"
+}
+```
 
-Call `start_run` with the `spec_path` recorded in Phase 5. **Follow all returned skill
-phases completely** — including discovery, implementation, Per-Step Review sub-loops,
-Verify, End-of-Skill Review, Metrics Recording, Commit, Version Bump, Tag, and Complete.
+Record a StepMetric for `step_id: "emit-event"`.
 
-## Phase 7 — Verify
+### Per-Step Review Sub-Loop (event artifact)
+
+0. **Error preflight.** If the preceding write returned an error (result contains
+   "failed", "error", or "could not"): Record StepMetric with
+   `step_id: "event-artifact"`, `iteration_count = 0`, `acceptance_rate = 1.0`,
+   `delta_scores = []`. Do NOT call `complete_review`. Proceed to Phase 6. Skip steps 1–8.
+
+1. **Inline Reviewer.** Without calling any tool, adopt the Reviewer Persona. Evaluate
+   the event artifact: the JSON must contain `type`, `event_id`, `signal_id`, `repo`,
+   `branch`, and `timestamp` fields with correct values. Produce a unified diff if any
+   required field is missing or malformed, or an empty string if correct.
+
+2. If the diff is empty or whitespace: terminate sub-loop. Record StepMetric with
+   `step_id: "event-artifact"`, `iteration_count = 0`, `acceptance_rate = 1.0`,
+   `delta_scores = []`.
+
+3. **Inline Moderator.** Without calling any tool, adopt the Moderator Persona. Produce
+   JSON: `{ "accepted": bool, "delta_score": float, "rationale": string }`.
+
+4. Parse Moderator JSON. If `[PARSE_WARNING]`: treat as
+   `{ "accepted": false, "delta_score": 0.0, "rationale": "Moderator parse failure" }`.
+
+5. If `accepted = true` and `delta_score >= 0.01` and `iteration_count < 2`:
+   - Call `patch_file` on `.moeb/events/<signal_id>.event.json` with the proposed diff.
+   - On error: terminate; append `{ "delta_score": 0.0, "accepted": false }` to history;
+     proceed to step 6.
+   - Otherwise: append `{ "delta_score": <score>, "accepted": true }` to history;
+     return to step 1.
+
+6. Otherwise: terminate sub-loop.
+
+7. Record StepMetric with `step_id: "event-artifact"`.
+
+8. Call `complete_review` with `.moeb/events/<signal_id>.event.json`.
+
+## Phase 6 — Verify
 
 Evaluate the fix_signal workflow for rubric compliance. Supply verdicts for all criteria
 from the injected rubric baseline and the specification's `## Rubric / ### Structured`
 table. Do not supply verdicts for kernel-authoritative criteria (`tool-errors`,
 `rubric-qualification`). Call `verify_rubrics` with the complete verdict list.
 
-## Phase 8 — End-of-Skill Review
+## Phase 7 — End-of-Skill Review
 
 Act as a QA Architect: evaluate the fix_signal workflow outputs (signal marking patch,
-branch creation, embedded spec and run outcomes, accumulated StepMetrics). Produce a
+branch creation, event artifact, accumulated StepMetrics). Produce a
 `ReviewSignalReport` JSON with four categories (`"Error"`, `"SkillImprovement"`,
 `"ToolImprovement"`, `"NewCapability"`) and a `"summary"` paragraph. Each signal must
 carry `signal_id` (UUID v4), `run_id`, `timestamp`, `category`, `severity`, `title`,
 `description`, `proposed_resolution`, and `gating_condition`. Write the complete array
 to `.moeb/signals/{{run_id}}.signals.json`.
 
-## Phase 9 — Metrics Recording
+## Phase 8 — Metrics Recording
 
 Assemble `RunMetrics`:
 - `run_id`: `{{run_id}}`
 - `timestamp`: ISO 8601 run-start time
-- `step_metrics`: StepMetric records from mark-signal and create-branch steps
+- `step_metrics`: StepMetric records from all steps
 - `wall_time_ms`: elapsed milliseconds since fix_signal run start
 - `rubric_score` and `end_review_error_count`: written by kernel — do NOT compute
 
@@ -116,7 +192,7 @@ Write the run file to `{{run_file_path}}`:
   "run_id": "{{run_id}}",
   "timestamp": "<ISO 8601 start time>",
   "command": "fix_signal",
-  "spec_path": "<spec path from Phase 5>",
+  "event_path": ".moeb/events/<signal_id>.event.json",
   "signals_path": ".moeb/signals/{{run_id}}.signals.json",
   "metrics_path": ".moeb/metrics/{{run_id}}.metrics.json",
   "rubric_score": "<from verify_rubrics output>",
@@ -124,21 +200,39 @@ Write the run file to `{{run_file_path}}`:
 }
 ```
 
-## Phase 10 — Commit
+## Commit
 
-The fix_signal workflow does not produce implementation artifacts requiring a dedicated
-commit. All spec and code commits are issued by the embedded spec and run skill phases.
-No `git_commit` call is made in this phase.
+Call `git_commit` with:
+- `kind`: `"run"`
+- `domain`: `"moeb"`
+- `slug`: `"fix-signal"`
 
-## Phase 11 — Tag
+This commit is unconditional. It executes regardless of whether QA produced errors,
+capturing all changes made during the fix_signal run.
+
+## Tag
 
 Call `tag_run` with:
 - `run_id`: `{{run_id}}`
-- `domain`: domain derived in Phase 3
-- `slug`: slug derived in Phase 3
+- `domain`: `"moeb"`
+- `slug`: `"fix-signal"`
 
-## Phase 12 — Complete
+This tag is created unconditionally — even when `end_review_error_count` is non-zero —
+providing a durable git trace for every fix_signal invocation including failed runs.
+
+## Signal Tag
+
+Call `tag_signal` with:
+- `signal_id`: the ID of the signal selected during Phase 2
+- `event_id`: the `event_id` field from the emitted event artifact
+  (`.moeb/events/<signal_id>.event.json`)
+
+This creates an annotated git tag `signal/<signal_id>` with annotation body
+`fix_signal selected <signal_id> event:<event_id>` on the isolation branch,
+making the signal selection decision and its corresponding event traceable in git history.
+
+## Complete
 
 Respond with a concise summary: which signal was selected (signal_id, title, severity),
-which branch was created (Phase 4), which spec was authored (path and domain/slug), and
-whether the run completed successfully.
+which branch was created (Phase 4), which event was emitted (path and type), and whether
+the run completed successfully.
