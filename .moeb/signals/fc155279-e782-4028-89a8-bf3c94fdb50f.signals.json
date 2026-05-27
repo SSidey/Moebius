@@ -8,7 +8,9 @@
     "title": "Tool error not recovered: patch_file on mod.rs",
     "description": "patch_file failed with 'error applying hunk #1' on src/moeb/src/tools/mod.rs. Recovered via write_file. Likely cause: CRLF/LF line-ending mismatch on Windows causing context line mismatches in diffy.",
     "proposed_resolution": "Investigate and fix patch_file hunk relocation logic for CRLF files on Windows, or normalise line endings before applying diffs.",
-    "gating_condition": null
+    "gating_condition": null,
+    "picked_up_at": "2026-05-27T21:45:06Z",
+    "fix_branch": "feat/fix-tool-error-not-recovered-patch-file-on-mod-rs"
   },
   {
     "signal_id": "a1b2c3d4-0002-4000-8000-000000000002",
