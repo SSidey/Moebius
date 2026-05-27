@@ -1,0 +1,10 @@
+{
+  "run_id": "e4e02b87-3c7a-4177-bf9b-d2f84d8b30cd",
+  "timestamp": "2026-05-27T22:40:19Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.patch-file-crlf-normalize.md",
+  "signals_path": ".moeb/signals/e4e02b87-3c7a-4177-bf9b-d2f84d8b30cd.signals.json",
+  "metrics_path": ".moeb/metrics/e4e02b87-3c7a-4177-bf9b-d2f84d8b30cd.metrics.json",
+  "rubric_score": 0.786,
+  "end_review_error_count": 2
+}

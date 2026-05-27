@@ -1,0 +1,68 @@
+[
+  {
+    "signal_id": "sig-6ef0d92a-0001",
+    "run_id": "6ef0d92a-4532-432f-a1a8-04c53417abfa",
+    "timestamp": "2026-05-27T21:53:02Z",
+    "category": "Error",
+    "severity": "Critical",
+    "title": "Tool error not recovered: patch_file",
+    "description": "patch_file failed twice on .moeb/README.md: 'error applying hunk #1. The diff context lines may not match the current file content'. The CRLF bug being specified caused the spec-authoring README link step to fail. write_file fallback was used to ensure registration.",
+    "proposed_resolution": "README registration completed via write_file fallback — no data loss. Root cause (CRLF in README.md) will be fixed by implementing moeb.patch-file-crlf-normalize.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "sig-6ef0d92a-0002",
+    "run_id": "6ef0d92a-4532-432f-a1a8-04c53417abfa",
+    "timestamp": "2026-05-27T21:53:02Z",
+    "category": "Error",
+    "severity": "Major",
+    "title": "moeb-tool-origin fail: ToolSearch and Read used without prior signals",
+    "description": "ToolSearch was used to load tool schemas; Read was used to retrieve the truncated start_spec output file. MissingMoebTool signals were buffered late (at verify_rubrics time) rather than immediately after each call.",
+    "proposed_resolution": "Buffer MissingMoebTool signals immediately after each external tool call per the Tool Origin Policy, before any subsequent moeb tool calls.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "sig-6ef0d92a-0003",
+    "run_id": "6ef0d92a-4532-432f-a1a8-04c53417abfa",
+    "timestamp": "2026-05-27T21:53:02Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: ToolSearch",
+    "description": "Used ToolSearch to load MCP tool schemas before calling them. No moeb equivalent exists.",
+    "proposed_resolution": "Run moeb spec to introduce a moeb tool for dynamically loading and introspecting available tool schemas.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "sig-6ef0d92a-0004",
+    "run_id": "6ef0d92a-4532-432f-a1a8-04c53417abfa",
+    "timestamp": "2026-05-27T21:53:02Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: Read",
+    "description": "Used Read to retrieve the truncated start_spec output file saved to a local temp path. The mcp__moeb tool result exceeded the context limit. No moeb equivalent for reading temp/overflow files exists.",
+    "proposed_resolution": "Extend start_spec to paginate or summarize its output so agents never need an external Read call to retrieve it.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "sig-6ef0d92a-0005",
+    "run_id": "6ef0d92a-4532-432f-a1a8-04c53417abfa",
+    "timestamp": "2026-05-27T21:53:02Z",
+    "category": "ToolImprovement",
+    "severity": "Major",
+    "title": "start_spec output exceeds token limit requiring external Read fallback",
+    "description": "The start_spec output was 136,894 characters (1,475 lines), exceeding the MCP result size limit. The agent was forced to use a non-moeb Read tool to retrieve it in chunks, failing moeb-tool-origin. This will recur on every spec run on this project.",
+    "proposed_resolution": "Introduce pagination or summarisation in start_spec so the initial prompt can be retrieved in bounded chunks via moeb tools only.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "sig-6ef0d92a-0006",
+    "run_id": "6ef0d92a-4532-432f-a1a8-04c53417abfa",
+    "timestamp": "2026-05-27T21:53:02Z",
+    "category": "ToolImprovement",
+    "severity": "Major",
+    "title": "patch_file CRLF failure recurs on every Windows spec run until fix is implemented",
+    "description": "Two patch_file failures on README.md during this spec run demonstrate the exact bug being specified. Every subsequent spec run on Windows will encounter the same failure for the README link step until moeb.patch-file-crlf-normalize is implemented.",
+    "proposed_resolution": "Implement moeb.patch-file-crlf-normalize as the next run. Until then, write_file fallback is required for README patching on Windows.",
+    "gating_condition": {"Custom": "implement moeb.patch-file-crlf-normalize before next spec run on Windows"}
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "signal_id": "f1a2b3c4-d5e6-4789-9012-a3b4c5d6e7f8",
+    "run_id": "e4e02b87-3c7a-4177-bf9b-d2f84d8b30cd",
+    "timestamp": "2026-05-28T00:10:00Z",
+    "category": "Error",
+    "severity": "Critical",
+    "title": "Tool error not recovered: patch_file (CRLF file on Windows)",
+    "description": "The initial mcp__moeb__patch_file call failed with 'error applying hunk #1 — error applying hunk' because patch_file.rs had CRLF line endings on disk and the deployed MCP binary lacked the normalize_line_endings fix. The operation was recovered by falling back to write_file.",
+    "proposed_resolution": "Rebuild and redeploy the moeb binary after this run so the MCP server uses the patched patch_file implementation with normalize_line_endings.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "e2f3a4b5-c6d7-4890-9123-b4c5d6e7f8a9",
+    "run_id": "e4e02b87-3c7a-4177-bf9b-d2f84d8b30cd",
+    "timestamp": "2026-05-28T00:10:00Z",
+    "category": "Error",
+    "severity": "Critical",
+    "title": "Spec Step 1 code example uses invalid Rust syntax: char vs &str",
+    "description": "The specification's Step 1 code example uses replace('\\r', '\\n') where the second argument is a char literal. Rust's str::replace requires &str for the replacement argument, causing a compile error. The implementation was fixed to use replace('\\r', \"\\n\"). The spec is immutable so the discrepancy remains.",
+    "proposed_resolution": "Add a rubric criterion or linting check that validates Rust code examples in spec Step sections against the Rust compiler before a spec is accepted, to catch type-level errors in examples before implementation.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "d3e4f5a6-b7c8-4901-9234-c5d6e7f8a9b0",
+    "run_id": "e4e02b87-3c7a-4177-bf9b-d2f84d8b30cd",
+    "timestamp": "2026-05-28T00:10:00Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: Bash (cargo test / cargo build)",
+    "description": "Used Bash to run cargo test -p moeb and cargo build --release for the all-tests-pass and binary-builds rubric criteria. No moeb equivalent exists for shell command or build/test execution. This forces moeb-tool-origin to fail on every run that checks build and test criteria.",
+    "proposed_resolution": "Run moeb spec to introduce a run_command or cargo tool covering cargo build and cargo test execution, so rubric verification can be performed without external Bash calls.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "c4d5e6f7-a8b9-4012-9345-d6e7f8a9b0c1",
+    "run_id": "e4e02b87-3c7a-4177-bf9b-d2f84d8b30cd",
+    "timestamp": "2026-05-28T00:10:00Z",
+    "category": "SkillImprovement",
+    "severity": "Minor",
+    "title": "patch_file.rs pre-existing context-budget violation (313 lines)",
+    "description": "patch_file.rs was 303 lines before this run (already 3 over the 300-line budget) and reached 313 lines after adding normalize_line_endings and the normalization pipeline. Inline tests were extracted to the companion file to minimise the overage. Further reduction requires splitting relocate_hunk_positions or find_closest_context into a dedicated module file.",
+    "proposed_resolution": "Author a targeted spec to extract relocate_hunk_positions and find_closest_context into patch_file_relocation.rs, reducing patch_file.rs to under 300 lines and enabling a clean context-budget pass in future runs.",
+    "gating_condition": null
+  }
+]

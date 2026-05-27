@@ -127,6 +127,10 @@ fn relocate_hunk_positions(diff: &str, original: &str) -> String {
     result
 }
 
+fn normalize_line_endings(s: &str) -> String {
+    s.replace("\r\n", "\n").replace('\r', "\n")
+}
+
 /// Rewrite each `@@ -orig_start[,orig_count] +new_start[,new_count] @@[ text]` header
 /// so that the declared counts match the actual hunk body lines.  Lines prefixed with
 /// `-` count only toward the original count; `+` only toward the new count; a space (or
@@ -273,7 +277,9 @@ impl ToolHandler for PatchFileTool {
         let original = std::fs::read_to_string(&abs_path)
             .with_context(|| format!("patch_file: could not read '{}'", path))?;
 
-        let normalized = normalize_hunk_counts(diff);
+        let diff = normalize_line_endings(diff);
+        let original = normalize_line_endings(&original);
+        let normalized = normalize_hunk_counts(&diff);
         let relocated = relocate_hunk_positions(&normalized, &original);
         let patch = diffy::Patch::from_str(&relocated)
             .map_err(|e| anyhow::anyhow!(
@@ -303,137 +309,5 @@ impl ToolHandler for PatchFileTool {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use tempfile::TempDir;
-
-    fn temp_dir() -> TempDir {
-        tempfile::tempdir().unwrap()
-    }
-
-    #[test]
-    fn patch_file_applies_single_hunk() {
-        let dir = temp_dir();
-        let file = dir.path().join("target.rs");
-        std::fs::write(&file, "fn foo() {\n    let x = 1;\n    x\n}\n").unwrap();
-
-        let tool = PatchFileTool;
-        let diff = "@@ -2,2 +2,2 @@\n-    let x = 1;\n+    let x = 42;\n     x\n";
-        let args = serde_json::json!({"path": "target.rs", "diff": diff});
-        let result = tool.execute(&args, dir.path()).unwrap();
-
-        assert!(result.contains("applied"), "expected success: {}", result);
-        let content = std::fs::read_to_string(&file).unwrap();
-        assert!(content.contains("let x = 42;"), "patch must be applied");
-        assert!(!content.contains("let x = 1;"), "old line must be removed");
-    }
-
-    #[test]
-    fn patch_file_returns_error_on_context_mismatch() {
-        let dir = temp_dir();
-        let file = dir.path().join("target.rs");
-        std::fs::write(&file, "fn foo() {}\n").unwrap();
-
-        let tool = PatchFileTool;
-        // Syntactically valid diff (correct counts) but context line doesn't match the file
-        let diff = "@@ -1,1 +1,1 @@\n-fn bar() {}\n+fn new() {}\n";
-        let args = serde_json::json!({"path": "target.rs", "diff": diff});
-        let err = tool.execute(&args, dir.path()).unwrap_err();
-        let msg = err.to_string();
-        assert!(msg.contains("failed to apply"), "expected apply error: {}", msg);
-        // File must be unchanged
-        assert_eq!(std::fs::read_to_string(&file).unwrap(), "fn foo() {}\n");
-    }
-
-    #[test]
-    fn patch_file_normalizes_wrong_counts_context_mismatch() {
-        // Header says -1,3 +1,3 but the hunk has only 2 original and 2 result lines.
-        // After normalization the header becomes -1,2 +1,2; diffy then rejects it
-        // because the context line "fn bar() {}" does not match the file "fn foo() {}".
-        let dir = temp_dir();
-        let file = dir.path().join("target.rs");
-        std::fs::write(&file, "fn foo() {}\n").unwrap();
-
-        let tool = PatchFileTool;
-        let diff = "@@ -1,3 +1,3 @@\n fn bar() {}\n-fn old() {}\n+fn new() {}\n";
-        let args = serde_json::json!({"path": "target.rs", "diff": diff});
-        let err = tool.execute(&args, dir.path()).unwrap_err();
-        assert!(err.to_string().contains("failed to apply"), "expected apply error: {}", err);
-        assert_eq!(std::fs::read_to_string(&file).unwrap(), "fn foo() {}\n");
-    }
-
-    #[test]
-    fn patch_file_normalizes_wrong_counts_and_applies() {
-        // Header declares wildly wrong counts (-1,999 +1,999) but the hunk content
-        // is correct.  The normalizer fixes the header to -1,2 +1,2 and the patch
-        // applies successfully.
-        let dir = temp_dir();
-        let file = dir.path().join("target.rs");
-        std::fs::write(&file, "fn foo() {}\nfn old() {}\n").unwrap();
-
-        let tool = PatchFileTool;
-        let diff = "@@ -1,999 +1,999 @@\n fn foo() {}\n-fn old() {}\n+fn new() {}\n";
-        let args = serde_json::json!({"path": "target.rs", "diff": diff});
-        let result = tool.execute(&args, dir.path()).unwrap();
-
-        assert!(result.contains("applied"), "expected success: {}", result);
-        let content = std::fs::read_to_string(&file).unwrap();
-        assert!(content.contains("fn new() {}"), "added line must be present");
-        assert!(!content.contains("fn old() {}"), "removed line must be absent");
-    }
-
-    #[test]
-    fn patch_file_returns_error_on_missing_file() {
-        let dir = temp_dir();
-        let tool = PatchFileTool;
-        let diff = "@@ -1,1 +1,1 @@\n-old\n+new\n";
-        let args = serde_json::json!({"path": "nonexistent.rs", "diff": diff});
-        let err = tool.execute(&args, dir.path()).unwrap_err();
-        assert!(err.to_string().contains("could not read"), "expected read error: {}", err);
-    }
-
-    #[test]
-    fn patch_file_relocates_wrong_start_and_applies() {
-        // Content is at line 6 but the diff declares line 1.
-        // relocate_hunk_positions finds the context at line 6 and adjusts the header;
-        // diffy::apply then succeeds.
-        let dir = temp_dir();
-        let file = dir.path().join("target.rs");
-        std::fs::write(
-            &file,
-            "fn a() {}\nfn b() {}\nfn c() {}\nfn d() {}\nfn e() {}\nfn foo() {}\nfn old() {}\n",
-        )
-        .unwrap();
-
-        let tool = PatchFileTool;
-        // Declares start at line 1, but fn foo() is at line 6.
-        let diff = "@@ -1,2 +1,2 @@\n fn foo() {}\n-fn old() {}\n+fn new() {}\n";
-        let args = serde_json::json!({"path": "target.rs", "diff": diff});
-        let result = tool.execute(&args, dir.path()).unwrap();
-
-        assert!(result.contains("applied"), "expected success: {}", result);
-        let content = std::fs::read_to_string(&file).unwrap();
-        assert!(content.contains("fn new() {}"), "added line must be present");
-        assert!(!content.contains("fn old() {}"), "removed line must be absent");
-    }
-
-    #[test]
-    fn patch_file_does_not_relocate_absent_context() {
-        // Context line does not exist anywhere in the file; relocation cannot help.
-        // The hunk is passed through unchanged and diffy returns an apply error.
-        let dir = temp_dir();
-        let file = dir.path().join("target.rs");
-        std::fs::write(&file, "fn foo() {}\n").unwrap();
-
-        let tool = PatchFileTool;
-        let diff = "@@ -99,2 +99,2 @@\n fn nonexistent() {}\n-fn old() {}\n+fn new() {}\n";
-        let args = serde_json::json!({"path": "target.rs", "diff": diff});
-        let err = tool.execute(&args, dir.path()).unwrap_err();
-        assert!(
-            err.to_string().contains("failed to apply"),
-            "expected apply error: {}",
-            err
-        );
-        assert_eq!(std::fs::read_to_string(&file).unwrap(), "fn foo() {}\n");
-    }
-}
+#[path = "patch_file_tests.rs"]
+mod tests;
