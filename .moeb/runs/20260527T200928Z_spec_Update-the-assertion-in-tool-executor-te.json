@@ -1,0 +1,8 @@
+{
+  "run_id": "06731596-e2f8-4cc7-b77f-1967003a03d0",
+  "timestamp": "2026-05-27T20:09:28Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.tool-executor-test-assertion-count.md",
+  "signals_path": ".moeb/signals/06731596-e2f8-4cc7-b77f-1967003a03d0.signals.json",
+  "metrics_path": ".moeb/metrics/06731596-e2f8-4cc7-b77f-1967003a03d0.metrics.json"
+}
