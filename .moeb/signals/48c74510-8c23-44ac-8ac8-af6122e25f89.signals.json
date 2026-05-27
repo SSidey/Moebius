@@ -1,27 +1,3 @@
 {
-  "signals": [
-    {
-      "signal_id": "sig-001",
-      "run_id": "48c74510-8c23-44ac-8ac8-af6122e25f89",
-      "timestamp": "2026-05-25T16:44:44Z",
-      "category": "Error",
-      "severity": "Critical",
-      "title": "Tool error not recovered: patch_file (README registration)",
-      "description": "patch_file was called 3 times to register the spec row in .moeb/README.md; all three invocations failed with 'error applying hunk #1. The diff context lines may not match the current file content'. Registration was completed via the Claude Code native Edit tool as a fallback. The 3 tool errors are recorded in RunState.tool_errors and caused the tool-errors rubric criterion to fail.",
-      "proposed_resolution": "Investigate patch_file context-line matching for extremely long lines (>300 chars). Consider using write_file with the full README content when patch_file fails, or improve patch_file's context-matching to handle long table rows. A targeted spec run to fix patch_file robustness on long lines would prevent this recurrence.",
-      "gating_condition": null
-    },
-    {
-      "signal_id": "sig-002",
-      "run_id": "48c74510-8c23-44ac-8ac8-af6122e25f89",
-      "timestamp": "2026-05-25T16:44:44Z",
-      "category": "ToolImprovement",
-      "severity": "Major",
-      "title": "patch_file context-line matching unreliable on long README table rows",
-      "description": "Table rows in the README spec index exceed 300 characters. Three patch_file calls using exact content from read_file all failed to apply, suggesting the context-line relocation algorithm does not handle very long lines reliably. This causes spec sessions that must add README rows to fall back to external tools, introducing a tool-error rubric failure.",
-      "proposed_resolution": "Add a moeb spec for patch_file robustness that implements a line-number-based insertion fallback: when context-line matching fails and the target line can be uniquely identified by substring, insert at the computed offset using line arithmetic rather than re-checking context.",
-      "gating_condition": null
-    }
-  ],
   "summary": "The spec was authored and registered successfully. The spec file satisfies all rubric criteria except tool-errors, which failed due to 3 patch_file invocations that could not apply context-line hunks to the README's long table rows. The README registration was completed via a native Edit tool fallback. The spec itself is complete, schema-compliant, drift-free, and well-formed. The persistent patch_file failure on long lines is a recurring reliability gap that warrants a targeted improvement spec."
 }

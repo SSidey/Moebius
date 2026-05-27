@@ -1,27 +1,5 @@
 [
   {
-    "signal_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "run_id": "33ae26e5-dbde-453d-89ef-991bd2a67def",
-    "timestamp": "2026-05-27T15:20:00Z",
-    "category": "Error",
-    "severity": "Critical",
-    "title": "patch_file failures recorded as tool errors",
-    "description": "Two patch_file calls failed with 'error applying hunk' during mod.rs modification attempts, recorded as tool errors in RunState. The write was recovered via write_file. The tool-errors rubric criterion will Fail.",
-    "proposed_resolution": "Investigate patch_file hunk context matching. The relocate logic should handle cases where the file content changed during the run session. Consider a moeb tool that re-reads before patching.",
-    "gating_condition": null
-  },
-  {
-    "signal_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-    "run_id": "33ae26e5-dbde-453d-89ef-991bd2a67def",
-    "timestamp": "2026-05-27T15:20:01Z",
-    "category": "Error",
-    "severity": "Critical",
-    "title": "Spec path mismatch: fix_signal.skill.md lives in src/ not .moeb/skills/",
-    "description": "The specification instructs patching .moeb/skills/fix_signal.skill.md but this file does not exist. The binary-bundled skill is at src/moeb/internal/skills/fix_signal.skill.md. The run used the correct src/ path but the spec steps are incorrect.",
-    "proposed_resolution": "Author a correcting spec that updates the fix_signal.skill.md path references in specifications/moeb/moeb.fix-signal-skill-hardening.md to use src/moeb/internal/skills/fix_signal.skill.md.",
-    "gating_condition": null
-  },
-  {
     "signal_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
     "run_id": "33ae26e5-dbde-453d-89ef-991bd2a67def",
     "timestamp": "2026-05-27T15:20:02Z",
@@ -42,16 +20,5 @@
     "description": "The standard_registry_has_ten_tools test expected 18 tools but standard() had 19 before this run began. The run added 1 more (tag_signal), requiring the count to be updated to 20. The pre-existing off-by-one indicates a prior run added a tool without updating this test.",
     "proposed_resolution": "When registering new tools in standard(), the companion test in tool_executor_tests.rs must be updated atomically. Add this requirement to the run.skill.md Implement phase.",
     "gating_condition": null
-  },
-  {
-    "signal_id": "e5f6a7b8-c9d0-1234-efab-345678901234",
-    "run_id": "33ae26e5-dbde-453d-89ef-991bd2a67def",
-    "timestamp": "2026-05-27T15:25:00Z",
-    "category": "Error",
-    "severity": "Critical",
-    "title": "Rubric score degraded below rolling baseline",
-    "description": "Current rubric_score (0.80) is more than 10% below the rolling average (0.915) of the last 5 metrics files with scores. Threshold: 0.8235.",
-    "proposed_resolution": "Revert to the git tag preceding this run, create a diagnostic spec identifying the regression cause, and branch from the pre-regression version.",
-    "gating_condition": "NoCandidateBranch"
   }
 ]

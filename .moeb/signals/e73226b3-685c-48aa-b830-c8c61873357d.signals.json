@@ -1,16 +1,5 @@
 [
   {
-    "signal_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "run_id": "e73226b3-685c-48aa-b830-c8c61873357d",
-    "timestamp": "2026-05-25T18:47:01Z",
-    "category": "Error",
-    "severity": "Critical",
-    "title": "patch_file repeatedly fails on .moeb/README.md with valid context",
-    "description": "patch_file failed 5 times when attempting to insert a new spec index row into .moeb/README.md. Context lines were confirmed correct via read_file_range but the diffy crate reported 'context lines may not match the current file content'. Suspected cause: CR/LF line endings in the file on Windows causing context mismatch in the diffy crate, or a bug in find_closest_context when context lines are very long (200+ characters). A Claude Code Edit tool fallback was required to complete the README update.",
-    "proposed_resolution": "Investigate patch_file.rs find_closest_context and normalize_hunk_counts behaviour when the file has CRLF line endings on Windows. Add a test case for large-line context matching. Consider normalising line endings to LF on file read in the patch_file tool.",
-    "gating_condition": null
-  },
-  {
     "signal_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
     "run_id": "e73226b3-685c-48aa-b830-c8c61873357d",
     "timestamp": "2026-05-25T18:47:01Z",

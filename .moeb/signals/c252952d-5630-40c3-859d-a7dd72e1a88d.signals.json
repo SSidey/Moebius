@@ -1,17 +1,5 @@
 [
   {
-    "signal_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "run_id": "c252952d-5630-40c3-859d-a7dd72e1a88d",
-    "timestamp": "2026-05-25T00:00:00Z",
-    "category": "Error",
-    "severity": "Critical",
-    "title": "Tool error not recovered: patch_file",
-    "description": "patch_file failed on first attempt when applying hunk #3 to src/moeb/src/domain/run.rs (context lines did not match). Retried successfully after re-reading the file. Kernel recorded a tool error causing tool-errors: fail.",
-    "proposed_resolution": "Investigate why patch_file failed and whether the intended operation completed. If a file write was not applied, a write_file fallback or retry is required before the next run succeeds.",
-    "auto_spec_path": null,
-    "gating_condition": null
-  },
-  {
     "signal_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
     "run_id": "c252952d-5630-40c3-859d-a7dd72e1a88d",
     "timestamp": "2026-05-25T00:00:00Z",

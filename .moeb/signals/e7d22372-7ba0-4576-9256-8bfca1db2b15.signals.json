@@ -1,13 +1,1 @@
-[
-  {
-    "signal_id": "f3a8c1d2-b4e5-4f67-8901-234567890abc",
-    "run_id": "e7d22372-7ba0-4576-9256-8bfca1db2b15",
-    "timestamp": "2026-05-23T00:00:00Z",
-    "category": "Error",
-    "severity": "Critical",
-    "title": "QA Architect response parse failure",
-    "description": "query_agent call to qa-architect role failed with OpenAI API error 429 Too Many Requests: insufficient_quota. This error is exactly the failure mode fixed by this specification (active_adapter=openai falling back on every query_agent call in MCP serve mode). The fix (eager adapter wiring in serve.rs) will prevent this on future moeb serve invocations.",
-    "proposed_resolution": null,
-    "auto_spec_path": null
-  }
-]
+[]
