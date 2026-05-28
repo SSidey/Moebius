@@ -205,6 +205,8 @@ Organised by domain. Add a new `###` subsection for each domain as it is introdu
 | Tool Executor Test: Fix Stale Registry Count Assertion | Fixes the stale count assertion and test function name in tool_executor_tests.rs to match the actual standard registry tool count of 18 | [specifications/moeb/moeb.tool-executor-test-assertion-count.md](specifications/moeb/moeb.tool-executor-test-assertion-count.md) | active |
 | Patch File Tool: Normalize CRLF Line Endings Before Applying Diffs | Adds a `normalize_line_endings` function to `patch_file.rs` that strips CR characters from both the diff input and file content before processing, eliminating apply failures on Windows CRLF files | [specifications/moeb/moeb.patch-file-crlf-normalize.md](specifications/moeb/moeb.patch-file-crlf-normalize.md) | active |
 
+| Signal Deduplication, Occurrence Tracking, and Lifecycle Reopening | Introduces a canonical signal store, per-signal occurrence tracking with severity elevation and status reopening, a signal index markdown file, and a no-signal-reoccurrence rubric criterion that fires when a previously resolved signal reappears | [specifications/moeb/moeb.signal-deduplication-and-lifecycle.md](specifications/moeb/moeb.signal-deduplication-and-lifecycle.md) | active |
+
 ### vcs
 
 | Name | Description | Path | Status |
