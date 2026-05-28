@@ -190,7 +190,9 @@ fn patch_file_diagnostic_names_absent_context_line() {
 #[test]
 fn patch_file_diagnostic_all_present_when_context_found() {
     // Context line exists but the removal line (-) does not match the file,
-    // so diffy::apply fails. The diagnostic must report all context lines present.
+    // so diffy::apply fails. With the three-branch diagnostic, the error now names
+    // the specific non-matching removed line rather than giving the generic
+    // "All context lines appear" message.
     let dir = temp_dir();
     let file = dir.path().join("target.rs");
     std::fs::write(&file, "fn foo() {}\nfn bar() {}\n").unwrap();
@@ -201,8 +203,72 @@ fn patch_file_diagnostic_all_present_when_context_found() {
     let err = tool.execute(&args, dir.path()).unwrap_err();
     let msg = err.to_string();
     assert!(
-        msg.contains("All context lines appear"),
-        "expected all-present diagnostic: {}",
+        msg.contains("removed lines not in file"),
+        "expected non-matching removed line diagnostic: {}",
+        msg
+    );
+    assert!(
+        msg.contains("fn baz()"),
+        "error must name the non-matching removed line: {}",
+        msg
+    );
+}
+
+#[test]
+fn patch_file_applies_when_removed_line_contains_double_brace() {
+    // Skill files store literal {{run_id}} template variables.
+    // patch_file must apply a diff whose removed line contains that exact text.
+    let dir = temp_dir();
+    let file = dir.path().join("spec.skill.md");
+    std::fs::write(
+        &file,
+        "## Phase 8\nWrite to `.moeb/metrics/{{run_id}}.metrics.json`.\nNext section.\n",
+    )
+    .unwrap();
+
+    let tool = PatchFileTool;
+    let diff = "@@ -1,3 +1,3 @@\n ## Phase 8\n-Write to `.moeb/metrics/{{run_id}}.metrics.json`.\n+Write to `.moeb/metrics/{{run_id}}.metrics.json` (updated).\n Next section.\n";
+    let args = serde_json::json!({"path": "spec.skill.md", "diff": diff});
+    let result = tool.execute(&args, dir.path()).unwrap();
+
+    assert!(result.contains("applied"), "expected success: {}", result);
+    let content = std::fs::read_to_string(&file).unwrap();
+    assert!(
+        content.contains("(updated)"),
+        "patched content must contain updated marker"
+    );
+    assert!(
+        content.contains("{{run_id}}"),
+        "template variable must be preserved in patched content"
+    );
+}
+
+#[test]
+fn patch_file_diagnostic_names_non_matching_removed_line() {
+    // Agent produces a diff with a rendered UUID but the file stores {{run_id}}.
+    // The error must name the specific non-matching removed line.
+    let dir = temp_dir();
+    let file = dir.path().join("spec.skill.md");
+    std::fs::write(
+        &file,
+        "## Phase 8\nWrite to `.moeb/metrics/{{run_id}}.metrics.json`.\nNext section.\n",
+    )
+    .unwrap();
+
+    let tool = PatchFileTool;
+    // Removed line has a rendered UUID rather than the literal {{run_id}}
+    let diff = "@@ -1,3 +1,3 @@\n ## Phase 8\n-Write to `.moeb/metrics/a735facc-5979-429f-8024-6e9f0fc0786a.metrics.json`.\n+Write to `.moeb/metrics/{{run_id}}.metrics.json` (updated).\n Next section.\n";
+    let args = serde_json::json!({"path": "spec.skill.md", "diff": diff});
+    let err = tool.execute(&args, dir.path()).unwrap_err();
+    let msg = err.to_string();
+    assert!(
+        msg.contains("removed lines not in file"),
+        "error must indicate non-matching removed lines: {}",
+        msg
+    );
+    assert!(
+        msg.contains("a735facc"),
+        "error must name the non-matching removed line content: {}",
         msg
     );
 }

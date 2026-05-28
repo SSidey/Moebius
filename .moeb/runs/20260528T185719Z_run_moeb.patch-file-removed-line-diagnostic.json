@@ -1,0 +1,10 @@
+{
+  "run_id": "2915970d-f315-43cc-adfe-237bc48cd92c",
+  "timestamp": "2026-05-28T18:57:19Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.patch-file-removed-line-diagnostic.md",
+  "signals_path": ".moeb/signals/2915970d-f315-43cc-adfe-237bc48cd92c.signals.json",
+  "metrics_path": ".moeb/metrics/2915970d-f315-43cc-adfe-237bc48cd92c.metrics.json",
+  "rubric_score": 0.875,
+  "end_review_error_count": 0
+}

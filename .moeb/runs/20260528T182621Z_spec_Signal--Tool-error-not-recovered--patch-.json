@@ -1,0 +1,9 @@
+{
+  "run_id": "a735facc-5979-429f-8024-6e9f0fc0786a",
+  "timestamp": "2026-05-28T18:26:21Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.patch-file-removed-line-diagnostic.md",
+  "signals_path": ".moeb/signals/a735facc-5979-429f-8024-6e9f0fc0786a.signals.json",
+  "metrics_path": ".moeb/metrics/a735facc-5979-429f-8024-6e9f0fc0786a.metrics.json",
+  "end_review_error_count": 0
+}

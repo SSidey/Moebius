@@ -75,6 +75,30 @@ fn diagnose_missing_context<'a>(relocated_diff: &'a str, original: &str) -> Vec<
     absent
 }
 
+/// Returns the removed lines (`-` prefix) from `relocated_diff` that do not appear
+/// anywhere in `original` (using `.trim_end()` comparison, consistent with
+/// `diagnose_missing_context`).  Called only when context lines all match but
+/// `diffy::apply` still fails, to name the specific removed lines that differ from
+/// the file content.
+fn diagnose_non_matching_removed_lines<'a>(relocated_diff: &'a str, original: &str) -> Vec<&'a str> {
+    let orig_lines: Vec<&str> = original.lines().collect();
+    let mut non_matching = Vec::new();
+    for line in relocated_diff.lines() {
+        if !line.starts_with('-') {
+            continue;
+        }
+        let content = &line[1..];
+        let content_t = content.trim_end();
+        if content_t.is_empty() {
+            continue;
+        }
+        if !orig_lines.iter().any(|l| l.trim_end() == content_t) {
+            non_matching.push(content);
+        }
+    }
+    non_matching
+}
+
 pub struct PatchFileTool;
 
 impl ToolHandler for PatchFileTool {
@@ -136,14 +160,26 @@ impl ToolHandler for PatchFileTool {
             .map_err(|e| {
                 let absent = diagnose_missing_context(&relocated, &original);
                 if absent.is_empty() {
-                    anyhow::anyhow!(
-                        "patch_file: failed to apply diff to '{}': {}. \
-                         All context lines appear in the file — check that the \
-                         removed lines (-) exactly match the file content, and that \
-                         no duplicate context block is selecting the wrong hunk. \
-                         Re-read the file and regenerate the diff.",
-                        path, e
-                    )
+                    let non_matching = diagnose_non_matching_removed_lines(&relocated, &original);
+                    if non_matching.is_empty() {
+                        anyhow::anyhow!(
+                            "patch_file: failed to apply diff to '{}': {}. \
+                             All context lines appear in the file — check that the \
+                             removed lines (-) exactly match the file content, and that \
+                             no duplicate context block is selecting the wrong hunk. \
+                             Re-read the file and regenerate the diff.",
+                            path, e
+                        )
+                    } else {
+                        anyhow::anyhow!(
+                            "patch_file: failed to apply diff to '{}': {}. \
+                             Context lines found; removed lines not in file: [{}]. \
+                             Re-read the file and ensure the diff's removed lines (-) \
+                             match the file content exactly.",
+                            path, e,
+                            non_matching.join("; ")
+                        )
+                    }
                 } else {
                     anyhow::anyhow!(
                         "patch_file: failed to apply diff to '{}': {}. \

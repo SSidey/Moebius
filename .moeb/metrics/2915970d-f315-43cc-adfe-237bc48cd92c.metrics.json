@@ -1,0 +1,19 @@
+{
+  "run_id": "2915970d-f315-43cc-adfe-237bc48cd92c",
+  "timestamp": "2026-05-28T18:57:19Z",
+  "step_metrics": [
+    {
+      "step_id": "2-3",
+      "iteration_count": 0,
+      "acceptance_rate": 1.0,
+      "delta_scores": []
+    },
+    {
+      "step_id": "4",
+      "iteration_count": 0,
+      "acceptance_rate": 1.0,
+      "delta_scores": []
+    }
+  ],
+  "wall_time_ms": 2700000
+}

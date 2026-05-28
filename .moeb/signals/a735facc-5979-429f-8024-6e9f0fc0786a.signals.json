@@ -1,0 +1,35 @@
+[
+  {
+    "signal_id": "f7e8d9c0-b1a2-4e3f-8d5c-6a7b9c0d1e2f",
+    "run_id": "a735facc-5979-429f-8024-6e9f0fc0786a",
+    "timestamp": "2026-05-28T18:26:21Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: Read (large tool output)",
+    "description": "Used Read (Claude Code) to read large start_spec output saved to disk. No moeb equivalent exists for reading harness-saved large tool result files.",
+    "proposed_resolution": "Run moeb spec to introduce a moeb tool (e.g. read_tool_result) that accepts a saved tool result path and returns it in paginated chunks.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "9e8d7c6b-5a4f-3e2d-1c0b-9a8f7e6d5c4b",
+    "run_id": "a735facc-5979-429f-8024-6e9f0fc0786a",
+    "timestamp": "2026-05-28T18:26:21Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: ToolSearch (deferred schema loading)",
+    "description": "ToolSearch called multiple times to load deferred MCP tool schemas. No moeb equivalent exists for deferred schema resolution in the Claude Code environment.",
+    "proposed_resolution": "Pre-include required tool schemas in start_spec/start_run output, or introduce a schema-preload mechanism.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "b1c2d3e4-f5a6-4b7c-8d9e-0f1a2b3c4d5e",
+    "run_id": "a735facc-5979-429f-8024-6e9f0fc0786a",
+    "timestamp": "2026-05-28T18:26:21Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: Glob",
+    "description": "Used Glob (Claude Code) to find patch_file*.rs source files and .signal.json files by glob pattern. No moeb equivalent exists for pattern-based file discovery.",
+    "proposed_resolution": "Run moeb spec to introduce a glob_files moeb tool covering pattern-based file discovery.",
+    "gating_condition": null
+  }
+]
