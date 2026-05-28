@@ -12,5 +12,7 @@
   "last_seen": "2026-05-28T17:45:00Z",
   "occurrences": [
     { "timestamp": "2026-05-28T17:45:00Z", "run_id": "fcab4166-c9fb-4583-9248-bbf78f2cef16" }
-  ]
+  ],
+  "picked_up_at": "2026-05-28T18:08:00Z",
+  "fix_branch": "feat/fix-tool-error-not-recovered-patch-file-on-spec-skill"
 }
