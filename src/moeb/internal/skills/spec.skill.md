@@ -264,6 +264,66 @@ Parse the returned `ReviewSignalReport` JSON:
 
 1. Assign `signal_id`, `run_id`, `timestamp` to each signal.
 
+## Canonical Signal Dedup-and-Write Procedure
+
+# Identity key: "<category>-<title-slug>"  (slug = lowercase, [^a-z0-9]+ → '-', strip edges, max 80 chars)
+# Canonical path: .moeb/signals/catalogue/<identity-key>.signal.json
+# Severity order: Info < Minor < Major < Critical
+# current_run_id: the run identifier injected via {{run_id}} in the spec prompt template
+# Note: .moeb/signals/catalogue/ is created on first use.
+# write_file creates parent directories automatically — no explicit mkdir required.
+#
+# Canonical signal record schema (all fields in this order):
+# { "signal_id", "category", "severity", "title", "description", "proposed_resolution",
+#   "gating_condition", "status", "occurrence_count", "first_seen", "last_seen", "occurrences" }
+
+For each signal S in the ReviewSignalReport:
+  1. Compute identity_key as described above.
+  2. Attempt to read `.moeb/signals/catalogue/<identity_key>.signal.json` using read_file.
+     If the file does not exist (read returns an error), treat as not_found.
+  3. If not_found:
+       Assign S.signal_id = new UUID v4.
+       Set S.status         = "open".
+       Set S.occurrence_count = 1.
+       Set S.first_seen     = current ISO 8601 timestamp.
+       Set S.last_seen      = current ISO 8601 timestamp.
+       Set S.occurrences    = [{ "timestamp": S.first_seen, "run_id": current_run_id }].
+       Write canonical record to `.moeb/signals/catalogue/<identity_key>.signal.json`.
+  4. If found:
+       Parse existing record E.
+       If severity_rank(S.severity) > severity_rank(E.severity): E.severity = S.severity.
+       If E.status == "resolved": E.status = "reopened".
+       E.occurrence_count += 1.
+       E.last_seen = current ISO 8601 timestamp.
+       Append { "timestamp": E.last_seen, "run_id": current_run_id } to E.occurrences.
+       Write updated E back to `.moeb/signals/catalogue/<identity_key>.signal.json`.
+       S.signal_id = E.signal_id.
+  5. After processing all signals, update `.moeb/signals/index.md` (see Index Update below).
+
+The run-based signals file `.moeb/signals/{{run_id}}.signals.json` is then written as normal,
+using the signal_id values assigned in steps 3–4 above.
+
+### Index Update
+
+After completing the Dedup-and-Write Procedure for all signals:
+- Attempt to read `.moeb/signals/index.md` using `read_file`. If missing, create it with
+  `write_file` using this header:
+
+  ```markdown
+  # Signal Index
+
+  | Signal ID | Title | Category | Severity | Status | Occurrences | Last Seen | File |
+  |-----------|-------|----------|----------|--------|-------------|-----------|------|
+  ```
+
+- For each canonical signal written in the current run, search the existing table for a
+  row whose `Signal ID` cell matches the canonical `signal_id`.
+  - If found: use `patch_file` to update `Severity`, `Status`, `Occurrences`, and
+    `Last Seen` cells on that row only.
+  - If not found: use `patch_file` to append a new row:
+
+    `| <signal_id> | <title> | <category> | <severity> | <status> | <occurrence_count> | <last_seen> | [catalogue/<identity_key>.signal.json](catalogue/<identity_key>.signal.json) |`
+
 2. Write signals to `.moeb/signals/{{run_id}}.signals.json`.
 
 3. Continue to Metrics Recording regardless of critical signal presence.

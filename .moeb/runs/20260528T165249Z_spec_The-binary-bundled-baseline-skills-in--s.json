@@ -1,0 +1,9 @@
+{
+  "run_id": "83fdcee0-edf1-4cf9-89a3-43992408a45a",
+  "timestamp": "2026-05-28T16:52:00Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.skill-baseline-sync.md",
+  "signals_path": ".moeb/signals/83fdcee0-edf1-4cf9-89a3-43992408a45a.signals.json",
+  "metrics_path": ".moeb/metrics/83fdcee0-edf1-4cf9-89a3-43992408a45a.metrics.json",
+  "end_review_error_count": 0
+}

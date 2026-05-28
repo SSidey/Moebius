@@ -1,0 +1,10 @@
+{
+  "run_id": "fcab4166-c9fb-4583-9248-bbf78f2cef16",
+  "timestamp": "2026-05-28T17:03:08Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.skill-baseline-sync.md",
+  "signals_path": ".moeb/signals/fcab4166-c9fb-4583-9248-bbf78f2cef16.signals.json",
+  "metrics_path": ".moeb/metrics/fcab4166-c9fb-4583-9248-bbf78f2cef16.metrics.json",
+  "rubric_score": 0.875,
+  "end_review_error_count": 2
+}

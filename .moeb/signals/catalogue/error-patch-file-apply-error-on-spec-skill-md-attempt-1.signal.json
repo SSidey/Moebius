@@ -1,0 +1,16 @@
+{
+  "signal_id": "3a7c8e12-f4b5-4d2a-9c6e-1f8a3d5b7c91",
+  "category": "Error",
+  "severity": "Critical",
+  "title": "Tool error not recovered: patch_file on spec.skill.md (attempt 1)",
+  "description": "patch_file returned: error applying hunk #1. All context lines appear in the file — check that the removed lines (-) exactly match the file content. Recovery via write_file succeeded.",
+  "proposed_resolution": "Investigate why patch_file fails when removed lines contain {{run_id}} template variables. Add a unit test covering patch_file on skill files with double-brace syntax.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-28T17:45:00Z",
+  "last_seen": "2026-05-28T17:45:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-28T17:45:00Z", "run_id": "fcab4166-c9fb-4583-9248-bbf78f2cef16" }
+  ]
+}

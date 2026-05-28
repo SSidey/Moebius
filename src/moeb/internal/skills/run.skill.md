@@ -151,6 +151,14 @@ For each criterion, evaluate pass, fail, or na:
 
 - `moeb-tool-origin`: Review this conversation for tool calls to non-moeb tools (tools whose names are not in the moeb tool schema, such as Bash, Edit, Write, Read, Glob, Grep, WebFetch, or WebSearch). If no external tool calls appear in the conversation, supply Pass. If external tool calls appear and MissingMoebTool signals were buffered for each one, supply Fail with `acknowledged_failures` listing each signal title. If external tool calls appear without corresponding buffered signals, supply Fail and list the unlogged tool names in the note field.
 
+- `no-signal-reoccurrence` check:
+  1. Use list_directory on `.moeb/signals/catalogue/` to enumerate *.signal.json files.
+     If the directory does not exist or is empty, verdict = pass.
+  2. For each file, read it. If any record has status == "reopened" and its last
+     occurrences entry has run_id == current_run_id: verdict = fail, note each
+     reopened signal title.
+  3. If no such record found: verdict = pass.
+
 - All other criteria: apply the stated Pass Condition. Mark `na` only when the criterion
   genuinely does not apply to this specification's scope.
 
@@ -178,6 +186,66 @@ Parse the returned `ReviewSignalReport` JSON:
    - `signal_id`: a fresh UUID v4
    - `run_id`: the current run identifier
    - `timestamp`: ISO 8601 current time
+
+## Canonical Signal Dedup-and-Write Procedure
+
+# Identity key: "<category>-<title-slug>"  (slug = lowercase, [^a-z0-9]+ → '-', strip edges, max 80 chars)
+# Canonical path: .moeb/signals/catalogue/<identity-key>.signal.json
+# Severity order: Info < Minor < Major < Critical
+# current_run_id: the run identifier from the current run session ({{run_id}} in the rendered prompt)
+# Note: .moeb/signals/catalogue/ is created on first use.
+# write_file creates parent directories automatically — no explicit mkdir required.
+#
+# Canonical signal record schema (all fields in this order):
+# { "signal_id", "category", "severity", "title", "description", "proposed_resolution",
+#   "gating_condition", "status", "occurrence_count", "first_seen", "last_seen", "occurrences" }
+
+For each signal S in the ReviewSignalReport:
+  1. Compute identity_key as described above.
+  2. Attempt to read `.moeb/signals/catalogue/<identity_key>.signal.json` using read_file.
+     If the file does not exist (read returns an error), treat as not_found.
+  3. If not_found:
+       Assign S.signal_id = new UUID v4.
+       Set S.status         = "open".
+       Set S.occurrence_count = 1.
+       Set S.first_seen     = current ISO 8601 timestamp.
+       Set S.last_seen      = current ISO 8601 timestamp.
+       Set S.occurrences    = [{ "timestamp": S.first_seen, "run_id": current_run_id }].
+       Write canonical record to `.moeb/signals/catalogue/<identity_key>.signal.json`.
+  4. If found:
+       Parse existing record E.
+       If severity_rank(S.severity) > severity_rank(E.severity): E.severity = S.severity.
+       If E.status == "resolved": E.status = "reopened".
+       E.occurrence_count += 1.
+       E.last_seen = current ISO 8601 timestamp.
+       Append { "timestamp": E.last_seen, "run_id": current_run_id } to E.occurrences.
+       Write updated E back to `.moeb/signals/catalogue/<identity_key>.signal.json`.
+       S.signal_id = E.signal_id.
+  5. After processing all signals, update `.moeb/signals/index.md` (see Index Update below).
+
+The run-based signals file `.moeb/signals/{{run_id}}.signals.json` is then written as normal,
+using the signal_id values assigned in steps 3–4 above.
+
+### Index Update
+
+After completing the Dedup-and-Write Procedure for all signals:
+- Attempt to read `.moeb/signals/index.md` using `read_file`. If missing, create it with
+  `write_file` using this header:
+
+  ```markdown
+  # Signal Index
+
+  | Signal ID | Title | Category | Severity | Status | Occurrences | Last Seen | File |
+  |-----------|-------|----------|----------|--------|-------------|-----------|------|
+  ```
+
+- For each canonical signal written in the current run, search the existing table for a
+  row whose `Signal ID` cell matches the canonical `signal_id`.
+  - If found: use `patch_file` to update `Severity`, `Status`, `Occurrences`, and
+    `Last Seen` cells on that row only.
+  - If not found: use `patch_file` to append a new row:
+
+    `| <signal_id> | <title> | <category> | <severity> | <status> | <occurrence_count> | <last_seen> | [catalogue/<identity_key>.signal.json](catalogue/<identity_key>.signal.json) |`
 
 2. Write the complete array of signals to `.moeb/signals/{{run_id}}.signals.json`.
 
