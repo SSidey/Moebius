@@ -1,0 +1,10 @@
+{
+  "run_id": "f4d9b014-4101-413f-b287-d90cd4154a3e",
+  "timestamp": "2026-05-28T09:51:01Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.signal-deduplication-and-lifecycle.md",
+  "signals_path": ".moeb/signals/f4d9b014-4101-413f-b287-d90cd4154a3e.signals.json",
+  "metrics_path": ".moeb/metrics/f4d9b014-4101-413f-b287-d90cd4154a3e.metrics.json",
+  "rubric_score": 0.85,
+  "end_review_error_count": 2
+}
