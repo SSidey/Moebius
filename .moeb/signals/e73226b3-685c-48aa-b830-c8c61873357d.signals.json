@@ -1,13 +1,1 @@
-[
-  {
-    "signal_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-    "run_id": "e73226b3-685c-48aa-b830-c8c61873357d",
-    "timestamp": "2026-05-25T18:47:01Z",
-    "category": "NewCapability",
-    "severity": "Major",
-    "title": "Missing moeb tool: Edit (README patch fallback)",
-    "description": "Used Claude Code Edit tool to insert a row into .moeb/README.md after patch_file failed repeatedly. No moeb equivalent exists for a reliable line-insert that bypasses patch_file when its context-matching fails on large files with long lines.",
-    "proposed_resolution": "Investigate and fix patch_file context-matching on Windows CRLF files (see companion Critical signal). Alternatively, introduce a write_file_insert_after tool that locates a unique anchor string and appends a line after it, bypassing unified diff parsing entirely.",
-    "gating_condition": null
-  }
-]
+[]

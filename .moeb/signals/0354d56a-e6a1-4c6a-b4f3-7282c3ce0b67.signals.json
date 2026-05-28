@@ -1,16 +1,5 @@
 [
   {
-    "signal_id": "3a4b5c6d-7e8f-4a0b-9c1d-2e3f4a5b6c7d",
-    "run_id": "0354d56a-e6a1-4c6a-b4f3-7282c3ce0b67",
-    "timestamp": "2026-05-27T21:45:06Z",
-    "category": "Error",
-    "severity": "Major",
-    "title": "patch_file CRLF failure on signals JSON during fix_signal mark phase",
-    "description": "patch_file returned 'error applying hunk #1' when attempting to add picked_up_at and fix_branch to .moeb/signals/fc155279-e782-4028-89a8-bf3c94fdb50f.signals.json. A write_file fallback was required. This is the same CRLF/context-line mismatch root cause as the signal being processed (a1b2c3d4-0001-4000-8000-000000000001), confirming the issue remains present and affects all harness JSON files on Windows.",
-    "proposed_resolution": "The root cause is tracked in signal a1b2c3d4-0001-4000-8000-000000000001 (fix patch_file hunk relocation for CRLF files). Resolve that signal to eliminate this recurring fallback pattern.",
-    "gating_condition": null
-  },
-  {
     "signal_id": "4b5c6d7e-8f9a-4b1c-0d2e-3f4a5b6c7d8e",
     "run_id": "0354d56a-e6a1-4c6a-b4f3-7282c3ce0b67",
     "timestamp": "2026-05-27T21:45:06Z",

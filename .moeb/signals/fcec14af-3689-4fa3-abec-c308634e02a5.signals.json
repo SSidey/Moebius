@@ -20,16 +20,5 @@
     "description": "The Read tool (Claude Code external) was used to retrieve the oversized fix_signal tool output from a harness-saved file at C:\\Users\\Simeon\\.claude\\projects\\...\\tool-results\\. No moeb tool exists for reading kernel-generated overflow result files.",
     "proposed_resolution": "Introduce a paginated or chunked fix_signal result return, or add a moeb tool to retrieve kernel overflow artifacts by path, eliminating the need for external Read calls.",
     "gating_condition": null
-  },
-  {
-    "signal_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
-    "run_id": "fcec14af-3689-4fa3-abec-c308634e02a5",
-    "timestamp": "2026-05-27T19:30:00Z",
-    "category": "SkillImprovement",
-    "severity": "Minor",
-    "title": "patch_file fails on signals JSON with CRLF line endings",
-    "description": "patch_file returned 'error applying hunk #1' on .moeb/signals/run-review-process-patch-and-regression-signals.signals.json. write_file fallback was required. This is a recurring CRLF/context-line mismatch issue on Windows affecting all patch_file calls against harness JSON files.",
-    "proposed_resolution": "Fix patch_file CRLF normalisation on Windows (see existing Critical signal in fc155279 run) so that patching JSON harness files succeeds without needing write_file fallback.",
-    "gating_condition": null
   }
 ]

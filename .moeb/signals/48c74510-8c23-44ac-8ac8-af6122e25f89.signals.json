@@ -1,3 +1,1 @@
-{
-  "summary": "The spec was authored and registered successfully. The spec file satisfies all rubric criteria except tool-errors, which failed due to 3 patch_file invocations that could not apply context-line hunks to the README's long table rows. The README registration was completed via a native Edit tool fallback. The spec itself is complete, schema-compliant, drift-free, and well-formed. The persistent patch_file failure on long lines is a recurring reliability gap that warrants a targeted improvement spec."
-}
+[]
