@@ -41,16 +41,29 @@ pub fn extract_review_flag(content: &str) -> bool {
 ///   1. {moeb_dir}/skills/{name}.skill.md  (project-local override)
 ///   2. Binary-bundled asset skills/{name}.skill.md
 ///   3. Empty string with a stderr warning
-pub fn load_skill(moeb_dir: &Path, name: &str) -> String {
+///
+/// Returns `Err` if `name` is a protected baseline skill and a project-level override
+/// file exists at `{moeb_dir}/skills/{name}.skill.md`.
+pub fn load_skill(moeb_dir: &Path, name: &str) -> anyhow::Result<String> {
+    use crate::internal::constants::PROTECTED_SKILLS;
+
     let local_path = moeb_dir.join("skills").join(format!("{}.skill.md", name));
+    if PROTECTED_SKILLS.contains(&name) && local_path.exists() {
+        return Err(anyhow::anyhow!(
+            ".moeb/skills/{name}.skill.md overrides a protected baseline skill.\n\
+             Protected skills (spec, run, fix_signal) cannot be customised at the project level.\n\
+             To propose a change, run `moeb spec` and target the source at\n\
+             src/moeb/internal/skills/{name}.skill.md."
+        ));
+    }
     if let Ok(content) = std::fs::read_to_string(&local_path) {
-        return strip_skill_frontmatter(&content);
+        return Ok(strip_skill_frontmatter(&content));
     }
 
     let asset_key = format!("skills/{}.skill.md", name);
     if let Some(asset) = crate::assets::Internal::get(&asset_key) {
         if let Ok(content) = std::str::from_utf8(asset.data.as_ref()) {
-            return strip_skill_frontmatter(content);
+            return Ok(strip_skill_frontmatter(content));
         }
     }
 
@@ -59,7 +72,7 @@ pub fn load_skill(moeb_dir: &Path, name: &str) -> String {
          workflow section will be empty.",
         name
     );
-    String::new()
+    Ok(String::new())
 }
 
 /// Returns the `review:` flag for the named skill (true = review enabled, false = opt-out).
@@ -200,5 +213,20 @@ mod tests {
     fn strip_skill_frontmatter_noop_without_frontmatter() {
         let content = "# Skill body\nMore content";
         assert_eq!(strip_skill_frontmatter(content), content);
+    }
+
+    #[test]
+    fn load_skill_rejects_protected_skill_override() {
+        let dir = tempfile::tempdir().unwrap();
+        let skills_dir = dir.path().join("skills");
+        std::fs::create_dir_all(&skills_dir).unwrap();
+        for name in crate::internal::constants::PROTECTED_SKILLS {
+            let skill_file = skills_dir.join(format!("{}.skill.md", name));
+            std::fs::write(&skill_file, "# override").unwrap();
+            let result = load_skill(dir.path(), name);
+            assert!(result.is_err(), "expected Err for protected skill '{}'", name);
+            let msg = result.unwrap_err().to_string();
+            assert!(msg.contains("protected baseline skill"), "error message missing expected text for '{}'", name);
+        }
     }
 }

@@ -1,0 +1,10 @@
+{
+  "run_id": "6025fff1-96b2-456b-880d-c89bb2bfd3f7",
+  "timestamp": "2026-05-28T16:04:50Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.protected-baseline-skills.md",
+  "signals_path": ".moeb/signals/6025fff1-96b2-456b-880d-c89bb2bfd3f7.signals.json",
+  "metrics_path": ".moeb/metrics/6025fff1-96b2-456b-880d-c89bb2bfd3f7.metrics.json",
+  "rubric_score": null,
+  "end_review_error_count": 0
+}

@@ -87,7 +87,7 @@ impl RunService {
         let moeb_dir = Path::new(MOEB_DIR);
         let skill_name = crate::skills::extract_skill_name(&spec_content)
             .unwrap_or_else(|| "run".to_string());
-        let skill_content = crate::skills::load_skill(moeb_dir, &skill_name);
+        let skill_content = crate::skills::load_skill(moeb_dir, &skill_name)?;
         let skill_review_enabled = crate::skills::load_skill_review_flag(moeb_dir, &skill_name);
         let role_name = crate::skills::extract_role_name(&spec_content)
             .unwrap_or_else(|| "run".to_string());

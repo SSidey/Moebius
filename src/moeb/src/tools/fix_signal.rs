@@ -43,7 +43,7 @@ impl ToolHandler for FixSignalTool {
             .unwrap_or_else(|_| "(not found)".to_string());
 
         let role_content = crate::skills::load_role(&moeb_dir, "run");
-        let skill_content = crate::skills::load_skill(&moeb_dir, "fix_signal");
+        let skill_content = crate::skills::load_skill(&moeb_dir, "fix_signal")?;
 
         let command_rubrics = build_fix_signal_rubrics(&moeb_dir);
 

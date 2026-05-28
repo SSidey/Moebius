@@ -1,0 +1,46 @@
+[
+  {
+    "signal_id": "9e8d7c6b-5a4f-3e2d-1c0b-9a8f7e6d5c4b",
+    "run_id": "6025fff1-96b2-456b-880d-c89bb2bfd3f7",
+    "timestamp": "2026-05-28T16:15:00Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: ToolSearch (deferred schema loading)",
+    "description": "ToolSearch called 3 times to load deferred MCP tool schemas before implementation could begin. No moeb equivalent exists for loading deferred tool schemas in the Claude Code environment. Causes moeb-tool-origin to fail on every run.",
+    "proposed_resolution": "Pre-include required tool schemas in start_run output, or introduce a schema-preload mechanism that eliminates ToolSearch calls during moeb runs.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "b8e4f2a1-c7d3-4e9f-a0b6-2d5c8f1e3a7b",
+    "run_id": "6025fff1-96b2-456b-880d-c89bb2bfd3f7",
+    "timestamp": "2026-05-28T16:15:00Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: Bash",
+    "description": "Used Bash to run cargo build --release and cargo test for binary-builds and all-tests-pass rubric verification. No moeb shell-execution tool exists.",
+    "proposed_resolution": "Introduce a run_command moeb tool for shell execution within the tool boundary.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "f7e8d9c0-b1a2-4e3f-8d5c-6a7b9c0d1e2f",
+    "run_id": "6025fff1-96b2-456b-880d-c89bb2bfd3f7",
+    "timestamp": "2026-05-28T16:15:00Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: Read (large tool output)",
+    "description": "start_run returned output exceeding inline limit; external Read used 5 times to read saved file. No moeb paginated-read tool exists.",
+    "proposed_resolution": "Introduce a read_tool_result moeb tool for paginated access to saved large tool outputs.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "4f5e6d7c-8b9a-0e1f-2d3c-4b5a6e7f8d9c",
+    "run_id": "6025fff1-96b2-456b-880d-c89bb2bfd3f7",
+    "timestamp": "2026-05-28T16:15:00Z",
+    "category": "SkillImprovement",
+    "severity": "Minor",
+    "title": "Protected-skill guard condition deviates from spec code snippet",
+    "description": "Spec Step 2 shows unconditional guard; implementation uses conditional check (also verifies local_path.exists()) to prevent kernel self-blocking. Spec raw requirement supports conditional approach but discrepancy creates ambiguity for future implementors.",
+    "proposed_resolution": "Clarify Step 2 to show the conditional guard pattern, or introduce a separate kernel-internal loader that bypasses the project-override guard.",
+    "gating_condition": null
+  }
+]

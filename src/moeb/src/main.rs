@@ -11,6 +11,7 @@ pub mod commands;
 pub mod compaction;
 pub mod config;
 pub mod domain;
+pub mod internal;
 pub mod mcp;
 pub mod ports;
 pub mod run_state;

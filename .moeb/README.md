@@ -73,6 +73,9 @@ not subject to the immutability policy. The default skills (`run.skill.md`,
 `spec.skill.md`) are bundled in the binary; placing a file of the same name in
 `.moeb/skills/` overrides the default for that project. A specification may declare
 `skill: <name>` in its frontmatter to select a non-default skill.
+The skills `spec`, `run`, and `fix_signal` are protected baseline skills and cannot be
+overridden via `.moeb/skills/`. To propose a change to a protected skill, run `moeb spec`
+and target `src/moeb/internal/skills/`.
 
 **Roles.** A catalogue of agent persona files is maintained under `.moeb/roles/`.
 Each role file is a markdown document that defines the agent's identity, expertise,

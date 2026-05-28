@@ -101,7 +101,7 @@ impl SpecService {
                 "(rubrics catalogue not found — rubrics/catalogue.rubrics.md is absent)".to_string()
             });
 
-        let skill_content = crate::skills::load_skill(working_dir, "spec");
+        let skill_content = crate::skills::load_skill(working_dir, "spec")?;
         let skill_review_enabled = crate::skills::load_skill_review_flag(working_dir, "spec");
         let role_content = crate::skills::load_role(working_dir, "spec");
 

@@ -1,0 +1,24 @@
+[
+  {
+    "signal_id": "f7e8d9c0-b1a2-4e3f-8d5c-6a7b9c0d1e2f",
+    "run_id": "213dfc8c-8b8b-4a15-9d42-3dbd094beeab",
+    "timestamp": "2026-05-28T15:46:30Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: Read (large tool output)",
+    "description": "The start_spec tool returned a result exceeding the inline response limit (144,268 characters), which was saved to disk. An external Read tool was required to access this content in chunks. No moeb tool exists for reading harness-saved large tool result files.",
+    "proposed_resolution": "Run moeb spec to introduce a moeb tool (e.g. read_tool_result) that accepts a saved tool result path and returns it in paginated chunks, eliminating the need for external Read calls on oversized tool outputs.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "c3d4e5f6-a7b8-4c9d-8e0f-1a2b3c4d5e6f",
+    "run_id": "213dfc8c-8b8b-4a15-9d42-3dbd094beeab",
+    "timestamp": "2026-05-28T15:46:30Z",
+    "category": "SkillImprovement",
+    "severity": "Minor",
+    "title": "start_spec output size causes external tool dependency",
+    "description": "The start_spec rendered prompt is large enough (1,592 lines, 144K characters) to consistently exceed inline response limits. This forces every spec session to use an external Read tool to access the rendered context, violating the moeb-tool-origin criterion on every spec run.",
+    "proposed_resolution": "Consider pre-loading only the sections of README.md actually needed by the spec agent (e.g. schema reference and specification index), rather than the full file, to reduce the rendered prompt size below the inline limit.",
+    "gating_condition": null
+  }
+]

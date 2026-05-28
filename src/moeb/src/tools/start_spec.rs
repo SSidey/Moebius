@@ -68,7 +68,7 @@ impl ToolHandler for StartSpecTool {
                         .to_string()
                 });
 
-        let skill_content = crate::skills::load_skill(&moeb_dir, "spec");
+        let skill_content = crate::skills::load_skill(&moeb_dir, "spec")?;
         let role_content = crate::skills::load_role(&moeb_dir, "spec");
         let reviewer_role = crate::skills::load_role(&moeb_dir, "reviewer");
         let moderator_role = crate::skills::load_role(&moeb_dir, "moderator");
