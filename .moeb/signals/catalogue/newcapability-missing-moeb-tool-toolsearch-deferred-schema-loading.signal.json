@@ -7,11 +7,12 @@
   "proposed_resolution": "Pre-include required tool schemas in start_run output, or introduce a schema-preload mechanism that eliminates ToolSearch calls during moeb runs.",
   "gating_condition": null,
   "status": "open",
-  "occurrence_count": 2,
+  "occurrence_count": 3,
   "first_seen": "2026-05-28T16:15:00Z",
-  "last_seen": "2026-05-28T18:26:21Z",
+  "last_seen": "2026-05-29T23:46:00Z",
   "occurrences": [
     { "timestamp": "2026-05-28T16:15:00Z", "run_id": "6025fff1-96b2-456b-880d-c89bb2bfd3f7" },
-    { "timestamp": "2026-05-28T18:26:21Z", "run_id": "a735facc-5979-429f-8024-6e9f0fc0786a" }
+    { "timestamp": "2026-05-28T18:26:21Z", "run_id": "a735facc-5979-429f-8024-6e9f0fc0786a" },
+    { "timestamp": "2026-05-29T23:46:00Z", "run_id": "9d5a69df-ac3a-4af4-a140-9aae58bd25d1" }
   ]
 }

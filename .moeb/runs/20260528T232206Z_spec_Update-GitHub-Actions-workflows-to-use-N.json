@@ -1,0 +1,8 @@
+{
+  "run_id": "f0bf5e4b-f8f0-4a64-b43a-dc59b91e9b89",
+  "timestamp": "2026-05-29T00:00:00Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.github-actions-nodejs24-upgrade.md",
+  "signals_path": ".moeb/signals/f0bf5e4b-f8f0-4a64-b43a-dc59b91e9b89.signals.json",
+  "metrics_path": ".moeb/metrics/f0bf5e4b-f8f0-4a64-b43a-dc59b91e9b89.metrics.json"
+}

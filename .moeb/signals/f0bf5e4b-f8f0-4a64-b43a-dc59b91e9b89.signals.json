@@ -1,0 +1,37 @@
+{
+  "run_id": "f0bf5e4b-f8f0-4a64-b43a-dc59b91e9b89",
+  "signals": [
+    {
+      "signal_id": "f0bf5e4b-0001-4001-8001-000000000001",
+      "category": "NewCapability",
+      "severity": "Major",
+      "title": "Missing moeb tool: Read (start_spec result file)",
+      "description": "Used Read (Claude Code built-in) to read the large start_spec result file written to an absolute host path. The moeb read_file tool cannot access this path.",
+      "proposed_resolution": "Extend start_spec to return large content via a moeb-accessible relative path, or add a moeb tool for reading kernel-generated output files by run_id."
+    },
+    {
+      "signal_id": "f0bf5e4b-0002-4001-8001-000000000002",
+      "category": "NewCapability",
+      "severity": "Minor",
+      "title": "Missing moeb tool: Glob (file discovery)",
+      "description": "Used Glob (Claude Code built-in) to discover .github/workflows/*.yml files. moeb list_directory and search_files were available.",
+      "proposed_resolution": "Use mcp__moeb__list_directory and mcp__moeb__search_files for file pattern discovery in spec sessions."
+    },
+    {
+      "signal_id": "f0bf5e4b-0003-4001-8001-000000000003",
+      "category": "NewCapability",
+      "severity": "Minor",
+      "title": "Missing moeb tool: Read (pre-authoring file inspection)",
+      "description": "Used Read (Claude Code built-in) to inspect .github/workflows/release.yml before authoring. moeb read_file was available.",
+      "proposed_resolution": "Use mcp__moeb__read_file for all file reads within the spec invocation."
+    },
+    {
+      "signal_id": "f0bf5e4b-0004-4001-8001-000000000004",
+      "category": "Error",
+      "severity": "Major",
+      "title": "patch_file fails on long README table rows",
+      "description": "Four consecutive patch_file calls failed on .moeb/README.md with 'All context lines appear in the file'. Very long table row lines (500+ characters) appear to cause hunk relocation or diffy apply to malfunction. A write_file fallback was required.",
+      "proposed_resolution": "Investigate diffy line-length limits or relocate_hunk_positions behaviour with very long context lines. Add regression tests."
+    }
+  ]
+}
