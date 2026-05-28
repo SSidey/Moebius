@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000005-0529-4000-8000-000000000005",
+  "category": "SkillImprovement",
+  "severity": "Minor",
+  "title": "Run retry should preserve failed run context for diagnosis",
+  "description": "When a run fails and is retried, the partial run state — tool errors, signals emitted mid-run, and the point of failure — is not persisted before the retry begins. This means recurring failures (e.g. missing frontmatter, patch errors) cannot be distinguished from first-time failures, and the agent retrying has no access to what was already attempted.",
+  "proposed_resolution": "Before initiating a retry, persist the current run state to the run file with a status of failed and a failure_reason field. On retry, load the prior failed run file and pass its tool_errors and signals to the agent as context so it can avoid repeating the same mistake. The retried run should reference the failed run via a retried_from_run_id field.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

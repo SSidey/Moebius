@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000024-0529-4000-8000-000000000024",
+  "category": "NewCapability",
+  "severity": "Minor",
+  "title": "Rename the moeb run command to remove ambiguity with run artefacts",
+  "description": "moeb run is ambiguous: it refers both to the CLI command that executes a spec and to the run artefacts produced by that execution (run files, run IDs, run state, run metrics). This causes confusion in documentation, signals, error messages, and conversations — for example it is unclear whether 'run failed' refers to the command or the artefact being in a failed state.",
+  "proposed_resolution": "Rename the moeb run CLI command to a less ambiguous name. Candidate: moeb execute or moeb apply. Update all CLI help text, documentation, skill files, README references, and signal proposed_resolutions that mention the run command. Maintain a deprecated moeb run alias for one major version with a deprecation warning printed to stderr. Ensure the renaming is reflected in all agent-facing prompts so agents do not invoke the old name.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

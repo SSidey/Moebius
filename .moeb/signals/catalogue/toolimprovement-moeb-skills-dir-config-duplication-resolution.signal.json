@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000030-0529-4000-8000-000000000030",
+  "category": "ToolImprovement",
+  "severity": "Minor",
+  "title": "Resolve ambiguity between .moeb/skills/ directory and config.toml skill configuration",
+  "description": "The .moeb/skills/ directory exists but contains only a README. It is unclear whether skill overrides should live here or be declared in config.toml, and moeb init does not copy skill templates into .moeb/skills/. The moeb.ai-first-artifact-refinement spec placed skill.template.md in src/moeb/internal/skills/ (dev context) rather than .moeb/skills/, deferring this decision. The Skills folder and config.toml may currently be doubling up on the same responsibility.",
+  "proposed_resolution": "Define and enforce the convention: .moeb/skills/ is for project-level skill overrides — a same-named file here overrides the bundled default in assets/skills/. config.toml references skills by name only and does not duplicate file content. Update moeb init to offer copying bundled skill templates into .moeb/skills/ when a project override is desired. Implement moeb skill list to enumerate bundled and override skills with their source (bundled | project-override). Remove any config.toml fields that duplicate skill file content.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

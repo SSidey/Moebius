@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000018-0529-4000-8000-000000000018",
+  "category": "SkillImprovement",
+  "severity": "Minor",
+  "title": "QA review agent should assess token usage and flag inefficiencies",
+  "description": "The QA review at run end assesses spec compliance but does not consider whether the run was cost-efficient. Redundant reads, re-reads of the same file, oversized prompts (start_spec is 144K characters), and unnecessary tool calls inflate cost without adding value. The run phase cost breakdown (see companion signal) will provide the data; the QA agent needs to act on it.",
+  "proposed_resolution": "Extend the QA review prompt to include a cost_efficiency section that runs after compliance checking. Using the phase cost breakdown from the run file, the reviewer must flag: (1) any file read more than once in the same phase without intervening writes, (2) any single prompt component larger than a configurable threshold (default 50K characters), (3) any tool call whose output was not referenced in a subsequent action. Findings are included in the review output with ✓/✗ format and may generate SkillImprovement signals. Depends on run-phase-cost-breakdown.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

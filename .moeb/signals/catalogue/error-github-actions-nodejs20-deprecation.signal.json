@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000001-0529-4000-8000-000000000001",
+  "category": "Error",
+  "severity": "Critical",
+  "title": "GitHub Actions runners will force Node.js 24 from 2026-06-02",
+  "description": "actions/cache@v4, actions/checkout@v4, and softprops/action-gh-release@v2 all run on Node.js 20, which is deprecated on GitHub Actions runners from 2026-06-02. The build and release pipeline will fail on that date unless updated. Node.js 20 is removed entirely from runners on 2026-09-16.",
+  "proposed_resolution": "Update all GitHub Actions workflow steps to Node.js 24-compatible action versions. Either pin updated action versions (e.g. actions/checkout@v4 with FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true on the runner, or upgrade to versions that natively support Node.js 24) or set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable as an interim measure. Verify all three affected actions: actions/cache, actions/checkout, softprops/action-gh-release.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

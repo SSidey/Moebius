@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000015-0529-4000-8000-000000000015",
+  "category": "NewCapability",
+  "severity": "Major",
+  "title": "Introduce package version rubric — outdated dependencies must be tracked as signals",
+  "description": "Cargo.toml declares several major-version-pinned dependencies (diffy = \"0.3\", tower = \"0.4\" in dev-dependencies, tower-http = \"0.5\") with no justification for staying behind the current published version. There is no mechanism to detect when dependencies fall behind latest or carry known security vulnerabilities. This is a silent quality and security risk.",
+  "proposed_resolution": "Add a package version rubric to the global runs rubric. At run time, check each declared Cargo.toml dependency against the latest version on crates.io. For each package that is not at the latest semver-major or semver-minor release: emit a Minor signal with the package name, current version, and latest version, unless a justification comment (# pinned: reason) is present in Cargo.toml immediately above the dependency. If a known CVE exists for the package version in use, emit a Critical signal regardless of justification. Each outdated package is its own signal — do not aggregate. Update Cargo.toml to add justification comments for any intentionally pinned versions as part of this spec.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

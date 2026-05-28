@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000026-0529-4000-8000-000000000026",
+  "category": "NewCapability",
+  "severity": "Minor",
+  "title": "Add moeb link command to attach a spec to a file post-creation",
+  "description": "When a spec is created but its target file is not linked in the spec frontmatter — whether because the file did not exist at spec authoring time or was omitted — there is no command to add the link without editing the spec file manually or re-running the spec skill from scratch.",
+  "proposed_resolution": "Implement moeb link <spec-path> <file-path> that writes the file path into the spec frontmatter links section and updates the corresponding README index entry if the spec appears there. The command should validate that the spec file exists and that the target file path is valid relative to the working directory. Print a confirmation of the updated frontmatter on success.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

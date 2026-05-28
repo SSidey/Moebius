@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000007-0529-4000-8000-000000000007",
+  "category": "SkillImprovement",
+  "severity": "Major",
+  "title": "Spec frontmatter should include signal_id and initiating run_id",
+  "description": "Specs are authored in response to signals from specific runs but carry no frontmatter link back to the signal_id or run_id that triggered them. Without this, tracing a spec back to its originating signal requires searching run files and signal catalogues manually, which breaks in the autonomous pipeline where correlation must be machine-readable.",
+  "proposed_resolution": "Update the spec skill to write signal_id and initiating_run_id into spec frontmatter when invoked via signal_fix. Update the spec schema (spec-schema.yaml and spec-schema-validation.json) to declare these as optional fields. The spec README index should display the signal_id where present.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

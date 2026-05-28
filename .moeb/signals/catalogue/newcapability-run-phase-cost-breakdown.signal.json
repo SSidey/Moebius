@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000017-0529-4000-8000-000000000017",
+  "category": "NewCapability",
+  "severity": "Major",
+  "title": "Run output must include a per-phase token and cost breakdown",
+  "description": "There is no visibility into how tokens are distributed across the phases of a run (spec authoring, run execution, review, rubric verification). Without this data it is impossible to identify which phase dominates cost, optimise prompt sizes, or give a QA agent the information it needs to assess efficiency. The start_spec prompt alone is known to be 144K characters — but the total session cost is unknown.",
+  "proposed_resolution": "Instrument each major phase of a run (start_spec, start_run, complete_review, verify_rubrics, query_agent calls) to record input_tokens, output_tokens, and estimated_cost_usd at phase exit, using token counts from the adapter response. Write the per-phase breakdown into the run file metrics section as a phases array. Print a summary table to stdout on run completion showing phase name, tokens in, tokens out, and estimated cost. The summary must also show the cumulative total.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

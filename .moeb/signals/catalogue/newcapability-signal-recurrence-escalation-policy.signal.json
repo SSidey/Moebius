@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000009-0529-4000-8000-000000000009",
+  "category": "NewCapability",
+  "severity": "Major",
+  "title": "Signals with repeated failed fixes must escalate to redesign recommendation",
+  "description": "No mechanism exists to detect when a signal has been addressed multiple times without resolution. The patch_file case is the proof: four separate Critical signals, multiple specs, repeated engineering time, all converging on the same root cause with no system-level recognition of the recurrence pattern. Without escalation, the pipeline will continue generating fix attempts indefinitely for the same broken component.",
+  "proposed_resolution": "Implement a recurrence escalation policy in signal_fix: when selecting a signal whose fix_history (see companion signal) contains two or more entries with outcome merged or abandoned and the signal is still open or has reopened, automatically escalate severity to Critical and replace the proposed_resolution with a redesign recommendation. Emit a companion signal of category Error flagging the recurrence, listing the prior fix branches, and recommending an architectural alternative. This policy is evaluated at signal_fix pickup time, before spec authoring begins.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

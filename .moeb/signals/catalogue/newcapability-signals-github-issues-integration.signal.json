@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000016-0529-4000-8000-000000000016",
+  "category": "NewCapability",
+  "severity": "Minor",
+  "title": "Moeb signals should be pushable to GitHub Issues",
+  "description": "Signals are currently local-only. For collaborative projects and for operating the autonomous loop against a remote repository, signals should be publishable as GitHub Issues: moeb-origin signals to the moeb repository, project-origin signals to the project repository. Without this, the signal catalogue cannot participate in a remote workflow or be visible to collaborators. Depends on separate-moeb-and-project-signals.",
+  "proposed_resolution": "Implement moeb signal push [--source moeb|project] that reads open signals from the catalogue filtered by signal_source and creates GitHub Issues via the GitHub API (using the configured token from .moeb/.secrets). Each issue must include: signal_id in the body, severity as a label, category as a label, and proposed_resolution as the issue description. Tag all created issues with a moeb-signal label. Record the created issue URL as github_issue_url in the signal catalogue entry to prevent duplicate creation on subsequent pushes.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

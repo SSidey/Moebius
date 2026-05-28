@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000025-0529-4000-8000-000000000025",
+  "category": "NewCapability",
+  "severity": "Major",
+  "title": "Specifications must transition through defined lifecycle states",
+  "description": "Specs are created in an implicit draft state and never formally updated to reflect that they have been implemented and accepted. There is no way to distinguish a spec that has been run and merged from one that is pending, abandoned, or superseded by a newer spec for the same area. The README index shows all specs with no status differentiation.",
+  "proposed_resolution": "Add a status field to spec frontmatter with defined values: draft | active | superseded. The run skill must transition the spec to active when its run is accepted (QA pass and PR merged). When a new spec targets the same area or file as an older spec, mark the older as superseded with a superseded_by field referencing the new spec slug. Update the README specification index to include a status column. The spec schema and schema validation file must be updated to declare the status field.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

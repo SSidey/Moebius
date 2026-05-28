@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000019-0529-4000-8000-000000000019",
+  "category": "SkillImprovement",
+  "severity": "Minor",
+  "title": "Reviewer should surface improvements beyond spec compliance",
+  "description": "The reviewer currently checks only whether the spec was followed. It does not ask whether the implementation could have been better, whether a simpler approach existed, or whether there are adjacent concerns the spec missed. This limits the value of the review to a pass/fail gate rather than a quality improvement mechanism.",
+  "proposed_resolution": "Add an explorative analysis section to the reviewer prompt that runs after compliance checking. The reviewer must address: (1) what could have been implemented more simply or efficiently, (2) what was not asked for but should have been considered given the scope of change, (3) whether the implementation introduces new technical debt or violates conventions not covered by rubrics. Findings from this section should be surfaced as signals of category SkillImprovement or NewCapability and included in the review output as a separate Observations block.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

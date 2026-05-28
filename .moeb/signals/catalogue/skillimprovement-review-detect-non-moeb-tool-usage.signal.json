@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000021-0529-4000-8000-000000000021",
+  "category": "SkillImprovement",
+  "severity": "Minor",
+  "title": "Reviews must automatically detect and signal non-moeb tool operations",
+  "description": "Non-moeb tool usage (Read, Bash, Glob, ToolSearch) is tracked as a moeb-tool-origin rubric violation but currently requires the reviewer to identify instances manually by reading the trace. The catalogue already contains seven NewCapability signals for missing moeb tools arising from a single planning session. Automated detection would catch these consistently and reduce reviewer workload.",
+  "proposed_resolution": "In the review phase, scan the run trace for tool calls that are not moeb MCP tools. For each detected external tool use: emit a NewCapability signal describing the operation performed and proposing the moeb tool that should be built to replace it (if one does not already exist in the catalogue). Maintain an exemption list for tool calls that are explicitly permitted (e.g. git operations via Bash until a moeb equivalent exists). The reviewer must note the total count of non-moeb tool calls in the review output.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

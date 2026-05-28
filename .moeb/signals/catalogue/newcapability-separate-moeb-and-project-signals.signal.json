@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000012-0529-4000-8000-000000000012",
+  "category": "NewCapability",
+  "severity": "Major",
+  "title": "Signals must be separable into moeb-origin and project-origin categories",
+  "description": "All signals are currently stored in a single catalogue without distinguishing whether they relate to the moeb harness itself or to the project under development. When signals are pushed to remote sources (GitHub Issues, telemetry endpoints), moeb-origin signals must route to the moeb repository and project-origin signals to the project repository. Without this separation the routing is impossible and telemetry would be polluted.",
+  "proposed_resolution": "Add a signal_source field to the signal schema with values: moeb | project. Populate based on rubric_source: signals arising from moeb rubrics or moeb tool-origin violations are moeb-origin; signals arising from project rubrics are project-origin. Update signal_fix, the fix_signal tool, and all signal reporting to support filtering by signal_source. Document the convention in the signal schema and README.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

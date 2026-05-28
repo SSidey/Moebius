@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000022-0529-4000-8000-000000000022",
+  "category": "NewCapability",
+  "severity": "Minor",
+  "title": "Add moeb skill validate command to check skills against the skill schema",
+  "description": "There is no tool to validate skill files against the skill schema. Skills may be incomplete, missing required sections, or inconsistent with the schema without any detection. The .moeb/skills/ directory currently contains only a README with no project-level skill files present, and the bundled skills in assets/skills/ have not been validated since the skill schema was introduced.",
+  "proposed_resolution": "Implement moeb skill validate that reads all skill files in assets/skills/ and .moeb/skills/, parses each against the skill schema, and reports missing or invalid fields using the ✓/✗ bullet format. Integrate as an optional step in the run review phase under a skill_schema_compliance rubric. A companion moeb skill list command should enumerate all available skills (bundled and project-override) with their validation status.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}

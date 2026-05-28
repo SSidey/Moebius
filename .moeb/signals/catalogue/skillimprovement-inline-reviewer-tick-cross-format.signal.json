@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000020-0529-4000-8000-000000000020",
+  "category": "SkillImprovement",
+  "severity": "Minor",
+  "title": "Inline reviewer output should use tick/cross bullet list format",
+  "description": "Review output is currently free-form prose, making it hard to scan for pass/fail status at a glance. When reviewing a run with 10+ rubric criteria, identifying which criteria failed requires reading the entire review body.",
+  "proposed_resolution": "Update the inline reviewer prompt to output each rubric criterion as a structured bullet: ✓ criterion description (for passes) or ✗ criterion description — reason (for failures). The summary line must be PASS or FAIL followed by a fraction (e.g. 11/14 criteria passed). The explorative analysis section (if present) follows the criterion list as a separate Observations block. This format applies to both complete_review and inline persona review outputs.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
+  ]
+}
