@@ -4,6 +4,10 @@ use serde_json::json;
 use crate::adapters::ToolDef;
 use crate::tools::ToolHandler;
 
+#[path = "patch_file_impl.rs"]
+mod patch_file_impl;
+use patch_file_impl::{normalize_hunk_counts, relocate_hunk_positions};
+
 /// Search `orig_lines` for the first consecutive run of `context` lines closest to
 /// `near` (1-indexed).  Returns the 1-indexed start line of that run, or `None` if
 /// `context` does not appear consecutively anywhere in `orig_lines`.
@@ -15,7 +19,7 @@ fn find_closest_context(orig_lines: &[&str], context: &[&str], near: usize) -> O
     let max_start = orig_lines.len() - context.len();
     'outer: for i in 0..=max_start {
         for (j, &c) in context.iter().enumerate() {
-            if orig_lines[i + j] != c {
+            if orig_lines[i + j].trim_end() != c.trim_end() {
                 continue 'outer;
             }
         }
@@ -28,208 +32,47 @@ fn find_closest_context(orig_lines: &[&str], context: &[&str], near: usize) -> O
     best.map(|(_, line)| line)
 }
 
-/// For each hunk in `diff`, extract the context lines and search `original` for the
-/// closest consecutive occurrence.  If found at a line other than the declared
-/// `orig_start`, rewrite both `orig_start` and `new_start` in the hunk header by the
-/// same delta, preserving the counts that `normalize_hunk_counts` already set.
-/// Hunks whose context cannot be located are passed through unchanged.
-fn relocate_hunk_positions(diff: &str, original: &str) -> String {
-    let diff_lines: Vec<&str> = diff.lines().collect();
-    let orig_lines: Vec<&str> = original.lines().collect();
-    let mut out: Vec<String> = Vec::with_capacity(diff_lines.len());
-    let mut i = 0;
-
-    while i < diff_lines.len() {
-        let line = diff_lines[i];
-
-        if !line.starts_with("@@") {
-            out.push(line.to_string());
-            i += 1;
-            continue;
-        }
-
-        // Parse the hunk header produced by normalize_hunk_counts:
-        // @@ -orig_start,orig_count +new_start,new_count @@ [suffix]
-        let inner = line.trim_start_matches('@').trim_start().trim_end_matches('@').trim();
-        let (ranges, suffix) = if let Some(idx) = inner.find("@@") {
-            (inner[..idx].trim(), inner[idx + 2..].trim())
-        } else {
-            (inner, "")
-        };
-
-        let mut parts = ranges.split_whitespace();
-        let orig_range = parts.next().unwrap_or("");
-        let new_range  = parts.next().unwrap_or("");
-
-        let parse_start = |r: &str, prefix: char| -> Option<usize> {
-            r.trim_start_matches(prefix).split(',').next()?.parse().ok()
-        };
-        let parse_count = |r: &str, prefix: char| -> Option<usize> {
-            r.trim_start_matches(prefix).split(',').nth(1)?.parse().ok()
-        };
-
-        let orig_start = parse_start(orig_range, '-');
-        let new_start  = parse_start(new_range,  '+');
-        let orig_count = parse_count(orig_range, '-');
-        let new_count  = parse_count(new_range,  '+');
-
-        // Collect the hunk body.
-        i += 1;
-        let body_start = i;
-        while i < diff_lines.len() && !diff_lines[i].starts_with("@@") {
-            i += 1;
-        }
-        let body = &diff_lines[body_start..i];
-
-        // Attempt relocation only when the header is fully parseable.
-        if let (Some(os), Some(ns), Some(oc), Some(nc)) =
-            (orig_start, new_start, orig_count, new_count)
-        {
-            let context: Vec<&str> = body
-                .iter()
-                .filter(|l| !l.starts_with('-') && !l.starts_with('+') && !l.starts_with('\\'))
-                .map(|l| if l.starts_with(' ') { &l[1..] } else { *l })
-                .collect();
-
-            if !context.is_empty() {
-                if let Some(found) = find_closest_context(&orig_lines, &context, os) {
-                    if found != os {
-                        let delta: i64 = (found as i64) - (os as i64);
-                        let new_ns = (ns as i64) + delta;
-                        if new_ns >= 1 {
-                            let new_header = if suffix.is_empty() {
-                                format!("@@ -{},{} +{},{} @@", found, oc, new_ns, nc)
-                            } else {
-                                format!("@@ -{},{} +{},{} @@ {}", found, oc, new_ns, nc, suffix)
-                            };
-                            out.push(new_header);
-                            for bl in body {
-                                out.push(bl.to_string());
-                            }
-                            continue;
-                        }
-                    }
-                }
-            }
-        }
-
-        // No relocation: emit hunk unchanged.
-        out.push(line.to_string());
-        for bl in body {
-            out.push(bl.to_string());
-        }
-    }
-
-    let mut result = out.join("\n");
-    if diff.ends_with('\n') {
-        result.push('\n');
-    }
-    result
-}
-
 fn normalize_line_endings(s: &str) -> String {
     s.replace("\r\n", "\n").replace('\r', "\n")
 }
 
-/// Rewrite each `@@ -orig_start[,orig_count] +new_start[,new_count] @@[ text]` header
-/// so that the declared counts match the actual hunk body lines.  Lines prefixed with
-/// `-` count only toward the original count; `+` only toward the new count; a space (or
-/// an otherwise empty line that represents a blank context line) counts toward both.
-/// Lines starting with `\` (the "no newline at end of file" marker) are skipped in the
-/// count.  Headers that cannot be parsed are passed through unchanged so diffy can emit
-/// its own error.
-fn normalize_hunk_counts(diff: &str) -> String {
-    // Use lines() rather than split('\n') to avoid a spurious trailing empty element
-    // when the diff string ends with '\n' — that empty element would otherwise be
-    // miscounted as a context line and corrupt every hunk header.
-    let lines: Vec<&str> = diff.lines().collect();
-    let mut out: Vec<String> = Vec::with_capacity(lines.len());
-    let mut i = 0;
-
-    while i < lines.len() {
-        let line = lines[i];
-
-        if !line.starts_with("@@") {
-            out.push(line.to_string());
-            i += 1;
-            continue;
-        }
-
-        // Parse: @@ -orig_start[,orig_count] +new_start[,new_count] @@ [suffix]
-        // We need only the start line numbers; we will recompute the counts.
-        let inner = line.trim_start_matches('@').trim_start().trim_end_matches('@').trim();
-        let (ranges, suffix) = if let Some(idx) = inner.find("@@") {
-            (inner[..idx].trim(), inner[idx + 2..].trim())
-        } else {
-            (inner, "")
-        };
-
-        let mut parts = ranges.split_whitespace();
-        let orig_range = parts.next().unwrap_or("");
-        let new_range = parts.next().unwrap_or("");
-
-        let orig_start = orig_range
-            .trim_start_matches('-')
-            .split(',')
-            .next()
-            .and_then(|s| s.parse::<usize>().ok());
-        let new_start = new_range
-            .trim_start_matches('+')
-            .split(',')
-            .next()
-            .and_then(|s| s.parse::<usize>().ok());
-
-        let (Some(orig_start), Some(new_start)) = (orig_start, new_start) else {
-            // Cannot parse; pass through and let diffy report the error.
-            out.push(line.to_string());
-            i += 1;
-            continue;
-        };
-
-        // Collect the hunk body (until next @@ or end of input).
-        i += 1;
-        let body_start = i;
-        while i < lines.len() && !lines[i].starts_with("@@") {
-            i += 1;
-        }
-        let body = &lines[body_start..i];
-
-        // Count actual lines.
-        let mut orig_count: usize = 0;
-        let mut new_count: usize = 0;
-        for body_line in body {
-            if body_line.starts_with('-') {
-                orig_count += 1;
-            } else if body_line.starts_with('+') {
-                new_count += 1;
-            } else if body_line.starts_with('\\') {
-                // "No newline at end of file" — does not count.
-            } else {
-                // Context line (space-prefixed or empty blank-context line).
-                orig_count += 1;
-                new_count += 1;
-            }
-        }
-
-        // Rebuild the header.
-        let new_header = if suffix.is_empty() {
-            format!("@@ -{},{} +{},{} @@", orig_start, orig_count, new_start, new_count)
-        } else {
-            format!("@@ -{},{} +{},{} @@ {}", orig_start, orig_count, new_start, new_count, suffix)
-        };
-        out.push(new_header);
-        for body_line in body {
-            out.push(body_line.to_string());
-        }
-    }
-
-    // Restore the trailing newline that lines() stripped, so diffy receives the
-    // same line-terminator convention as the original diff.
-    let mut result = out.join("\n");
-    if diff.ends_with('\n') {
+fn normalize_trailing_whitespace(s: &str) -> String {
+    let mut result = String::with_capacity(s.len());
+    for line in s.lines() {
+        result.push_str(line.trim_end());
         result.push('\n');
     }
+    if !s.ends_with('\n') && result.ends_with('\n') {
+        result.pop();
+    }
     result
+}
+
+/// Returns the context lines from `relocated_diff` that are absent from `original`
+/// (using exact equality after trimming trailing whitespace on both sides — consistent
+/// with the comparator in `find_closest_context`).  Called only on the apply-failure
+/// path to produce an actionable diagnostic.
+fn diagnose_missing_context<'a>(relocated_diff: &'a str, original: &str) -> Vec<&'a str> {
+    let orig_lines: Vec<&str> = original.lines().collect();
+    let mut absent = Vec::new();
+    for line in relocated_diff.lines() {
+        if line.starts_with('@')
+            || line.starts_with('-')
+            || line.starts_with('+')
+            || line.starts_with('\\')
+        {
+            continue;
+        }
+        let ctx = if line.starts_with(' ') { &line[1..] } else { line };
+        let ctx_t = ctx.trim_end();
+        if ctx_t.is_empty() {
+            continue;
+        }
+        if !orig_lines.iter().any(|l| l.trim_end() == ctx_t) {
+            absent.push(ctx);
+        }
+    }
+    absent
 }
 
 pub struct PatchFileTool;
@@ -279,6 +122,7 @@ impl ToolHandler for PatchFileTool {
 
         let diff = normalize_line_endings(diff);
         let original = normalize_line_endings(&original);
+        let original = normalize_trailing_whitespace(&original);
         let normalized = normalize_hunk_counts(&diff);
         let relocated = relocate_hunk_positions(&normalized, &original);
         let patch = diffy::Patch::from_str(&relocated)
@@ -289,12 +133,27 @@ impl ToolHandler for PatchFileTool {
             ))?;
 
         let patched = diffy::apply(&original, &patch)
-            .map_err(|e| anyhow::anyhow!(
-                "patch_file: failed to apply diff to '{}': {}. \
-                 The diff context lines may not match the current file content — \
-                 re-read the file and regenerate the diff.",
-                path, e
-            ))?;
+            .map_err(|e| {
+                let absent = diagnose_missing_context(&relocated, &original);
+                if absent.is_empty() {
+                    anyhow::anyhow!(
+                        "patch_file: failed to apply diff to '{}': {}. \
+                         All context lines appear in the file — check that the \
+                         removed lines (-) exactly match the file content, and that \
+                         no duplicate context block is selecting the wrong hunk. \
+                         Re-read the file and regenerate the diff.",
+                        path, e
+                    )
+                } else {
+                    anyhow::anyhow!(
+                        "patch_file: failed to apply diff to '{}': {}. \
+                         Context lines not found in file: [{}]. \
+                         Re-read the file and use only lines that appear verbatim.",
+                        path, e,
+                        absent.join("; ")
+                    )
+                }
+            })?;
 
         let lines_before = original.lines().count();
         let lines_after = patched.lines().count();

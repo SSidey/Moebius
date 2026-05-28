@@ -148,3 +148,61 @@ fn test_patch_crlf_file_with_lf_diff() {
     assert!(content.contains("baz()"), "patched content must contain baz()");
     assert!(!content.contains("bar()"), "patched content must not contain bar()");
 }
+
+#[test]
+fn patch_file_tolerates_trailing_whitespace_in_file() {
+    // File lines have trailing spaces (common in markdown tables);
+    // diff context lines do not — patch must still apply successfully.
+    let dir = temp_dir();
+    let file = dir.path().join("target.md");
+    std::fs::write(&file, "| col1 | col2 |   \n| old  | val  |   \n").unwrap();
+
+    let tool = PatchFileTool;
+    let diff = "@@ -1,2 +1,2 @@\n | col1 | col2 |\n-| old  | val  |\n+| new  | val  |\n";
+    let args = serde_json::json!({"path": "target.md", "diff": diff});
+    let result = tool.execute(&args, dir.path()).unwrap();
+
+    assert!(result.contains("applied"), "expected success: {}", result);
+    let content = std::fs::read_to_string(&file).unwrap();
+    assert!(content.contains("new"), "patched content must contain new row");
+    assert!(!content.contains("| old"), "old row must be removed");
+}
+
+#[test]
+fn patch_file_diagnostic_names_absent_context_line() {
+    // Context line does not exist in the file; error message must name it.
+    let dir = temp_dir();
+    let file = dir.path().join("target.md");
+    std::fs::write(&file, "| real | row |\n").unwrap();
+
+    let tool = PatchFileTool;
+    let diff = "@@ -1,2 +1,2 @@\n | phantom | row |\n-| old | val |\n+| new | val |\n";
+    let args = serde_json::json!({"path": "target.md", "diff": diff});
+    let err = tool.execute(&args, dir.path()).unwrap_err();
+    let msg = err.to_string();
+    assert!(
+        msg.contains("phantom"),
+        "error must name the absent context line: {}",
+        msg
+    );
+}
+
+#[test]
+fn patch_file_diagnostic_all_present_when_context_found() {
+    // Context line exists but the removal line (-) does not match the file,
+    // so diffy::apply fails. The diagnostic must report all context lines present.
+    let dir = temp_dir();
+    let file = dir.path().join("target.rs");
+    std::fs::write(&file, "fn foo() {}\nfn bar() {}\n").unwrap();
+
+    let tool = PatchFileTool;
+    let diff = "@@ -1,2 +1,2 @@\n fn foo() {}\n-fn baz() {}\n+fn qux() {}\n";
+    let args = serde_json::json!({"path": "target.rs", "diff": diff});
+    let err = tool.execute(&args, dir.path()).unwrap_err();
+    let msg = err.to_string();
+    assert!(
+        msg.contains("All context lines appear"),
+        "expected all-present diagnostic: {}",
+        msg
+    );
+}

@@ -908,7 +908,7 @@ dependencies = [
 
 [[package]]
 name = "moeb"
-version = "1.11.1"
+version = "1.11.3"
 dependencies = [
  "anyhow",
  "axum",
