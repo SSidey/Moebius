@@ -1,0 +1,10 @@
+{
+  "run_id": "53922478-9f39-43f0-9e5f-aa0204e9c553",
+  "timestamp": "2026-05-28T11:22:40Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.patch-file-context-match-hardening.md",
+  "signals_path": ".moeb/signals/53922478-9f39-43f0-9e5f-aa0204e9c553.signals.json",
+  "metrics_path": ".moeb/metrics/53922478-9f39-43f0-9e5f-aa0204e9c553.metrics.json",
+  "rubric_score": 0.875,
+  "end_review_error_count": 0
+}
