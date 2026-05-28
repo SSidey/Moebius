@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1b2c3d4-e5f6-4789-b0c1-d2e3f4a5b6c7",
+  "category": "NewCapability",
+  "severity": "Major",
+  "title": "Missing moeb tool: read_absolute_path",
+  "description": "Used external Read tool (Claude Code MCP) to read truncated start_spec output at absolute system path C:\\Users\\Simeon\\.claude\\...\\tool-results\\mcp-moeb-start_spec-*.txt. No moeb equivalent exists for reading files at absolute paths outside the project directory. This causes moeb-tool-origin to fail for every spec invocation where start_spec output is large enough to be truncated by the MCP host.",
+  "proposed_resolution": "Run moeb spec to introduce a mechanism for the MCP server to serve large tool result outputs directly without requiring the client to read from absolute system paths outside the project directory.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-28T19:15:19Z",
+  "last_seen": "2026-05-28T19:15:19Z",
+  "occurrences": [
+    {"timestamp": "2026-05-28T19:15:19Z", "run_id": "623e266f-3385-43ea-8e85-13e348a64aca"}
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "run_id": "623e266f-3385-43ea-8e85-13e348a64aca",
+  "timestamp": "2026-05-28T19:15:19Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.fix-signal-catalogue-alignment.md",
+  "signals_path": ".moeb/signals/623e266f-3385-43ea-8e85-13e348a64aca.signals.json",
+  "metrics_path": ".moeb/metrics/623e266f-3385-43ea-8e85-13e348a64aca.metrics.json"
+}
