@@ -1,0 +1,17 @@
+{
+  "signal_id": "f3a2b1c0-d4e5-4f67-8a90-b1c2d3e4f506",
+  "category": "Error",
+  "severity": "Critical",
+  "title": "Tool error not recovered: patch_file (pure-insertion diff failure on .moeb/README.md)",
+  "description": "All pure-insertion patch_file attempts against .moeb/README.md failed with 'All context lines appear in the file — check removed lines' despite context lines matching exactly. A remove-and-restore workaround succeeded but inadvertently erased the blank line between ### vcs and the vcs domain table.",
+  "proposed_resolution": "Investigate patch_file.rs apply path for pure-insertion hunks. Confirm diffy handles patches with no removed lines. Also restore the blank line between ### vcs and the vcs table in .moeb/README.md.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 2,
+  "first_seen": "2026-05-29T10:58:00Z",
+  "last_seen": "2026-05-29T13:30:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T10:58:00Z", "run_id": "8dd58b95-2f1a-48cc-971b-aeea59cef0d3" },
+    { "timestamp": "2026-05-29T13:30:00Z", "run_id": "9d683661-f996-480b-b9c2-1e1eceb4ceb8" }
+  ]
+}
