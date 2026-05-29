@@ -12,5 +12,7 @@
   "last_seen": "2026-05-29T08:51:30Z",
   "occurrences": [
     { "timestamp": "2026-05-29T08:51:30Z", "run_id": "6ba066b5-e443-4db5-b72a-0c25f623fd84" }
-  ]
+  ],
+  "picked_up_at": "2026-05-29T10:20:25Z",
+  "fix_branch": "feat/moeb-missing-moeb-tool-web-search-for-github-actions-ve"
 }
