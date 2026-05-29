@@ -1,0 +1,18 @@
+{
+  "signal_id": "22a24658-8a03-42f2-9312-712d42f1b22a",
+  "category": "Error",
+  "severity": "Critical",
+  "title": "Release pipeline GitHub Actions require Node.js 24-compatible version updates and FORCE_JAVASCRIPT_ACTIONS_TO_NODE24 removal",
+  "description": "The release pipeline (.github/workflows/release.yml) pins actions/checkout@v4, actions/cache@v4, and softprops/action-gh-release@v2. All three run on Node.js 20, which GitHub Actions runners will force to Node.js 24 from 2026-06-02, breaking the pipeline. FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true is an existing workaround in the workflow env block; the correct fix is to upgrade each action to a version whose 'runs' statement natively targets Node.js 24, then remove the workaround env var. dtolnay/rust-toolchain@stable uses a shell script, not a JS action, and does not require a version change.",
+  "proposed_resolution": "Use github_releases to look up the latest release of each affected action (actions/checkout, actions/cache, softprops/action-gh-release) and confirm its 'runs: using' value is 'node24'. Update .github/workflows/release.yml to pin those versions. Remove the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true env block entirely. Verify no other workflows in .github/workflows/ reference the deprecated versions.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:00:00Z",
+  "last_seen": "2026-05-29T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "a0fa639a-a2f3-4b53-833b-ce5e67bcd6cc" }
+  ],
+  "picked_up_at": null,
+  "fix_branch": null
+}
