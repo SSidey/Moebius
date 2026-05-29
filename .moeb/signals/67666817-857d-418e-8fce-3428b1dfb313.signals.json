@@ -1,0 +1,50 @@
+{
+  "run_id": "67666817-857d-418e-8fce-3428b1dfb313",
+  "signals": [
+    {
+      "signal_id": "a2b3c4d5-e6f7-4a89-b012-c3d4e5f6a7b8",
+      "category": "Error",
+      "severity": "Critical",
+      "title": "Tool error not recovered: patch_file blocked by read-set enforcement on spec file",
+      "description": "patch_file call on '.moeb/specifications/moeb/moeb.deprecate-patch-file-as-default-write-path.md' during the Per-Step Review Sub-Loop returned 'write_file rejected: exists on disk but has not been read during this run.' The spec file was created with write_file in Phase 4 and not added to the read set, so patch_file was rejected by read-set enforcement. The intended improvement (adding no-signal-reoccurrence to the rubric table) was not applied.",
+      "proposed_resolution": "Add an explicit read_file call for the spec file path immediately after write_file in Phase 4 to add it to the read set before the review sub-loop begins. Alternatively, update the kernel to implicitly add newly-created files to the read set.",
+      "gating_condition": null
+    },
+    {
+      "signal_id": "b3c4d5e6-f7a8-4b90-c123-d4e5f6a7b8c9",
+      "category": "Error",
+      "severity": "Critical",
+      "title": "patch_file systematic line insertion failure corrupted README.md",
+      "description": "Four patch_file calls on .moeb/README.md each reported 'applied' with no error, but every hunk that added a net new line produced the same line count (234 -> 234) instead of inserting a new line. Required 4 additional read_file_range calls and a full write_file rewrite (52157 bytes) to restore correct formatting.",
+      "proposed_resolution": "Investigate the diffy crate's behavior when applying zero-context insertion hunks to LF-normalized files. Add a unit test that patches a file by inserting a new line and verifies the line count increases by 1.",
+      "gating_condition": null
+    },
+    {
+      "signal_id": "c4d5e6f7-a8b9-4c01-d234-e5f6a7b8c9d0",
+      "category": "NewCapability",
+      "severity": "Major",
+      "title": "Missing moeb tool: read-absolute-path for tool result files",
+      "description": "Native Claude Code Read tool was used to read start_spec output file at an absolute path outside the working directory. No moeb equivalent exists.",
+      "proposed_resolution": "Run moeb spec to introduce a streaming or chunked tool-result retrieval mechanism so large MCP tool outputs do not require an external file read.",
+      "gating_condition": null
+    },
+    {
+      "signal_id": "d5e6f7a8-b9c0-4d12-e345-f6a7b8c9d0e1",
+      "category": "SkillImprovement",
+      "severity": "Major",
+      "title": "Phase 4 review sub-loop structurally blocked on newly-created spec files",
+      "description": "The Per-Step Review Sub-Loop in Phase 4 of spec.skill.md cannot modify the spec file because the file was created (not read) in the same run, violating read-set enforcement. This blocks every spec session's review loop from functioning.",
+      "proposed_resolution": "Add an explicit read_file call for the spec file path after write_file in Phase 4, before the review sub-loop begins.",
+      "gating_condition": null
+    },
+    {
+      "signal_id": "e6f7a8b9-c0d1-4e23-f456-a7b8c9d0e1f2",
+      "category": "SkillImprovement",
+      "severity": "Minor",
+      "title": "Spec rubric missing no-signal-reoccurrence criterion for signal-lifecycle trait",
+      "description": "Step 6 of moeb.deprecate-patch-file-as-default-write-path closes signal files, triggering the signal-lifecycle trait, but no-signal-reoccurrence is absent from the spec's rubric table. The patch_file attempt to add it failed due to read-set enforcement.",
+      "proposed_resolution": "The implementing run agent should add no-signal-reoccurrence to the spec's rubric table using read_file + write_file.",
+      "gating_condition": null
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "run_id": "e22533c1-7842-425d-b65a-34cee93b9f89",
+  "timestamp": "2026-05-29T21:22:47Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.deprecate-patch-file-as-default-write-path.md",
+  "signals_path": ".moeb/signals/e22533c1-7842-425d-b65a-34cee93b9f89.signals.json",
+  "metrics_path": ".moeb/metrics/e22533c1-7842-425d-b65a-34cee93b9f89.metrics.json",
+  "rubric_score": 0.94,
+  "end_review_error_count": 0
+}

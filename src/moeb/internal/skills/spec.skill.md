@@ -136,8 +136,10 @@ After writing the spec file in Phase 4:
    `{ "accepted": false, "delta_score": 0.0, "rationale": "Moderator parse failure" }`.
 
 5. If `accepted = true` and `delta_score >= 0.01` and `iteration_count < 2`:
-   - Apply the diff: `patch_file` with the proposed diff on the spec file path.
-   - If `patch_file` returns an error result, terminate the sub-loop immediately —
+   - Apply the reviewer's improvements: using the spec content already in context,
+     incorporate the proposed changes in working memory to produce the complete updated
+     content, then write it using `write_file` with the spec file path.
+   - If `write_file` returns an error result, terminate the sub-loop immediately —
      do not return to step 1. Append `{ "delta_score": 0.0, "accepted": false }` to
      iteration history and proceed to step 6. The error is recorded in RunState.tool_errors.
    - Otherwise append `{ "delta_score": <score>, "accepted": true }` to iteration
@@ -153,23 +155,22 @@ After writing the spec file in Phase 4:
 
 ## Phase 5 — Link README
 
-Read `.moeb/README.md` using `read_file`. Locate the `### <domain>` section (create it if
-absent). Append a new table row for this specification using `patch_file` on `.moeb/README.md`:
+Read `.moeb/README.md` using `read_file`. Locate the `### <domain>` section in the
+Specification index. If the section does not exist, create it in alphabetical order
+among the existing `###` domain subsections with a standard table header. Find the last
+data row in the domain table and insert the new row immediately after it. Write the
+complete updated file content to `.moeb/README.md` using `write_file`.
 
-```
+New row format (four columns, Status value `active`):
 | <Title> | <one-sentence description> | [specifications/<domain>/<domain>.<slug>.md](specifications/<domain>/<domain>.<slug>.md) | active |
-```
-
-Use `patch_file` with a minimal unified diff targeting only the insertion point. The
-table row must include the Status column with value `active`.
 
 ### Per-Step Review Sub-Loop (README patch)
 
 Skip this sub-loop entirely if `{{no_review}}` is `"true"`.
 
-After patching `.moeb/README.md`:
+After writing `.moeb/README.md`:
 
-0. **Error preflight.** If the `patch_file` call on `.moeb/README.md` immediately
+0. **Error preflight.** If the `write_file` call on `.moeb/README.md` immediately
    preceding this sub-loop returned an error result (result string contains "failed",
    "error", or "could not"):
    - Record StepMetric with `step_id: "readme-link"`, `iteration_count = 0`,
@@ -196,8 +197,10 @@ After patching `.moeb/README.md`:
 
 4. Parse Moderator JSON. If `accepted = true` and `delta_score >= 0.01` and
    `iteration_count < 2`:
-   - Apply the diff: `patch_file` on `.moeb/README.md` with the proposed diff.
-   - If `patch_file` returns an error result, terminate the sub-loop immediately.
+   - Re-apply the reviewer's correction: read `.moeb/README.md` using `read_file`,
+     incorporate the proposed changes in working memory to produce the complete updated
+     content, and write it using `write_file`.
+   - If `write_file` returns an error result, terminate the sub-loop immediately.
      Append `{ "delta_score": 0.0, "accepted": false }` to iteration history.
      The error is recorded in RunState.tool_errors. Proceed to step 5.
    - Otherwise append `{ "delta_score": <score>, "accepted": true }` to iteration
@@ -318,9 +321,11 @@ After completing the Dedup-and-Write Procedure for all signals:
 
 - For each canonical signal written in the current run, search the existing table for a
   row whose `Signal ID` cell matches the canonical `signal_id`.
-  - If found: use `patch_file` to update `Severity`, `Status`, `Occurrences`, and
-    `Last Seen` cells on that row only.
-  - If not found: use `patch_file` to append a new row:
+  - If found: replace that row in the in-memory content with updated values for
+    `Severity`, `Status`, `Occurrences`, and `Last Seen`, then write the complete
+    updated file using `write_file`.
+  - If not found: append a new row to the in-memory content, then write the complete
+    updated file using `write_file`:
 
     `| <signal_id> | <title> | <category> | <severity> | <status> | <occurrence_count> | <last_seen> | [catalogue/<identity_key>.signal.json](catalogue/<identity_key>.signal.json) |`
 

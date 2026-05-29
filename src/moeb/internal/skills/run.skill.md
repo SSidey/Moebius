@@ -261,9 +261,11 @@ After completing the Dedup-and-Write Procedure for all signals:
 
 - For each canonical signal written in the current run, search the existing table for a
   row whose `Signal ID` cell matches the canonical `signal_id`.
-  - If found: use `patch_file` to update `Severity`, `Status`, `Occurrences`, and
-    `Last Seen` cells on that row only.
-  - If not found: use `patch_file` to append a new row:
+  - If found: replace that row in the in-memory content with updated values for
+    `Severity`, `Status`, `Occurrences`, and `Last Seen`, then write the complete
+    updated file using `write_file`.
+  - If not found: append a new row to the in-memory content, then write the complete
+    updated file using `write_file`:
 
     `| <signal_id> | <title> | <category> | <severity> | <status> | <occurrence_count> | <last_seen> | [catalogue/<identity_key>.signal.json](catalogue/<identity_key>.signal.json) |`
 
@@ -389,3 +391,11 @@ correctly.
 ## Phase 10 — Complete
 
 Respond with a concise summary of every file created or updated.
+
+## Rubric
+
+### Structured
+
+| Criterion | Description | Pass Condition | Verification Method |
+|-----------|-------------|----------------|---------------------|
+| `no-preferred-patch-file` | No skill, prompt, or role file written or modified during this run instructs agents to call `patch_file` by preference or by default for writing new file content | Zero violations | grep for instructional `patch_file` references in all skill, prompt, and role files written during this run; verify no match designates `patch_file` as the primary or preferred write tool for new content |

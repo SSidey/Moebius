@@ -1,0 +1,16 @@
+{
+  "signal_id": "d5e6f7a8-b9c0-4d12-e345-f6a7b8c9d0e1",
+  "category": "SkillImprovement",
+  "severity": "Major",
+  "title": "Phase 4 review sub-loop structurally blocked on newly-created spec files",
+  "description": "The Per-Step Review Sub-Loop in Phase 4 of spec.skill.md attempts to modify the spec file via patch_file (or write_file per the new spec) after it was created in Phase 4. However, read-set enforcement rejects any modification to a file that was not read before being modified. Since spec files are created (not read) in Phase 4, the review sub-loop always fails to apply its improvements. StepMetric for spec-file in this run: iteration_count=1, acceptance_rate=0.0. This is a structural gap that prevents every spec session's Phase 4 review loop from functioning.",
+  "proposed_resolution": "Add an explicit read_file call for the spec file path immediately after the write_file in Phase 4, before the review sub-loop begins. This adds the newly-created file to the read set without semantic overhead. Alternatively, update the kernel read-set enforcement to consider write_file on a new file as implicitly adding it to the read set.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T16:35:00Z",
+  "last_seen": "2026-05-29T16:35:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T16:35:00Z", "run_id": "67666817-857d-418e-8fce-3428b1dfb313" }
+  ]
+}
