@@ -1,0 +1,16 @@
+{
+  "signal_id": "7b3a9c2d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+  "category": "Error",
+  "severity": "Critical",
+  "title": "Tool error not recovered: query_agent",
+  "description": "query_agent failed with OpenAI API 429 (quota exceeded) at Step 2 of run e1e59193-e8e0-44f3-b1f3-50576b129a7a (moeb.github-actions-release-actions-upgrade). No action pins were upgraded; FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true was retained. The Node.js 20 deprecation warning in release runs remains unresolved.",
+  "proposed_resolution": "Re-run this spec when the OpenAI adapter has available quota, or switch to a different adapter (e.g., Anthropic claude-sonnet) via moeb use that can fulfil the query_agent call.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:35:23Z",
+  "last_seen": "2026-05-29T00:35:23Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:35:23Z", "run_id": "e1e59193-e8e0-44f3-b1f3-50576b129a7a" }
+  ]
+}

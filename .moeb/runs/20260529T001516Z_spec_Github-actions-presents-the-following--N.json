@@ -1,0 +1,8 @@
+{
+  "run_id": "e2bc5f63-446c-457e-9abb-ff486fa1718a",
+  "timestamp": "2026-05-29T00:15:16Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.github-actions-release-actions-upgrade.md",
+  "signals_path": ".moeb/signals/e2bc5f63-446c-457e-9abb-ff486fa1718a.signals.json",
+  "metrics_path": ".moeb/metrics/e2bc5f63-446c-457e-9abb-ff486fa1718a.metrics.json"
+}

@@ -1,0 +1,16 @@
+{
+  "signal_id": "d7e3f1a2-b5c4-4d6e-9f0a-1b2c3d4e5f6a",
+  "category": "NewCapability",
+  "severity": "Major",
+  "title": "Missing moeb tool: large-tool-output-reader",
+  "description": "The mcp__moeb__start_spec tool returned output exceeding the MCP token limit, which was automatically saved to a tool-results cache file outside the project directory. No moeb tool exists to read this file; the external Read tool (Claude Code) was required to retrieve the spec prompt template in chunks. This occurs whenever any moeb tool returns output too large for the MCP response buffer.",
+  "proposed_resolution": "Run moeb spec to introduce either: (a) pagination support for large moeb tool outputs via an optional offset/limit parameter on start_spec and start_run, or (b) a read_tool_output moeb tool that reads from the tool-results cache by run ID and tool name.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T00:15:16Z",
+  "last_seen": "2026-05-29T00:15:16Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T00:15:16Z", "run_id": "e2bc5f63-446c-457e-9abb-ff486fa1718a" }
+  ]
+}

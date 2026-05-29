@@ -1,0 +1,23 @@
+{
+  "run_id": "e2bc5f63-446c-457e-9abb-ff486fa1718a",
+  "signals": [
+    {
+      "signal_id": "d7e3f1a2-b5c4-4d6e-9f0a-1b2c3d4e5f6a",
+      "category": "NewCapability",
+      "severity": "Major",
+      "title": "Missing moeb tool: large-tool-output-reader",
+      "description": "The mcp__moeb__start_spec tool returned output exceeding the MCP token limit, which was automatically saved to a tool-results cache file outside the project directory. No moeb tool exists to read this file; the external Read tool (Claude Code) was required to retrieve the spec prompt template in chunks. This occurs whenever any moeb tool returns output too large for the MCP response buffer.",
+      "proposed_resolution": "Run moeb spec to introduce either: (a) pagination support for large moeb tool outputs via an optional offset/limit parameter on start_spec and start_run, or (b) a read_tool_output moeb tool that reads from the tool-results cache by run ID and tool name.",
+      "gating_condition": null
+    },
+    {
+      "signal_id": "f0bf5e4b-0004-4001-8001-000000000004",
+      "category": "Error",
+      "severity": "Major",
+      "title": "patch_file fails on long README table rows",
+      "description": "Two consecutive patch_file calls failed when modifying rows in .moeb/README.md. Both failures returned 'All context lines appear in the file' with no further disambiguation. The root cause is that very long table row lines (500+ characters) cause hunk relocation or diffy apply to malfunction. A write_file fallback was required to complete the README update.",
+      "proposed_resolution": "Investigate whether diffy has a line-length limit or whether relocate_hunk_positions malfunctions with very long context lines. Add a regression test for patch_file with 500+ character table row content similar to the moeb README index.",
+      "gating_condition": null
+    }
+  ]
+}

@@ -11,6 +11,9 @@
   "first_seen": "2026-05-29T00:00:00Z",
   "last_seen": "2026-05-29T00:00:00Z",
   "occurrences": [
-    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
-  ]
+    { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" },
+    { "timestamp": "2026-05-29T10:00:00Z", "run_id": "9d5a69df-ac3a-4af4-a140-9aae58bd25d1" }
+  ],
+  "picked_up_at": "2026-05-29T01:00:00Z",
+  "fix_branch": "feat/moeb-github-actions-nodejs24-upgrade"
 }
