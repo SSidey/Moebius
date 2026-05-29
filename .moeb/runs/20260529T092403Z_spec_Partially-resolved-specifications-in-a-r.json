@@ -1,0 +1,10 @@
+{
+  "run_id": "1a43df68-41a1-4647-aff2-1f74b1d3d760",
+  "timestamp": "2026-05-29T09:24:03Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.run-partial-recovery-and-fix-signal-direct.md",
+  "signals_path": ".moeb/signals/1a43df68-41a1-4647-aff2-1f74b1d3d760.signals.json",
+  "metrics_path": ".moeb/metrics/1a43df68-41a1-4647-aff2-1f74b1d3d760.metrics.json",
+  "rubric_score": null,
+  "end_review_error_count": 0
+}

@@ -165,6 +165,26 @@ For each criterion, evaluate pass, fail, or na:
 Call `verify_rubrics` with the complete list of verdicts covering all criteria from both
 sources. Do not call `verify_rubrics` with a partial list.
 
+## Partial Resolution Check
+
+Review the task list created at the start of this run. Identify any task whose status was never updated to `done`.
+
+If all tasks are `done`, skip signal emission and proceed to End-of-Skill Review without further action.
+
+If any task remains incomplete:
+
+a. Assemble a signal record:
+   - `category`: `"Error"`
+   - `severity`: `"Major"`
+   - `title`: `"Partial resolution: <domain>/<slug>"`
+   - `description`: `"Run <run_id> did not complete all tasks for specification <spec_path>. Incomplete tasks: <comma-separated list of incomplete task titles>."`
+   - `proposed_resolution`: `"Resume by invoking fix_signal with signal_id=<signal_id_of_this_record>. The signal description records which tasks remain."`
+   - `gating_condition`: `null`
+
+b. Write this record via the **Canonical Signal Dedup-and-Write Procedure** already present in run.skill.md. The UUID v4 assigned as `signal_id` during the procedure is the value to substitute into `proposed_resolution` before writing.
+
+Continue to End-of-Skill Review regardless of whether a signal was emitted.
+
 ## Phase 5 — End-of-Skill Review
 
 This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if

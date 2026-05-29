@@ -1,0 +1,46 @@
+[
+  {
+    "signal_id": "a1000002-0529-4001-8001-000000000001",
+    "run_id": "296e9eb4-c240-4e28-a2eb-a4d0c7aa3bd6",
+    "timestamp": "2026-05-29T09:50:00Z",
+    "category": "Error",
+    "severity": "Critical",
+    "title": "Tool error not recovered: patch_file",
+    "description": "Three patch_file calls failed on src/moeb/internal/skills/run.skill.md: (1) diff header '--- a/path' treated as removed line rather than file header; (2) pure insertion diff (no removed lines) failed with 'all context lines appear in the file'; (3) same failure on retry with corrected line-number context. The operation was recovered via write_file.",
+    "proposed_resolution": "Fix patch_file.rs to correctly apply hunks where orig_count is 0 (pure insertion). Alternatively, update run.skill.md to direct agents to use write_file for pure-insertion changes.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "b2000001-0529-4001-9001-000000000001",
+    "run_id": "296e9eb4-c240-4e28-a2eb-a4d0c7aa3bd6",
+    "timestamp": "2026-05-29T09:50:00Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: Read (large MCP result files)",
+    "description": "Used Claude Code's external Read tool 5 times to access oversized MCP tool result files (mcp-moeb-start_run and mcp-moeb-grep_files outputs saved to .txt paths by the MCP result size limiter). No moeb equivalent exists for reading truncated MCP tool results. This caused a moeb-tool-origin rubric failure.",
+    "proposed_resolution": "Run moeb spec to introduce a kernel mechanism that handles oversized tool results inline, eliminating the need for external file reads.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "a1000002-0529-4002-8002-000000000002",
+    "run_id": "296e9eb4-c240-4e28-a2eb-a4d0c7aa3bd6",
+    "timestamp": "2026-05-29T09:50:00Z",
+    "category": "ToolImprovement",
+    "severity": "Major",
+    "title": "patch_file does not support pure-insertion unified diffs",
+    "description": "patch_file consistently fails when the diff contains only added lines (+) with no removed lines (-). The tool requires at least one removed line to successfully apply the hunk. This forces agents to fall back to write_file for pure insertions, increasing token usage and generating tool-error signals.",
+    "proposed_resolution": "Fix patch_file.rs to apply hunks where orig_count is 0 by anchoring on following context lines.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "a1000002-0529-4003-8003-000000000003",
+    "run_id": "296e9eb4-c240-4e28-a2eb-a4d0c7aa3bd6",
+    "timestamp": "2026-05-29T09:50:00Z",
+    "category": "SkillImprovement",
+    "severity": "Minor",
+    "title": "run.skill.md should direct agents to use write_file for pure-insertion changes",
+    "description": "Phase 3 recommends patch_file for changes under ~20 lines but does not distinguish pure insertions (no removed lines) from modifications. Three tool errors were incurred before falling back to write_file.",
+    "proposed_resolution": "Add a note to Phase 3: for pure insertions (no lines removed), use write_file instead of patch_file.",
+    "gating_condition": null
+  }
+]

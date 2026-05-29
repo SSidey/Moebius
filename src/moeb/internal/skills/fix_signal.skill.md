@@ -23,6 +23,21 @@ If an external tool must be used, buffer a MissingMoebTool signal immediately af
 }
 ```
 
+## Signal Resolution Mode
+
+Inspect `{{signal_id}}`:
+
+**If `{{signal_id}}` is non-empty:**
+1. Read `.moeb/signals/index.md`.
+2. Find the table row whose `Signal ID` column equals `{{signal_id}}`.
+3. Extract the file path from the `File` column of that row.
+4. Read the signal record from that path.
+5. Skip Phase 1 (signal scan) and Phase 2 (signal selection) below.
+6. Proceed directly to Phase 3 (mark as picked up) with the loaded signal record.
+
+**If `{{signal_id}}` is empty:**
+Proceed with Phase 1 and Phase 2 as defined below.
+
 ## Phase 1 — Scan
 
 Call `list_directory` on `.moeb/signals/`. For each entry ending with `.signals.json`,

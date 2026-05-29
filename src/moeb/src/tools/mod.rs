@@ -113,6 +113,7 @@ impl ToolRegistry {
         let mut r = Self::standard(std::sync::Arc::clone(&state), Arc::clone(&read_paths));
         r.register(Box::new(start_run::StartRunTool));
         r.register(Box::new(start_spec::StartSpecTool));
+        // fix_signal is MCP-only per moeb.signal-fix-command Decision 1; not in standard()
         r.register(Box::new(fix_signal::FixSignalTool));
         r.register(Box::new(get_run_status::GetRunStatusTool { state: std::sync::Arc::clone(&state) }));
         r
@@ -132,6 +133,7 @@ impl ToolRegistry {
         );
         r.register(Box::new(start_run::StartRunTool));
         r.register(Box::new(start_spec::StartSpecTool));
+        // fix_signal is MCP-only per moeb.signal-fix-command Decision 1; not in standard()
         r.register(Box::new(fix_signal::FixSignalTool));
         r.register(Box::new(get_run_status::GetRunStatusTool {
             state: std::sync::Arc::clone(&state),

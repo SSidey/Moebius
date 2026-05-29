@@ -7,11 +7,12 @@
   "proposed_resolution": "Fix patch_file.rs to correctly apply hunks where orig_count is 0 (pure insertion). The relocate_hunk_positions step should anchor insertion hunks by the lines that follow rather than lines that precede. Alternatively, update run.skill.md to direct agents to use write_file for pure-insertion changes.",
   "gating_condition": null,
   "status": "open",
-  "occurrence_count": 2,
+  "occurrence_count": 3,
   "first_seen": "2026-05-29T23:46:00Z",
-  "last_seen": "2026-05-29T08:51:30Z",
+  "last_seen": "2026-05-29T09:50:00Z",
   "occurrences": [
     { "timestamp": "2026-05-29T23:46:00Z", "run_id": "9d5a69df-ac3a-4af4-a140-9aae58bd25d1" },
-    { "timestamp": "2026-05-29T08:51:30Z", "run_id": "6ba066b5-e443-4db5-b72a-0c25f623fd84" }
+    { "timestamp": "2026-05-29T08:51:30Z", "run_id": "6ba066b5-e443-4db5-b72a-0c25f623fd84" },
+    { "timestamp": "2026-05-29T09:50:00Z", "run_id": "296e9eb4-c240-4e28-a2eb-a4d0c7aa3bd6" }
   ]
 }

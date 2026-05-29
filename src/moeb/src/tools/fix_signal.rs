@@ -8,6 +8,7 @@ use super::ToolHandler;
 
 const RUN_ID_TOKEN: &str = "{{run_id}}";
 const RUN_FILE_PATH_TOKEN: &str = "{{run_file_path}}";
+const SIGNAL_ID_TOKEN: &str = "{{signal_id}}";
 
 pub struct FixSignalTool;
 
@@ -25,14 +26,21 @@ impl ToolHandler for FixSignalTool {
                 rendered fix_signal.prompt containing the full fix_signal.skill.md workflow.",
             parameters: json!({
                 "type": "object",
-                "properties": {},
+                "properties": {
+                    "signal_id": {
+                        "type": "string",
+                        "description": "Optional signal ID for direct invocation, bypassing signal-selection phases."
+                    }
+                },
                 "required": []
             }),
         }
     }
 
-    fn execute(&self, _args: &serde_json::Value, working_dir: &Path) -> Result<String> {
+    fn execute(&self, args: &serde_json::Value, working_dir: &Path) -> Result<String> {
         let moeb_dir = working_dir.join(".moeb");
+
+        let signal_id = args["signal_id"].as_str().unwrap_or("").to_string();
 
         let asset = Prompts::get("fix_signal.prompt")
             .ok_or_else(|| anyhow::anyhow!("fix_signal: fix_signal.prompt not found in binary"))?;
@@ -57,7 +65,8 @@ impl ToolHandler for FixSignalTool {
             .replace("{{skill_content}}", &skill_content)
             .replace("{{command_rubrics}}", &command_rubrics)
             .replace(RUN_ID_TOKEN, &run_id)
-            .replace(RUN_FILE_PATH_TOKEN, &run_file_path);
+            .replace(RUN_FILE_PATH_TOKEN, &run_file_path)
+            .replace(SIGNAL_ID_TOKEN, &signal_id);
 
         Ok(prompt)
     }
