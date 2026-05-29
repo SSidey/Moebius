@@ -1,0 +1,10 @@
+{
+  "run_id": "751e2b3b-c696-4ddc-b3eb-9de4f341e5b1",
+  "timestamp": "2026-05-29T14:40:16Z",
+  "command": "fix_signal",
+  "event_path": ".moeb/events/22a24658-8a03-42f2-9312-712d42f1b22a.event.json",
+  "signals_path": ".moeb/signals/751e2b3b-c696-4ddc-b3eb-9de4f341e5b1.signals.json",
+  "metrics_path": ".moeb/metrics/751e2b3b-c696-4ddc-b3eb-9de4f341e5b1.metrics.json",
+  "rubric_score": "4 pass, 2 fail, 0 na",
+  "end_review_error_count": 0
+}

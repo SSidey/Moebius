@@ -13,6 +13,6 @@
   "occurrences": [
     { "timestamp": "2026-05-29T00:00:00Z", "run_id": "a0fa639a-a2f3-4b53-833b-ce5e67bcd6cc" }
   ],
-  "picked_up_at": null,
-  "fix_branch": null
+  "picked_up_at": "2026-05-29T14:40:16Z",
+  "fix_branch": "feat/fix-release-pipeline-github-actions-require-node-js-24"
 }
