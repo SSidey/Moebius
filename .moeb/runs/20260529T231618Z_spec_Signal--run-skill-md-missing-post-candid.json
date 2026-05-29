@@ -1,0 +1,9 @@
+{
+  "run_id": "46e35ae0-d15f-4f14-b342-0fede3bb0739",
+  "timestamp": "2026-05-29T23:16:18Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.run-skill-retrospective-and-signal-schema.md",
+  "signals_path": ".moeb/signals/46e35ae0-d15f-4f14-b342-0fede3bb0739.signals.json",
+  "metrics_path": ".moeb/metrics/46e35ae0-d15f-4f14-b342-0fede3bb0739.metrics.json",
+  "end_review_error_count": 0
+}

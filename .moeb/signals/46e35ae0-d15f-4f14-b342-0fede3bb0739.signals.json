@@ -1,0 +1,24 @@
+[
+  {
+    "signal_id": "d8e9f0a1-b2c3-4d5e-9f0a-1b2c3d4e5f6a",
+    "run_id": "46e35ae0-d15f-4f14-b342-0fede3bb0739",
+    "timestamp": "2026-05-30T00:00:00Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: Read (tool-result output file reader)",
+    "description": "Used the Claude Code Read tool to read tool-result output files saved to absolute temp paths (e.g. C:\\Users\\...\\tool-results\\mcp-moeb-start_spec-*.txt and *.json). These files are written by the harness when MCP tool output exceeds inline limits. No moeb tool exists for reading files by absolute path outside the project working directory.",
+    "proposed_resolution": "Add a read_tool_result moeb tool that accepts an absolute path and returns the file content, subject to the same size cap as read_file. Alternatively, extend read_file to accept absolute paths when the path is within a known harness session directory.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "e9f0a1b2-c3d4-4e5f-a0b1-2c3d4e5f6a7b",
+    "run_id": "46e35ae0-d15f-4f14-b342-0fede3bb0739",
+    "timestamp": "2026-05-30T00:00:00Z",
+    "category": "SkillImprovement",
+    "severity": "Minor",
+    "title": "start_spec signal_id lookup fails for catalogue-only signals",
+    "description": "start_spec returned 'No signal found with signal_id c7d8e9f0-a1b2-4c3d-8e4f-5a6b7c8d9e0f' despite the signal being present in .moeb/signals/index.md and .moeb/signals/catalogue/. The tool appears to search only run-level .signals.json files, not the canonical catalogue. This forces agents to pass the requirement text directly instead of using the signal_id parameter, breaking the correlation token injection and signal ID tracking.",
+    "proposed_resolution": "Update start_spec signal resolution to search .moeb/signals/catalogue/ (and .moeb/signals/index.md) when the signal_id is not found in any run-level .signals.json file. The catalogue is the authoritative signal store per moeb.signal-deduplication-and-lifecycle.",
+    "gating_condition": null
+  }
+]
