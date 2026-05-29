@@ -1,0 +1,24 @@
+[
+  {
+    "signal_id": "a1000002-0529-4001-8001-000000000001",
+    "run_id": "6ba066b5-e443-4db5-b72a-0c25f623fd84",
+    "timestamp": "2026-05-29T08:51:30Z",
+    "category": "Error",
+    "severity": "Critical",
+    "title": "Tool error not recovered: patch_file",
+    "description": "patch_file failed 3 consecutive times when adding the MCP mode guard to query_agent.rs. Failure mode: the tool rejected pure-insertion diffs (no removed lines) with 'All context lines appear in the file'; it also rejected the remove-then-re-add approach with the same error. write_file fallback succeeded and the guard is correctly applied, but the 3 failures register as tool_errors and fail the tool-errors rubric.",
+    "proposed_resolution": "Extend patch_file to support pure-insertion @@ -N,0 +N,K @@ hunks. Until fixed, update run.skill.md to explicitly direct agents to use write_file for pure-insertion changes.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "7e4d2f1a-9b3c-4e8f-a2d5-6c0e9f1b8a7d",
+    "run_id": "6ba066b5-e443-4db5-b72a-0c25f623fd84",
+    "timestamp": "2026-05-29T08:51:30Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: web-search for GitHub Actions version lookup",
+    "description": "Step 3 required identifying the latest node24-native stable release tags for actions/checkout, actions/cache, and softprops/action-gh-release. Training knowledge (cutoff August 2025) was insufficient to confirm specific node24-native tags for releases likely published after that date. All three returned null and the workflow upgrade was not performed, leaving FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true in place. A web-search or GitHub API query tool would allow the agent to resolve current release tags at implementation time without relying on potentially stale training knowledge.",
+    "proposed_resolution": "Add a web_search or github_releases moeb tool that queries the GitHub releases API for a given action repository and returns the latest tag whose action.yml declares a specified runs.using version.",
+    "gating_condition": null
+  }
+]

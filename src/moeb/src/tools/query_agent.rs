@@ -56,6 +56,9 @@ impl ToolHandler for QueryAgentTool {
     }
 
     fn execute(&self, args: &serde_json::Value, working_dir: &Path) -> Result<String> {
+        if self.resolve_adapter().is_err() {
+            return Ok("query_agent is not available in MCP serve mode. Use inline reasoning from your training knowledge instead of calling this tool.".to_string());
+        }
         let role = args["role"].as_str().context("query_agent: missing 'role'")?;
         let prompt = args["prompt"].as_str().context("query_agent: missing 'prompt'")?;
         let response_type = args["expected_response_type"].as_str().unwrap_or("text");

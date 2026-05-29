@@ -1,0 +1,10 @@
+{
+  "run_id": "6ba066b5-e443-4db5-b72a-0c25f623fd84",
+  "timestamp": "2026-05-29T08:51:30Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.github-actions-release-actions-inline-version-resolution.md",
+  "signals_path": ".moeb/signals/6ba066b5-e443-4db5-b72a-0c25f623fd84.signals.json",
+  "metrics_path": ".moeb/metrics/6ba066b5-e443-4db5-b72a-0c25f623fd84.metrics.json",
+  "rubric_score": null,
+  "end_review_error_count": 1
+}
