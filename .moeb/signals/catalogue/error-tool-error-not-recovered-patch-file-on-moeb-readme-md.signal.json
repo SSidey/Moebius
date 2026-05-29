@@ -6,7 +6,10 @@
   "description": "patch_file failed 3 times on .moeb/README.md with 'removed lines not in file' and 'removed lines not matching' errors despite read_file_range and grep_files confirming byte-identical content. Recovery required full file reconstruction via write_file. This is now the 2nd occurrence of this failure pattern across spec runs.",
   "proposed_resolution": "Investigate why patch_file removed-line matching fails on .moeb/README.md even when read_file_range reports identical content. Likely a hidden character or encoding artifact not caught by normalize_line_endings or normalize_trailing_whitespace. Add byte-level diagnostic logging at the mismatch point.",
   "gating_condition": null,
-  "status": "open",
+  "status": "superseded",
+  "links": [
+    { "artifactType": "spec", "id": "moeb.deprecate-patch-file-as-default-write-path", "type": "superseded_by" }
+  ],
   "occurrence_count": 2,
   "first_seen": "2026-05-28T19:15:19Z",
   "last_seen": "2026-05-29T15:15:00Z",

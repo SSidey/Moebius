@@ -6,7 +6,10 @@
   "description": "patch_file was called twice with pure-insertion diffs (no removed lines) on .github/workflows/release.yml. Both attempts failed with 'error applying hunk #1 — All context lines appear in the file'. The operation was recovered via write_file. The kernel recorded both failures as tool errors, causing the tool-errors rubric criterion to fail.",
   "proposed_resolution": "Fix patch_file.rs to correctly apply hunks where orig_count is 0 (pure insertion). The relocate_hunk_positions step should anchor insertion hunks by the lines that follow rather than lines that precede. Alternatively, update run.skill.md to direct agents to use write_file for pure-insertion changes.",
   "gating_condition": null,
-  "status": "open",
+  "status": "superseded",
+  "links": [
+    { "artifactType": "spec", "id": "moeb.deprecate-patch-file-as-default-write-path", "type": "superseded_by" }
+  ],
   "occurrence_count": 4,
   "first_seen": "2026-05-29T23:46:00Z",
   "last_seen": "2026-05-29T15:45:00Z",

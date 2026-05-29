@@ -6,7 +6,10 @@
   "description": "All pure-insertion patch_file attempts against .moeb/README.md failed with 'All context lines appear in the file — check removed lines' despite context lines matching exactly. A remove-and-restore workaround succeeded but inadvertently erased the blank line between ### vcs and the vcs domain table.",
   "proposed_resolution": "Investigate patch_file.rs apply path for pure-insertion hunks. Confirm diffy handles patches with no removed lines. Also restore the blank line between ### vcs and the vcs table in .moeb/README.md.",
   "gating_condition": null,
-  "status": "open",
+  "status": "superseded",
+  "links": [
+    { "artifactType": "spec", "id": "moeb.deprecate-patch-file-as-default-write-path", "type": "superseded_by" }
+  ],
   "occurrence_count": 2,
   "first_seen": "2026-05-29T10:58:00Z",
   "last_seen": "2026-05-29T13:30:00Z",

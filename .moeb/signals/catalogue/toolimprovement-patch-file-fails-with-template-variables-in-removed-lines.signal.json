@@ -6,7 +6,10 @@
   "description": "patch_file failed twice when the removed line contained {{run_id}}. Context lines matched but removed lines did not — likely a preprocessing or encoding issue with double-brace sequences. write_file fallback was required. This will recur on any run patching skill files.",
   "proposed_resolution": "Investigate patch_file.rs for any {{}} preprocessing. Add a unit test for patching files containing template variable syntax. Fix root cause so patch_file is reliable on skill markdown files.",
   "gating_condition": null,
-  "status": "open",
+  "status": "superseded",
+  "links": [
+    { "artifactType": "spec", "id": "moeb.deprecate-patch-file-as-default-write-path", "type": "superseded_by" }
+  ],
   "occurrence_count": 1,
   "first_seen": "2026-05-28T17:45:00Z",
   "last_seen": "2026-05-28T17:45:00Z",
