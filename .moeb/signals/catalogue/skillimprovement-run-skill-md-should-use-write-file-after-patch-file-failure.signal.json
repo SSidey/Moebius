@@ -1,0 +1,16 @@
+{
+  "signal_id": "8d2e5f1a-7c4b-4e3d-a6f2-9b1c0d8e7a35",
+  "category": "SkillImprovement",
+  "severity": "Minor",
+  "title": "run.skill.md should use write_file after patch_file failure",
+  "description": "During run 3853e12f, two patch_file attempts on .github/workflows/release.yml failed before write_file was used as a fallback. The skill currently recommends patch_file for <20-line changes but provides no guidance on escalating after a failure. Each failed patch_file call increments tool_errors, reducing rubric_score. Adding an explicit escalation rule would prevent these redundant failures on subsequent runs.",
+  "proposed_resolution": "Add to run.skill.md Phase 3: 'If patch_file returns a failure result for a file, do not retry patch_file on that file — fall back immediately to write_file with the complete new content.' This reduces expected tool_errors per run by ~2 when patch_file is unreliable on a given file type.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T15:45:00Z",
+  "last_seen": "2026-05-29T15:45:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T15:45:00Z", "run_id": "3853e12f-99c2-4283-8161-76fa3cc6df2b" }
+  ]
+}

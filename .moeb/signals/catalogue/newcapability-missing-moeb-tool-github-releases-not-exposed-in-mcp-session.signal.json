@@ -1,0 +1,16 @@
+{
+  "signal_id": "3c9e7b2d-5f1a-4c8e-b2d6-7a0f4e9c1b38",
+  "category": "NewCapability",
+  "severity": "Major",
+  "title": "Missing moeb tool: github_releases (not exposed in MCP session)",
+  "description": "Used WebFetch to perform GitHub Releases API queries and action.yml inspection because github_releases was not available in the MCP tool schema for this session. The tool is implemented in Rust source (src/moeb/src/tools/github_releases.rs) but was not exposed by the running MCP server. WebFetch was used to call https://api.github.com/repos/{repo}/releases?per_page=30 and https://raw.githubusercontent.com/{repo}/{tag}/action.yml for actions/checkout, actions/cache, and softprops/action-gh-release.",
+  "proposed_resolution": "Restart the Claude Code MCP extension with the latest compiled moeb binary so that github_releases appears in the MCP tool schema. No new moeb tool is needed — the tool already exists.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-29T15:45:00Z",
+  "last_seen": "2026-05-29T15:45:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-29T15:45:00Z", "run_id": "3853e12f-99c2-4283-8161-76fa3cc6df2b" }
+  ]
+}

@@ -3,15 +3,16 @@
   "category": "Error",
   "severity": "Major",
   "title": "patch_file fails on long README table rows",
-  "description": "Four consecutive patch_file calls failed when inserting or removing rows in .moeb/README.md. All failures returned 'All context lines appear in the file' with no further disambiguation. The root cause appears to be that very long table row lines (500+ characters) cause hunk relocation or diffy apply to malfunction. A write_file fallback was required to complete the README update, producing two tool_errors in RunState.",
-  "proposed_resolution": "Investigate whether diffy has a line-length limit or whether relocate_hunk_positions malfunctions with very long context lines. Add a regression test for patch_file with 500+ character table row content similar to the moeb README index.",
+  "description": "patch_file consistently fails to apply replacement diffs on long table rows in .moeb/README.md even when content is verified identical via read_file_range and grep_files. Three consecutive attempts with different context configurations all failed. Root cause appears to be that very long table row lines (500+ characters) cause diffy's removed-line matching to malfunction despite CRLF and trailing-whitespace normalization. A write_file fallback is required to complete each README update.",
+  "proposed_resolution": "Fix removed-line byte-level matching in patch_file.rs for long content lines. Add a regression test for patch_file with 500+ character table row content. Consider adding a line-length threshold above which write_file is used instead of diffy.",
   "gating_condition": null,
   "status": "open",
-  "occurrence_count": 2,
+  "occurrence_count": 3,
   "first_seen": "2026-05-29T00:00:00Z",
-  "last_seen": "2026-05-29T00:15:16Z",
+  "last_seen": "2026-05-29T15:15:00Z",
   "occurrences": [
     { "timestamp": "2026-05-29T00:00:00Z", "run_id": "f0bf5e4b-f8f0-4a64-b43a-dc59b91e9b89" },
-    { "timestamp": "2026-05-29T00:15:16Z", "run_id": "e2bc5f63-446c-457e-9abb-ff486fa1718a" }
+    { "timestamp": "2026-05-29T00:15:16Z", "run_id": "e2bc5f63-446c-457e-9abb-ff486fa1718a" },
+    { "timestamp": "2026-05-29T15:15:00Z", "run_id": "e6a1247e-e598-4b1e-9c8a-b3f87123e64d" }
   ]
 }
