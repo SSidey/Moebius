@@ -1,0 +1,10 @@
+{
+  "run_id": "84a4a5ed-f656-4ae3-9f00-79a912d2019b",
+  "timestamp": "2026-05-30T15:30:45Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.patch-file-exact-string-rewrite.md",
+  "signals_path": ".moeb/signals/84a4a5ed-f656-4ae3-9f00-79a912d2019b.signals.json",
+  "metrics_path": ".moeb/metrics/84a4a5ed-f656-4ae3-9f00-79a912d2019b.metrics.json",
+  "rubric_score": null,
+  "end_review_error_count": 0
+}

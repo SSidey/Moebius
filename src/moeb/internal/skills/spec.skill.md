@@ -158,8 +158,11 @@ After writing the spec file in Phase 4:
 Read `.moeb/README.md` using `read_file`. Locate the `### <domain>` section in the
 Specification index. If the section does not exist, create it in alphabetical order
 among the existing `###` domain subsections with a standard table header. Find the last
-data row in the domain table and insert the new row immediately after it. Write the
-complete updated file content to `.moeb/README.md` using `write_file`.
+data row in the domain table. Call `patch_file` with `old_string` set to
+the exact text of that last row and `new_string` set to that row immediately followed by
+the new row on the next line. If `patch_file` returns an error, read the complete README
+content, apply the row insertion in working memory, and write the full updated content
+using `write_file` — do not retry `patch_file`.
 
 New row format (four columns, Status value `active`):
 | <Title> | <one-sentence description> | [specifications/<domain>/<domain>.<slug>.md](specifications/<domain>/<domain>.<slug>.md) | active |

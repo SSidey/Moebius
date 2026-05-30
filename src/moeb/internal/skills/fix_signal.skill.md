@@ -63,13 +63,14 @@ Compute `fix_branch` before patching:
    collapse consecutive hyphens, strip leading/trailing hyphens, truncate to 50 chars.
 3. `fix_branch` = `"feat/<domain>-<slug>"`.
 
-Call `read_file` on the source file path. Construct a minimal unified diff adding
-`"picked_up_at": "<current ISO 8601 timestamp>"` and `"fix_branch": "<fix_branch>"` as
-new fields after the last existing field of the chosen signal object, before its closing
-`}`. Call `patch_file` with this diff.
+Call `read_file` on the source file path. Locate the closing `}` of the chosen signal
+object. Call `patch_file` with `old_string` set to the closing `}` of the signal object
+and `new_string` set to the same closing `}` preceded by the two new fields:
 
-If `patch_file` returns an error, add the two fields in memory and call `write_file` to
-overwrite the source file.
+  `,\n  "picked_up_at": "<current ISO 8601 timestamp>",\n  "fix_branch": "<fix_branch>"\n}`
+
+If `patch_file` returns an error, add the two fields in working memory and call
+`write_file` to overwrite the source file with the complete updated content.
 
 ### Per-Step Review Sub-Loop (signal pickup)
 
@@ -94,9 +95,12 @@ overwrite the source file.
    `{ "accepted": false, "delta_score": 0.0, "rationale": "Moderator parse failure" }`.
 
 5. If `accepted = true` and `delta_score >= 0.01` and `iteration_count < 2`:
-   - Call `patch_file` on the signal file path with the proposed diff.
-   - On error: terminate; append `{ "delta_score": 0.0, "accepted": false }` to history;
-     proceed to step 6.
+   - Apply the patch: call `patch_file` with `old_string` set to the content being
+     replaced and `new_string` set to the updated content. If `patch_file` returns an
+     error, call `write_file` with the complete updated artifact content immediately —
+     do not retry `patch_file`.
+   - If the write tool returns an error result, terminate the sub-loop immediately —
+     append `{ "delta_score": 0.0, "accepted": false }` to history; proceed to step 6.
    - Otherwise: append `{ "delta_score": <score>, "accepted": true }` to history;
      return to step 1.
 
@@ -161,9 +165,12 @@ Record a StepMetric for `step_id: "emit-event"`.
    `{ "accepted": false, "delta_score": 0.0, "rationale": "Moderator parse failure" }`.
 
 5. If `accepted = true` and `delta_score >= 0.01` and `iteration_count < 2`:
-   - Call `patch_file` on `.moeb/events/<signal_id>.event.json` with the proposed diff.
-   - On error: terminate; append `{ "delta_score": 0.0, "accepted": false }` to history;
-     proceed to step 6.
+   - Apply the patch: call `patch_file` with `old_string` set to the content being
+     replaced and `new_string` set to the updated content. If `patch_file` returns an
+     error, call `write_file` with the complete updated artifact content immediately —
+     do not retry `patch_file`.
+   - If the write tool returns an error result, terminate the sub-loop immediately —
+     append `{ "delta_score": 0.0, "accepted": false }` to history; proceed to step 6.
    - Otherwise: append `{ "delta_score": <score>, "accepted": true }` to history;
      return to step 1.
 

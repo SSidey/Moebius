@@ -54,7 +54,9 @@ For each task in your task list, in order:
    `read_file` only when writing a complete file replacement.
 3. Write the change:
    - If changing fewer than ~20 lines in a file already read in full, use `patch_file`
-     with a unified diff — only the changed lines are transmitted.
+     with `old_string` set to the exact current content to replace and `new_string` set
+     to the replacement. If `patch_file` returns an error, use `write_file` with the
+     complete new content immediately — do not retry `patch_file`.
    - Otherwise use `write_file` with the complete new content.
    Never use `patch_file` on a file you have not read via `read_file` or `read_files`
    in this run.
@@ -95,8 +97,11 @@ After every `write_file` or `patch_file` call within a step:
    `{ "accepted": false, "delta_score": 0.0, "rationale": "Moderator parse failure" }`.
 
 5. If `accepted = true` and `delta_score >= 0.01` and `iteration_count < 2`:
-   - Apply the diff: `patch_file` with the proposed diff on the artifact path.
-   - If `patch_file` returns an error result, terminate the sub-loop immediately —
+   - Apply the patch: call `patch_file` with `old_string` set to the content being
+     replaced and `new_string` set to the updated content. If `patch_file` returns an
+     error, call `write_file` with the complete updated artifact content immediately —
+     do not retry `patch_file`.
+   - If the write tool returns an error result, terminate the sub-loop immediately —
      do not return to step 1. Append `{ "delta_score": 0.0, "accepted": false }` to
      iteration history and proceed to step 6. The kernel records this as a tool error.
    - Otherwise append `{ "delta_score": <score>, "accepted": true }` to iteration
