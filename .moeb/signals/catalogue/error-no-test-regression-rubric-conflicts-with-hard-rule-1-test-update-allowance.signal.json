@@ -1,0 +1,19 @@
+{
+  "signal_id": "3e5f9c2a-18b7-4d6e-a902-7f84c1b0d3e5",
+  "category": "Error",
+  "severity": "Minor",
+  "title": "no-test-regression rubric conflicts with HARD RULE 1 test update allowance",
+  "description": "The no-test-regression rubric pass condition 'no test file edited' conflicts with HARD RULE 1, which explicitly permits updating test code to the minimum extent needed to compile against a new implementation. When a public API changes (adding a required struct field), test files must be updated to compile. The kernel forces no-test-regression to fail even when all tests pass and edits are strictly minimal.",
+  "proposed_resolution": "Update run.rubrics.md to exempt test file edits that are strictly required for compilation (no test deletion or weakening) from the no-test-regression failure condition.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-30T16:15:00Z",
+  "last_seen": "2026-05-30T16:15:00Z",
+  "occurrences": [
+    {
+      "timestamp": "2026-05-30T16:15:00Z",
+      "run_id": "7c7b0441-87c2-4176-a065-3afcd18f2131"
+    }
+  ]
+}

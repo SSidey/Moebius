@@ -7,11 +7,12 @@
   "proposed_resolution": "Extend start_run to return large content via a moeb-accessible relative path (e.g. .moeb/tmp/<run_id>-run-prompt.txt), or add a moeb tool for reading kernel-generated output files by run_id.",
   "gating_condition": null,
   "status": "open",
-  "occurrence_count": 2,
+  "occurrence_count": 3,
   "first_seen": "2026-05-29T23:46:00Z",
-  "last_seen": "2026-05-29T00:35:23Z",
+  "last_seen": "2026-05-30T16:15:00Z",
   "occurrences": [
     { "timestamp": "2026-05-29T23:46:00Z", "run_id": "9d5a69df-ac3a-4af4-a140-9aae58bd25d1" },
-    { "timestamp": "2026-05-29T00:35:23Z", "run_id": "e1e59193-e8e0-44f3-b1f3-50576b129a7a" }
+    { "timestamp": "2026-05-29T00:35:23Z", "run_id": "e1e59193-e8e0-44f3-b1f3-50576b129a7a" },
+    { "timestamp": "2026-05-30T16:15:00Z", "run_id": "7c7b0441-87c2-4176-a065-3afcd18f2131" }
   ]
 }

@@ -40,6 +40,8 @@ Proceed with Phase 1 and Phase 2 as defined below.
 
 ## Phase 1 — Scan
 
+Call `enter_phase` with `phase_id: "phase-1"` as the first action in this phase.
+
 Call `list_directory` on `.moeb/signals/`. For each entry ending with `.signals.json`,
 call `read_file` on that path. Parse the JSON array. Collect every signal object where
 `picked_up_at` is absent or null. Record each signal alongside its source file path.
@@ -49,6 +51,8 @@ Phase 12 with the message: `"No unresolved signals found."`.
 
 ## Phase 2 — Select
 
+Call `enter_phase` with `phase_id: "phase-2"` as the first action in this phase.
+
 Assign each unresolved signal a numeric severity rank: `"Critical"` → 2, `"Major"` → 1,
 any other value → 0. Sort by severity rank descending, then by `timestamp` ascending
 (oldest first among equal severity). Select the first signal after sorting. Record its
@@ -56,6 +60,8 @@ any other value → 0. Sort by severity rank descending, then by `timestamp` asc
 path.
 
 ## Phase 3 — Mark
+
+Call `enter_phase` with `phase_id: "phase-3"` as the first action in this phase.
 
 Compute `fix_branch` before patching:
 1. Derive `domain`: if `category` is `"Error"`, use `"fix"`; otherwise use `"moeb"`.
@@ -114,10 +120,14 @@ Record a StepMetric for `step_id: "mark-signal"`.
 
 ## Phase 4 — Branch
 
+Call `enter_phase` with `phase_id: "phase-4"` as the first action in this phase.
+
 Call `create_branch` with `domain` and `slug` derived in Phase 3.
 Record a StepMetric for `step_id: "create-branch"`.
 
 ## Phase 5 — Emit Event
+
+Call `enter_phase` with `phase_id: "phase-5"` as the first action in this phase.
 
 Generate a UUID v4 `event_id` for this event.
 
@@ -182,12 +192,16 @@ Record a StepMetric for `step_id: "emit-event"`.
 
 ## Phase 6 — Verify
 
+Call `enter_phase` with `phase_id: "phase-6"` as the first action in this phase.
+
 Evaluate the fix_signal workflow for rubric compliance. Supply verdicts for all criteria
 from the injected rubric baseline and the specification's `## Rubric / ### Structured`
 table. Do not supply verdicts for kernel-authoritative criteria (`tool-errors`,
 `rubric-qualification`). Call `verify_rubrics` with the complete verdict list.
 
 ## Phase 7 — End-of-Skill Review
+
+Call `enter_phase` with `phase_id: "phase-7"` as the first action in this phase.
 
 Act as a QA Architect: evaluate the fix_signal workflow outputs (signal marking patch,
 branch creation, event artifact, accumulated StepMetrics). Produce a
@@ -199,12 +213,15 @@ to `.moeb/signals/{{run_id}}.signals.json`.
 
 ## Phase 8 — Metrics Recording
 
+Call `enter_phase` with `phase_id: "phase-8"` as the first action in this phase.
+
 Assemble `RunMetrics`:
 - `run_id`: `{{run_id}}`
 - `timestamp`: ISO 8601 run-start time
 - `step_metrics`: StepMetric records from all steps
 - `wall_time_ms`: elapsed milliseconds since fix_signal run start
 - `rubric_score` and `end_review_error_count`: written by kernel — do NOT compute
+- `tools_used`: sorted array of tool names from `get_run_status`.
 
 Write to `.moeb/metrics/{{run_id}}.metrics.json`.
 
@@ -218,11 +235,16 @@ Write the run file to `{{run_file_path}}`:
   "signals_path": ".moeb/signals/{{run_id}}.signals.json",
   "metrics_path": ".moeb/metrics/{{run_id}}.metrics.json",
   "rubric_score": "<from verify_rubrics output>",
-  "end_review_error_count": "<count of Critical signals>"
+  "end_review_error_count": "<count of Critical signals>",
+  "tools_used": <sorted array from get_run_status>
 }
 ```
 
+> `tools_used`: call `get_run_status` immediately before writing the run file and extract the `tools used:` line as a sorted JSON array.
+
 ## Commit
+
+Call `enter_phase` with `phase_id: "phase-commit"` as the first action in this phase.
 
 Call `git_commit` with:
 - `kind`: `"run"`
@@ -234,6 +256,8 @@ capturing all changes made during the fix_signal run.
 
 ## Tag
 
+Call `enter_phase` with `phase_id: "phase-tag"` as the first action in this phase.
+
 Call `tag_run` with:
 - `run_id`: `{{run_id}}`
 - `domain`: `"moeb"`
@@ -243,6 +267,8 @@ This tag is created unconditionally — even when `end_review_error_count` is no
 providing a durable git trace for every fix_signal invocation including failed runs.
 
 ## Signal Tag
+
+Call `enter_phase` with `phase_id: "phase-signal-tag"` as the first action in this phase.
 
 Call `tag_signal` with:
 - `signal_id`: the ID of the signal selected during Phase 2
@@ -254,6 +280,8 @@ This creates an annotated git tag `signal/<signal_id>` with annotation body
 making the signal selection decision and its corresponding event traceable in git history.
 
 ## Complete
+
+Call `enter_phase` with `phase_id: "phase-complete"` as the first action in this phase.
 
 Respond with a concise summary: which signal was selected (signal_id, title, severity),
 which branch was created (Phase 4), which event was emitted (path and type), and whether

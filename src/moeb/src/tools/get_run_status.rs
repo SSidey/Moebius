@@ -19,7 +19,7 @@ impl ToolHandler for GetRunStatusTool {
     fn definition(&self) -> ToolDef {
         ToolDef {
             name: "get_run_status",
-            description: "Return current session state: task list, task statuses, and rubric verifications.",
+            description: "Return current session state: task list, task statuses, rubric verifications, and tools used.",
             parameters: json!({
                 "type": "object",
                 "properties": {}
@@ -71,6 +71,13 @@ impl ToolHandler for GetRunStatusTool {
                 }
                 output.push('\n');
             }
+        }
+
+        let tools = state.sorted_tools_used();
+        if tools.is_empty() {
+            output.push_str("tools used: none\n");
+        } else {
+            output.push_str(&format!("tools used: {}\n", tools.join(", ")));
         }
 
         Ok(output)

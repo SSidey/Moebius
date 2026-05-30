@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -44,6 +44,9 @@ pub struct RunState {
     pub run_id: String,
     pub rubric_score: Option<f32>,
     pub end_review_error_count: Option<u32>,
+    pub tools_used: HashSet<String>,
+    pub current_phase: Option<String>,
+    pub phase_tool_map: HashMap<String, Vec<String>>,
 }
 
 impl RunState {
@@ -76,6 +79,28 @@ impl RunState {
             tool_name: tool_name.to_string(),
             message: message.to_string(),
         });
+    }
+
+    pub fn record_tool_used(&mut self, name: &str) {
+        self.tools_used.insert(name.to_string());
+    }
+
+    pub fn set_current_phase(&mut self, phase_id: Option<String>) {
+        self.current_phase = phase_id;
+    }
+
+    pub fn sorted_tools_used(&self) -> Vec<String> {
+        let mut v: Vec<String> = self.tools_used.iter().cloned().collect();
+        v.sort();
+        v
+    }
+
+    pub fn set_phase_tool_map(&mut self, map: HashMap<String, Vec<String>>) {
+        self.phase_tool_map = map;
+    }
+
+    pub fn allowed_tools_for_phase(&self, phase_id: &str) -> Option<&Vec<String>> {
+        self.phase_tool_map.get(phase_id)
     }
 }
 

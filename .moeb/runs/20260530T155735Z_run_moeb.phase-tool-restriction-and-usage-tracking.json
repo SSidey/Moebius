@@ -1,0 +1,11 @@
+{
+  "run_id": "7c7b0441-87c2-4176-a065-3afcd18f2131",
+  "timestamp": "2026-05-30T15:57:35Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.phase-tool-restriction-and-usage-tracking.md",
+  "signals_path": ".moeb/signals/7c7b0441-87c2-4176-a065-3afcd18f2131.signals.json",
+  "metrics_path": ".moeb/metrics/7c7b0441-87c2-4176-a065-3afcd18f2131.metrics.json",
+  "rubric_score": 0.842,
+  "end_review_error_count": 0,
+  "tools_used": []
+}

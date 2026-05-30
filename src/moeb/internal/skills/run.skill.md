@@ -290,6 +290,7 @@ After completing the Dedup-and-Write Procedure for all signals:
    - `step_metrics`: all StepMetric records accumulated across steps
    - `end_review_error_count`: written by the kernel from RunState — do NOT compute or write this field.
    - `wall_time_ms`: elapsed milliseconds since run start
+   - `tools_used`: sorted array of tool names from `get_run_status`.
 
 2. Write the `RunMetrics` object to `.moeb/metrics/{{run_id}}.metrics.json` as JSON.
 
@@ -304,9 +305,12 @@ After completing the Dedup-and-Write Procedure for all signals:
      "signals_path": ".moeb/signals/{{run_id}}.signals.json",
      "metrics_path": ".moeb/metrics/{{run_id}}.metrics.json",
      "rubric_score": <from verify_rubrics output>,
-     "end_review_error_count": <count of Critical signals>
+     "end_review_error_count": <count of Critical signals>,
+     "tools_used": <sorted array from get_run_status>
    }
    ```
+
+   > `tools_used`: call `get_run_status` immediately before writing the run file and extract the `tools used:` line as a sorted JSON array.
 
    Use `write_file` with path `{{run_file_path}}`. The `spec_path` is the spec file
    path as provided in the prompt context. The timestamp is the session start time (the

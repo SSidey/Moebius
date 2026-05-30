@@ -106,7 +106,30 @@ fn do_call_tool(
     let args = call_params.arguments.unwrap_or(json!({}));
     let turn = session.increment_turn();
     let working_dir = session.working_dir.clone();
+
+    // Phase-level tool restriction — enter_phase is always permitted
+    if name != "enter_phase" {
+        if let Some(phase_id) = session.current_phase() {
+            if let Some(allowed) = session.allowed_tools_for_phase(&phase_id) {
+                if !allowed.contains(&name) {
+                    return Ok(format!(
+                        "tool '{}' is not available in phase '{}'. Available tools: [{}].",
+                        name,
+                        phase_id,
+                        allowed.join(", ")
+                    ));
+                }
+            }
+        }
+    }
+
     let (text, _) = executor.execute(&name, &name, &args, &working_dir, turn)?;
+
+    // Record tool usage — enter_phase is harness bookkeeping, not productive tool use
+    if name != "enter_phase" {
+        session.state.lock().unwrap().record_tool_used(&name);
+    }
+
     Ok(text)
 }
 

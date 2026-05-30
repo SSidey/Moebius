@@ -1,15 +1,19 @@
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use anyhow::Result;
 use serde_json::json;
 
 use crate::adapters::ToolDef;
 use crate::assets::{Internal, Prompts};
+use crate::run_state::SharedRunState;
 use super::ToolHandler;
 
 const RUN_ID_TOKEN: &str = "{{run_id}}";
 const RUN_FILE_PATH_TOKEN: &str = "{{run_file_path}}";
 
-pub struct StartRunTool;
+pub struct StartRunTool {
+    pub state: SharedRunState,
+}
 
 impl ToolHandler for StartRunTool {
     fn name(&self) -> &'static str {
@@ -55,6 +59,9 @@ impl ToolHandler for StartRunTool {
         let skill_name = crate::skills::extract_skill_name(&spec_content)
             .unwrap_or_else(|| "run".to_string());
         let skill_content = crate::skills::load_skill(&moeb_dir, &skill_name)?;
+
+        let phase_tool_map = parse_phase_tool_map(&skill_content);
+        self.state.lock().unwrap().set_phase_tool_map(phase_tool_map);
 
         let skill_review_enabled =
             crate::skills::load_skill_review_flag(&moeb_dir, &skill_name);
@@ -106,6 +113,35 @@ impl ToolHandler for StartRunTool {
 
         Ok(prompt)
     }
+}
+
+fn parse_phase_tool_map(skill_content: &str) -> HashMap<String, Vec<String>> {
+    let mut map = HashMap::new();
+    for line in skill_content.lines() {
+        if line.contains("<!-- tools:") && line.contains("## Phase ") {
+            if let Some(phase_pos) = line.find("## Phase ") {
+                let after_phase = &line[phase_pos + "## Phase ".len()..];
+                let label = after_phase.split_whitespace().next().unwrap_or("").to_lowercase();
+                if label.is_empty() {
+                    continue;
+                }
+                if let Some(tools_start) = line.find("<!-- tools:") {
+                    let after_tools = &line[tools_start + "<!-- tools:".len()..];
+                    if let Some(end) = after_tools.find("-->") {
+                        let tools: Vec<String> = after_tools[..end]
+                            .split(',')
+                            .map(|s| s.trim().to_string())
+                            .filter(|s| !s.is_empty())
+                            .collect();
+                        if !tools.is_empty() {
+                            map.insert(format!("phase-{}", label), tools);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    map
 }
 
 pub(crate) fn build_run_rubrics(moeb_dir: &Path) -> String {

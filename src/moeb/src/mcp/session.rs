@@ -21,4 +21,16 @@ impl McpSession {
         self.turn_count += 1;
         self.turn_count
     }
+
+    pub fn current_phase(&self) -> Option<String> {
+        self.state.lock().unwrap().current_phase.clone()
+    }
+
+    pub fn set_phase_tool_map(&mut self, map: std::collections::HashMap<String, Vec<String>>) {
+        self.state.lock().unwrap().set_phase_tool_map(map);
+    }
+
+    pub fn allowed_tools_for_phase(&self, phase_id: &str) -> Option<Vec<String>> {
+        self.state.lock().unwrap().allowed_tools_for_phase(phase_id).cloned()
+    }
 }

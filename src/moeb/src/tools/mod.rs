@@ -3,6 +3,7 @@ pub mod complete_review;
 pub mod create_candidate_tag;
 pub mod create_branch;
 pub mod create_task_list;
+pub mod enter_phase;
 pub mod get_run_status;
 pub mod get_version;
 pub mod git_commit;
@@ -86,6 +87,7 @@ impl ToolRegistry {
         r.register(Box::new(update_task::UpdateTaskTool { state: std::sync::Arc::clone(&state) }));
         r.register(Box::new(verify_rubrics::VerifyRubricsTool { state: std::sync::Arc::clone(&state) }));
         r.register(Box::new(complete_review::CompleteReviewTool { state: Arc::clone(&state) }));
+        r.register(Box::new(enter_phase::EnterPhaseTool { state: Arc::clone(&state) }));
         r.register(Box::new(create_branch::CreateBranchTool));
         r.register(Box::new(git_commit::GitCommitTool));
         r.register(Box::new(bump_version::BumpVersionTool));
@@ -115,7 +117,7 @@ impl ToolRegistry {
     /// Register the MCP tools (standard tools + start_run + start_spec + get_run_status).
     pub fn mcp(state: SharedRunState, read_paths: Arc<Mutex<HashSet<String>>>) -> Self {
         let mut r = Self::standard(std::sync::Arc::clone(&state), Arc::clone(&read_paths));
-        r.register(Box::new(start_run::StartRunTool));
+        r.register(Box::new(start_run::StartRunTool { state: Arc::clone(&state) }));
         r.register(Box::new(start_spec::StartSpecTool));
         // fix_signal is MCP-only per moeb.signal-fix-command Decision 1; not in standard()
         r.register(Box::new(fix_signal::FixSignalTool));
@@ -135,7 +137,7 @@ impl ToolRegistry {
             std::sync::Arc::clone(&adapter),
             Arc::clone(&read_paths),
         );
-        r.register(Box::new(start_run::StartRunTool));
+        r.register(Box::new(start_run::StartRunTool { state: Arc::clone(&state) }));
         r.register(Box::new(start_spec::StartSpecTool));
         // fix_signal is MCP-only per moeb.signal-fix-command Decision 1; not in standard()
         r.register(Box::new(fix_signal::FixSignalTool));
@@ -172,6 +174,7 @@ impl ToolRegistry {
             "read_file", "write_file", "patch_file", "list_directory",
             "search_files", "grep_files", "read_files", "read_file_range",
             "create_task_list", "update_task", "verify_rubrics", "complete_review",
+            "enter_phase",
             "create_branch", "git_commit",
             "bump_version", "create_candidate_tag",
             "get_version", "tag_run", "tag_signal", "query_agent", "github_releases",

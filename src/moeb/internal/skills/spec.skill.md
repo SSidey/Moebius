@@ -153,7 +153,9 @@ After writing the spec file in Phase 4:
    This is a no-op at the kernel level (path starts with `.moeb/`) but makes the review
    obligation explicit and maintains symmetry with the run skill.
 
-## Phase 5 — Link README
+## Phase 5 — Link README <!-- tools: read_file, write_file -->
+
+Call `enter_phase` with `phase_id: "phase-5"` as the first action in this phase.
 
 Read `.moeb/README.md` using `read_file`. Locate the `### <domain>` section in the
 Specification index. If the section does not exist, create it in alphabetical order
@@ -347,6 +349,7 @@ After completing the Dedup-and-Write Procedure for all signals:
    - `step_metrics`: all StepMetric records from spec-file and readme-link steps
    - `end_review_error_count`: written by the kernel from RunState — do NOT compute or write this field.
    - `wall_time_ms`: elapsed milliseconds since run start
+   - `tools_used`: sorted array of tool names from `get_run_status`.
 
 2. Write to `.moeb/metrics/{{run_id}}.metrics.json`.
 
@@ -361,9 +364,12 @@ After completing the Dedup-and-Write Procedure for all signals:
      "signals_path": ".moeb/signals/{{run_id}}.signals.json",
      "metrics_path": ".moeb/metrics/{{run_id}}.metrics.json",
      "rubric_score": <from rubric_score above>,
-     "end_review_error_count": <count of Critical signals>
+     "end_review_error_count": <count of Critical signals>,
+     "tools_used": <sorted array from get_run_status>
    }
    ```
+
+   > `tools_used`: call `get_run_status` immediately before writing the run file and extract the `tools used:` line as a sorted JSON array.
 
    Use `write_file` with path `{{run_file_path}}`. The `spec_path` is the path of the
    spec file authored in Phase 4 (`.moeb/specifications/<domain>/<domain>.<slug>.md`
