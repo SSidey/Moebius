@@ -1,0 +1,11 @@
+{
+  "run_id": "7abaa3ef-0230-4425-8ff6-05b95e572b9d",
+  "timestamp": "2026-05-30T19:24:12Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.reasoning-reviewer.md",
+  "signals_path": ".moeb/signals/7abaa3ef-0230-4425-8ff6-05b95e572b9d.signals.json",
+  "metrics_path": ".moeb/metrics/7abaa3ef-0230-4425-8ff6-05b95e572b9d.metrics.json",
+  "rubric_score": 0.6875,
+  "end_review_error_count": 2,
+  "tools_used": ["complete_review", "create_task_list", "grep_files", "list_directory", "patch_file", "read_file", "read_file_range", "start_run", "update_task", "verify_rubrics", "write_file"]
+}

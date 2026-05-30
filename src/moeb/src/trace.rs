@@ -126,6 +126,13 @@ pub struct CompactionEvent {
     pub messages_compacted: usize,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ThinkingBlockEvent {
+    pub attempt: u32,
+    pub turn: u32,
+    pub texts: Vec<String>,
+}
+
 // ── Tagged union ──────────────────────────────────────────────────────────────
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
@@ -139,6 +146,7 @@ pub enum TraceEvent {
     AgentFinished(AgentFinishedEvent),
     CacheUsage(CacheUsageEvent),
     Compaction(CompactionEvent),
+    ThinkingBlock(ThinkingBlockEvent),
     MetricsEvent { metrics: RunMetrics },
 }
 

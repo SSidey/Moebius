@@ -32,7 +32,8 @@
         "NewCapability",
         "SkillImprovement",
         "ToolImprovement",
-        "ProcessImprovement"
+        "ProcessImprovement",
+        "ReasoningImprovement"
       ],
       "description": "Classifies the signal by the kind of improvement it represents. Error: a recoverable failure that degraded run quality or caused a rubric violation. NewCapability: a missing moeb tool or feature that forced an external or unsupported workaround. SkillImprovement: a skill file instruction that produced suboptimal or incorrect agent behaviour. ToolImprovement: a moeb tool implementation defect that did not cause complete failure but increased cost or produced incorrect output. ProcessImprovement: a gap in the run, spec, or fix_signal workflow lifecycle that caused unnecessary manual intervention."
     },

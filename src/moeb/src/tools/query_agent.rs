@@ -99,7 +99,7 @@ impl ToolHandler for QueryAgentTool {
         let mut full_prompt = role_content;
         if !context_pairs.is_empty() {
             full_prompt.push_str(
-                "\n\n## Context files\n\nThe following files are provided as read-only reference context:\n",
+                "\n\n## Context files\n\nThe following files are provided as read-only context:\n",
             );
             for (path, content) in &context_pairs {
                 full_prompt.push_str(&format!("\n### {}\n{}\n", path, content));
@@ -114,9 +114,17 @@ impl ToolHandler for QueryAgentTool {
         let messages = vec![Message::User(full_prompt)];
         let response = adapter.send(&messages, &[])?;
 
+        // Unwrap WithThinking: discard thinking blocks and process inner response.
+        let response = if let AgentResponse::WithThinking { inner, .. } = response {
+            *inner
+        } else {
+            response
+        };
+
         let text = match response {
             AgentResponse::Text(t) => t,
             AgentResponse::ToolCalls(_) => String::new(),
+            AgentResponse::WithThinking { .. } => unreachable!("WithThinking is always unwrapped before dispatch"),
         };
 
         if response_type == "json" && serde_json::from_str::<serde_json::Value>(&text).is_err() {

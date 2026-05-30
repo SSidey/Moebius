@@ -73,6 +73,7 @@ pub struct ToolDef {
 pub enum AgentResponse {
     Text(String),
     ToolCalls(Vec<ToolCall>),
+    WithThinking { inner: Box<AgentResponse>, thinking: Vec<String> },
 }
 
 // ── Trait ────────────────────────────────────────────────────────────────────

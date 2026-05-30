@@ -1,0 +1,90 @@
+[
+  {
+    "signal_id": "e4c7f2a1-b5d3-4e9a-8f0b-1c2d3e4f5a6b",
+    "category": "Error",
+    "severity": "Critical",
+    "title": "Tool error not recovered: patch_file on adapters/mod.rs",
+    "description": "patch_file returned 'old_string not found' when attempting to add the WithThinking variant to src/moeb/src/adapters/mod.rs. Likely cause: CRLF vs LF line ending mismatch. Recovered immediately by write_file.",
+    "proposed_resolution": "Normalize line endings in patch_file and read_file consistently on Windows, or document that write_file is preferred for Windows-hosted repositories.",
+    "gating_condition": null,
+    "status": "open",
+    "occurrence_count": 1,
+    "first_seen": "2026-05-30T19:24:00Z",
+    "last_seen": "2026-05-30T19:24:00Z",
+    "occurrences": [
+      { "timestamp": "2026-05-30T19:24:00Z", "run_id": "7abaa3ef-0230-4425-8ff6-05b95e572b9d" }
+    ]
+  },
+  {
+    "signal_id": "f5d8a3b2-c6e4-4f0b-9a1c-2d3e4f5a6b7c",
+    "category": "Error",
+    "severity": "Critical",
+    "title": "Rubric criterion Pass with acknowledged failures: no-test-regression",
+    "description": "The no-test-regression criterion was passed with acknowledged_failures noting that anthropic_tests.rs was modified to add 4 spec-required test cases. The criterion's pass condition states 'no test file edited', creating unavoidable tension when a spec mandates adding test coverage.",
+    "proposed_resolution": "Clarify no-test-regression to distinguish additive test changes (adding new tests) from regressive test changes (modifying or deleting existing tests).",
+    "gating_condition": null,
+    "status": "open",
+    "occurrence_count": 1,
+    "first_seen": "2026-05-30T19:24:00Z",
+    "last_seen": "2026-05-30T19:24:00Z",
+    "occurrences": [
+      { "timestamp": "2026-05-30T19:24:00Z", "run_id": "7abaa3ef-0230-4425-8ff6-05b95e572b9d" }
+    ]
+  },
+  {
+    "signal_id": "a6e9b4c3-d7f5-4a1c-0b2d-3e4f5a6b7c8d",
+    "category": "SkillImprovement",
+    "severity": "Minor",
+    "title": "WithThinking unwrap required in query_agent.rs violates qualitative spec constraint",
+    "description": "The moeb.reasoning-reviewer spec's qualitative rubric states WithThinking must not be referenced outside three specified files. However, query_agent.rs calls adapter.send() directly and required a second pre-unwrap arm for Rust exhaustive match compliance.",
+    "proposed_resolution": "Update the spec's qualitative criterion to include query_agent.rs, or route query_agent through a shared unwrap helper in adapters/mod.rs.",
+    "gating_condition": null,
+    "status": "open",
+    "occurrence_count": 1,
+    "first_seen": "2026-05-30T19:24:00Z",
+    "last_seen": "2026-05-30T19:24:00Z",
+    "occurrences": [
+      { "timestamp": "2026-05-30T19:24:00Z", "run_id": "7abaa3ef-0230-4425-8ff6-05b95e572b9d" }
+    ]
+  },
+  {
+    "signal_id": "a1000002-0529-4004-8004-000000000004",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: Read (start_run result file)",
+    "description": "Used Read to read oversized start_run output from absolute temp path. moeb read_file cannot access paths outside the working directory.",
+    "proposed_resolution": "Extend start_run to write large results to a moeb-accessible relative path, or add a moeb tool for reading kernel-generated output files by run_id.",
+    "gating_condition": null,
+    "status": "open",
+    "occurrence_count": 4,
+    "first_seen": "2026-05-29T23:46:00Z",
+    "last_seen": "2026-05-30T19:24:00Z",
+    "occurrences": [
+      { "timestamp": "2026-05-29T23:46:00Z", "run_id": "9d5a69df-ac3a-4af4-a140-9aae58bd25d1" },
+      { "timestamp": "2026-05-29T00:35:23Z", "run_id": "e1e59193-e8e0-44f3-b1f3-50576b129a7a" },
+      { "timestamp": "2026-05-30T16:15:00Z", "run_id": "7c7b0441-87c2-4176-a065-3afcd18f2131" },
+      { "timestamp": "2026-05-30T19:24:00Z", "run_id": "7abaa3ef-0230-4425-8ff6-05b95e572b9d" }
+    ]
+  },
+  {
+    "signal_id": "b8e4f2a1-c7d3-4e9f-a0b6-2d5c8f1e3a7b",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: Bash",
+    "description": "Used Bash for cargo build --release and cargo test. No moeb equivalent for shell command execution.",
+    "proposed_resolution": "Introduce a moeb run_command tool for executing build and test verification commands.",
+    "gating_condition": null,
+    "status": "open",
+    "occurrence_count": 6,
+    "first_seen": "2026-05-28T15:22:40Z",
+    "last_seen": "2026-05-30T19:24:00Z",
+    "occurrences": [
+      { "timestamp": "2026-05-28T15:22:40Z", "run_id": "53922478-9f39-43f0-9e5f-aa0204e9c553" },
+      { "timestamp": "2026-05-28T16:15:00Z", "run_id": "6025fff1-96b2-456b-880d-c89bb2bfd3f7" },
+      { "timestamp": "2026-05-28T16:52:00Z", "run_id": "83fdcee0-edf1-4cf9-89a3-43992408a45a" },
+      { "timestamp": "2026-05-28T18:57:00Z", "run_id": "2915970d-f315-43cc-adfe-237bc48cd92c" },
+      { "timestamp": "2026-05-29T13:30:00Z", "run_id": "9d683661-f996-480b-b9c2-1e1eceb4ceb8" },
+      { "timestamp": "2026-05-30T19:24:00Z", "run_id": "7abaa3ef-0230-4425-8ff6-05b95e572b9d" }
+    ]
+  }
+]

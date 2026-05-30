@@ -211,6 +211,41 @@ carry `signal_id` (UUID v4), `run_id`, `timestamp`, `category`, `severity`, `tit
 `description`, `proposed_resolution`, and `gating_condition`. Write the complete array
 to `.moeb/signals/{{run_id}}.signals.json`.
 
+## Phase 7b — Reasoning Review
+
+This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
+`{{no_review}}` is the exact string `"true"`.
+
+This review is advisory — its findings are emitted as signals to the improvement
+queue but do not affect the rubric verdict or run pass/fail.
+
+1. If `RunState.thinking_blocks` is empty, skip this phase entirely and proceed to
+   Phase 8.
+
+2. Call `query_agent` with:
+   - `role`: `"reasoning-reviewer"`
+   - `prompt`: a JSON string `{ "thinking_blocks": [<the accumulated thinking block strings>] }`
+   - `expected_response_type`: `"json"`
+   - `context_files`: `["src/moeb/internal/rubrics/reasoning.rubrics.md"]`
+
+3. Parse the returned value as a JSON array of signal objects, each with
+   `"category": "ReasoningImprovement"`.
+
+4. For each signal S in the returned array, assign:
+   - `signal_id`: a fresh UUID v4
+   - `run_id`: the current run identifier (`{{run_id}}`)
+   - `timestamp`: ISO 8601 current time
+
+   Then write S via the **Canonical Signal Dedup-and-Write Procedure** defined in
+   this skill file.
+
+5. After all signals are processed, run the Index Update sub-procedure.
+
+6. Read `.moeb/signals/{{run_id}}.signals.json`, append the reasoning signal objects
+   to the array, and write the complete updated file.
+
+Continue to Phase 8 — Metrics Recording regardless of signal count.
+
 ## Phase 8 — Metrics Recording
 
 Call `enter_phase` with `phase_id: "phase-8"` as the first action in this phase.

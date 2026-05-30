@@ -4,7 +4,7 @@ use std::sync::Arc;
 
 use crate::config::{MoebConfig, Secrets};
 use crate::ports::AiPort;
-use crate::trace::{CacheUsageEvent, HttpRequestEvent, HttpRetryEvent, QuotaWarningEvent, TraceContext, TraceEvent};
+use crate::trace::{CacheUsageEvent, HttpRequestEvent, HttpRetryEvent, QuotaWarningEvent, ThinkingBlockEvent, TraceContext, TraceEvent};
 use super::{retry, Adapter, AgentResponse, Message, ToolCall, ToolDef};
 
 #[path = "anthropic_request.rs"]
@@ -213,7 +213,19 @@ impl Adapter for AnthropicAdapter {
                 anyhow::bail!("Anthropic API error {}: {}", status, text);
             }
 
-            return parse_response(&response_body);
+            let (primary_response, thinking_texts) = parse_response(&response_body)?;
+            if !thinking_texts.is_empty() {
+                self.trace.push(TraceEvent::ThinkingBlock(ThinkingBlockEvent {
+                    attempt,
+                    turn,
+                    texts: thinking_texts.clone(),
+                }));
+                return Ok(AgentResponse::WithThinking {
+                    inner: Box::new(primary_response),
+                    thinking: thinking_texts,
+                });
+            }
+            return Ok(primary_response);
         }
 
         Err(last_err.unwrap_or_else(|| anyhow::anyhow!("Anthropic API request failed")))

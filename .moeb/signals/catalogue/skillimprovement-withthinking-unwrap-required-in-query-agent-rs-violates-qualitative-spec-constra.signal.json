@@ -1,0 +1,16 @@
+{
+  "signal_id": "a6e9b4c3-d7f5-4a1c-0b2d-3e4f5a6b7c8d",
+  "category": "SkillImprovement",
+  "severity": "Minor",
+  "title": "WithThinking unwrap required in query_agent.rs violates qualitative spec constraint",
+  "description": "The moeb.reasoning-reviewer spec's qualitative rubric states the WithThinking variant must not be referenced outside adapters/mod.rs, adapters/anthropic.rs, and the single unwrap arm in agent_inner.rs. However, query_agent.rs also calls adapter.send() directly and must handle WithThinking for Rust exhaustive match compliance. A pre-unwrap arm was added to query_agent.rs, technically violating the qualitative constraint. The spec did not account for other files that call adapter.send() directly.",
+  "proposed_resolution": "Update the moeb.reasoning-reviewer spec's qualitative criterion to include query_agent.rs in the list of permissible WithThinking references, or route query_agent.rs through a shared unwrap helper in adapters/mod.rs so all WithThinking handling is centralized in one place.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-30T19:24:00Z",
+  "last_seen": "2026-05-30T19:24:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-30T19:24:00Z", "run_id": "7abaa3ef-0230-4425-8ff6-05b95e572b9d" }
+  ]
+}

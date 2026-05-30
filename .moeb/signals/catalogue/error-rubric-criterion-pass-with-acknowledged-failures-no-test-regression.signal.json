@@ -1,0 +1,16 @@
+{
+  "signal_id": "f5d8a3b2-c6e4-4f0b-9a1c-2d3e4f5a6b7c",
+  "category": "Error",
+  "severity": "Critical",
+  "title": "Rubric criterion Pass with acknowledged failures: no-test-regression",
+  "description": "The no-test-regression criterion was passed with acknowledged_failures: 'anthropic_tests.rs was modified to add 4 new test cases as required by Step 2 of the specification; all pre-existing tests pass without change to their logic.' The criterion's pass condition states 'no test file edited', creating unavoidable tension when a spec explicitly requires adding test coverage.",
+  "proposed_resolution": "Re-run with the criterion evaluated strictly. A failure is a Fail regardless of whether it is attributed to prior work or the current change. If the failure is genuinely pre-existing, fix it in a separate targeted run first. Alternatively, clarify the no-test-regression criterion to distinguish additive test changes (allowed) from regressive test changes (forbidden).",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-30T19:24:00Z",
+  "last_seen": "2026-05-30T19:24:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-30T19:24:00Z", "run_id": "7abaa3ef-0230-4425-8ff6-05b95e572b9d" }
+  ]
+}

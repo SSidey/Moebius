@@ -1,11 +1,14 @@
     use super::*;
+    use super::parse_response;
     use std::env;
     use std::fs;
     use std::time::Duration;
     use tempfile::TempDir;
 
+    use crate::adapters::AgentResponse;
     use crate::adapters::retry;
     use crate::config::{tests::CWD_LOCK, AdapterConfig, MoebConfig, Secrets, MOEB_DIR};
+    use serde_json::json;
 
     fn in_temp_dir() -> (TempDir, std::sync::MutexGuard<'static, ()>) {
         let guard = CWD_LOCK.lock().unwrap_or_else(|e| e.into_inner());
@@ -154,4 +157,73 @@
         ];
         let body = build_request_body("claude-opus-4-7", &messages, &[], false).unwrap();
         assert_eq!(body["system"], "sys", "system must be a plain string when prompt_cache=false");
+    }
+
+    #[test]
+    fn parse_response_only_thinking_returns_empty_text_with_thinking() {
+        let response = json!({
+            "stop_reason": "end_turn",
+            "content": [
+                {"type": "thinking", "thinking": "I'm reasoning about this."}
+            ]
+        });
+        let (primary, thinking) = parse_response(&response).unwrap();
+        assert_eq!(thinking, vec!["I'm reasoning about this."]);
+        match primary {
+            AgentResponse::Text(t) => assert_eq!(t, ""),
+            _ => panic!("expected Text"),
+        }
+    }
+
+    #[test]
+    fn parse_response_thinking_and_text_returns_text_with_thinking() {
+        let response = json!({
+            "stop_reason": "end_turn",
+            "content": [
+                {"type": "thinking", "thinking": "Let me think."},
+                {"type": "text", "text": "Hello world"}
+            ]
+        });
+        let (primary, thinking) = parse_response(&response).unwrap();
+        assert_eq!(thinking, vec!["Let me think."]);
+        match primary {
+            AgentResponse::Text(t) => assert_eq!(t, "Hello world"),
+            _ => panic!("expected Text"),
+        }
+    }
+
+    #[test]
+    fn parse_response_thinking_and_tool_use_returns_tool_calls_with_thinking() {
+        let response = json!({
+            "stop_reason": "tool_use",
+            "content": [
+                {"type": "thinking", "thinking": "Using a tool."},
+                {"type": "tool_use", "id": "tc1", "name": "write_file", "input": {"path": "x.rs"}}
+            ]
+        });
+        let (primary, thinking) = parse_response(&response).unwrap();
+        assert_eq!(thinking, vec!["Using a tool."]);
+        match primary {
+            AgentResponse::ToolCalls(calls) => {
+                assert_eq!(calls.len(), 1);
+                assert_eq!(calls[0].name, "write_file");
+            }
+            _ => panic!("expected ToolCalls"),
+        }
+    }
+
+    #[test]
+    fn parse_response_no_thinking_returns_empty_thinking_vec() {
+        let response = json!({
+            "stop_reason": "end_turn",
+            "content": [
+                {"type": "text", "text": "plain response"}
+            ]
+        });
+        let (primary, thinking) = parse_response(&response).unwrap();
+        assert!(thinking.is_empty());
+        match primary {
+            AgentResponse::Text(t) => assert_eq!(t, "plain response"),
+            _ => panic!("expected Text"),
+        }
     }

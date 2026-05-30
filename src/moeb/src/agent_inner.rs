@@ -62,6 +62,14 @@ pub(super) fn run_agent_loop_inner(
             .send(&messages, tools)
             .with_context(|| format!("AI adapter call failed on turn {}", turn_num))?;
 
+        // Unwrap WithThinking wrapper: push thinking blocks to RunState and dispatch inner response.
+        let response = if let AgentResponse::WithThinking { inner, thinking } = response {
+            state.lock().unwrap().push_thinking_blocks(thinking);
+            *inner
+        } else {
+            response
+        };
+
         match &response {
             AgentResponse::Text(ref text) => {
                 if require_write_before_completion {
@@ -210,6 +218,8 @@ pub(super) fn run_agent_loop_inner(
                     });
                 }
             }
+
+            AgentResponse::WithThinking { .. } => unreachable!("WithThinking is always unwrapped before dispatch"),
         }
     }
 

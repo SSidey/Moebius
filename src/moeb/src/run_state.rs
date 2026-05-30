@@ -47,6 +47,7 @@ pub struct RunState {
     pub tools_used: HashSet<String>,
     pub current_phase: Option<String>,
     pub phase_tool_map: HashMap<String, Vec<String>>,
+    pub thinking_blocks: Vec<String>,
 }
 
 impl RunState {
@@ -101,6 +102,10 @@ impl RunState {
 
     pub fn allowed_tools_for_phase(&self, phase_id: &str) -> Option<&Vec<String>> {
         self.phase_tool_map.get(phase_id)
+    }
+
+    pub fn push_thinking_blocks(&mut self, texts: Vec<String>) {
+        self.thinking_blocks.extend(texts);
     }
 }
 
