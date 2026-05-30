@@ -1,0 +1,19 @@
+{
+  "signal_id": "c3e4f5a6-b7d8-4e9f-a1b2-c3d4e5f6a7b8",
+  "category": "NewCapability",
+  "severity": "Major",
+  "title": "Missing moeb tool: Read (spec prompt template session file)",
+  "description": "The spec prompt template is saved as a tool-result file outside the moeb working directory. No moeb tool can read files from the session tool-results directory. The Read (native) tool was required to access it.",
+  "proposed_resolution": "Run moeb spec to introduce a moeb tool that can read the current session's tool-result files, or update start_spec to inject the prompt template content directly into the MCP response rather than saving it to a separate file.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-30T17:53:57Z",
+  "last_seen": "2026-05-30T17:53:57Z",
+  "occurrences": [
+    {
+      "timestamp": "2026-05-30T17:53:57Z",
+      "run_id": "f127f99e-18f6-414c-b6d6-4641793ff1bf"
+    }
+  ]
+}

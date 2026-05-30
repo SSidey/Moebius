@@ -1,0 +1,9 @@
+{
+  "run_id": "f127f99e-18f6-414c-b6d6-4641793ff1bf",
+  "timestamp": "2026-05-30T17:53:57Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.reasoning-reviewer.md",
+  "signals_path": ".moeb/signals/f127f99e-18f6-414c-b6d6-4641793ff1bf.signals.json",
+  "metrics_path": ".moeb/metrics/f127f99e-18f6-414c-b6d6-4641793ff1bf.metrics.json",
+  "tools_used": ["complete_review", "create_branch", "get_run_status", "git_commit", "grep_files", "list_directory", "patch_file", "read_file", "read_file_range", "start_spec", "tag_run", "verify_rubrics", "write_file"]
+}

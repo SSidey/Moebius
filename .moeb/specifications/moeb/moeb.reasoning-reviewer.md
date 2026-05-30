@@ -195,7 +195,14 @@ Return an empty JSON array [] if no violations are found. Return only the JSON a
 no preamble, no markdown fencing, no prose outside the JSON.
 ```
 
-### Step 6 — Add Reasoning Review phase to run.skill.md
+### Step 6 — Add Reasoning Review phase to all three canonical skill files
+
+Apply the Reasoning Review phase insertion to `run.skill.md`, `spec.skill.md`, and
+`fix_signal.skill.md`. In each file, insert immediately after the End-of-Skill Review phase
+and before the Metrics Recording phase. Use `Nb` as the phase heading suffix (where N is the
+number of the End-of-Skill Review phase in that file) to avoid renumbering downstream phases.
+
+**run.skill.md**
 
 File: `src/moeb/internal/skills/run.skill.md`
 
@@ -239,6 +246,26 @@ queue but do not affect the rubric verdict or run pass/fail.
 
 Continue to Phase 6 — Metrics Recording regardless of signal count.
 ```
+
+**spec.skill.md**
+
+File: `src/moeb/internal/skills/spec.skill.md`
+
+Insert the same Reasoning Review phase immediately after the End-of-Skill Review phase and
+before the Metrics Recording phase. If End-of-Skill Review is Phase N, use heading
+`## Phase Nb — Reasoning Review` to avoid renumbering downstream phases. The phase body is
+identical to the run.skill.md version above; replace any reference to "Phase 6 — Metrics
+Recording" with the equivalent Metrics Recording phase label used in `spec.skill.md`.
+
+**fix_signal.skill.md**
+
+File: `src/moeb/internal/skills/fix_signal.skill.md`
+
+Insert the same Reasoning Review phase immediately after the End-of-Skill Review phase and
+before the Metrics Recording phase. If End-of-Skill Review is Phase N, use heading
+`## Phase Nb — Reasoning Review`. The phase body is identical to the run.skill.md version
+above; replace any reference to "Phase 6 — Metrics Recording" with the equivalent Metrics
+Recording phase label used in `fix_signal.skill.md`.
 
 ### Step 7 — Register ReasoningImprovement in the signal schema
 
@@ -308,7 +335,7 @@ The reviewer does not call `verify_rubrics` and does not add criteria to the `##
 | `kernel-thin-and-parity` | No domain-specific or workflow-specific coordination logic may be placed in kernel Rust code when it can live in skill markdown or role files. Every tool registered in the CLI tool registry must also be registered in the MCP stdio server tool list. | Zero violations | Spec review: no proposed step places review/coordination logic in Rust; Run review: grep confirms no skill-specific logic in kernel tools; tool lists in tools/mod.rs and the MCP server match exactly |
 | `moeb-tool-origin` | All tool calls made during this invocation must originate from moeb's own tool registry. If an external tool (not in the moeb registry) was used because no moeb equivalent exists, the agent must write a MissingMoebTool signal immediately after each such call. The criterion always fails when any external tool is used, whether or not a signal was written. | Zero external tool calls | Agent reviews the conversation for calls to non-moeb tools (e.g. Bash, Edit, Write, Read, Glob, Grep, WebFetch, WebSearch in Claude Code MCP mode). Supplies Pass if none were made. If external tools were used with MissingMoebTool signals, supplies Fail with `acknowledged_failures` listing each signal title. If external tools were used without signals, supplies Fail with the unlogged tool names in the note. |
 | `thin-kernel` | New Rust code in tools/, commands/, or domain/ must be either (a) a primitive operation wrapper (filesystem, git, or HTTP with no domain logic) or (b) a thin dispatcher that calls into skills, tools, or agents and returns the result unchanged. Workflow logic — sequencing, conditionals, review loops, retry strategy, branching decisions — must live in skill markdown or role files, not in compiled Rust. | Zero workflow-logic functions in new Rust | Spec review: no Step proposes placing sequencing or conditional workflow logic in Rust when a skill-file change would suffice; Run review: every new function in tools/ or commands/ either wraps a single OS/VCS/HTTP call or contains no domain-specific branching |
-| `new-skill-mandatory-phases` | Any `*.skill.md` file written during this run contains all mandatory phase heading strings: "Verify", "End-of-Skill Review", "Metrics Recording", "Commit", "Tag", "Complete" | All six strings present in the written skill file | moeb skill-authoring run — grep for all six heading strings in the updated run.skill.md |
+| `new-skill-mandatory-phases` | All three canonical skill files updated during this run (`run.skill.md`, `spec.skill.md`, `fix_signal.skill.md`) contain all mandatory phase heading strings: "Verify", "End-of-Skill Review", "Metrics Recording", "Commit", "Tag", "Complete" | All six strings present in all three updated skill files | grep for all six heading strings in each of the three updated skill files; fail if any string is absent from any file |
 
 ### Qualitative
 

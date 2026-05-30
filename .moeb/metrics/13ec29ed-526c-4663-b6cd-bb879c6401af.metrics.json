@@ -1,0 +1,22 @@
+{
+  "run_id": "13ec29ed-526c-4663-b6cd-bb879c6401af",
+  "timestamp": "2026-05-30T17:54:01Z",
+  "rubric_score": null,
+  "step_metrics": [
+    {
+      "step_id": "spec-file",
+      "iteration_count": 0,
+      "acceptance_rate": 1.0,
+      "delta_scores": []
+    },
+    {
+      "step_id": "readme-link",
+      "iteration_count": 0,
+      "acceptance_rate": 1.0,
+      "delta_scores": []
+    }
+  ],
+  "end_review_error_count": 0,
+  "wall_time_ms": 1320000,
+  "tools_used": ["complete_review", "grep_files", "list_directory", "patch_file", "read_file", "read_file_range", "start_spec", "verify_rubrics", "write_file"]
+}

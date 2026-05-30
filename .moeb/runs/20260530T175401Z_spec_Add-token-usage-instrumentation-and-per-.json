@@ -1,0 +1,11 @@
+{
+  "run_id": "13ec29ed-526c-4663-b6cd-bb879c6401af",
+  "timestamp": "2026-05-30T17:54:01Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.token-usage-instrumentation.md",
+  "signals_path": ".moeb/signals/13ec29ed-526c-4663-b6cd-bb879c6401af.signals.json",
+  "metrics_path": ".moeb/metrics/13ec29ed-526c-4663-b6cd-bb879c6401af.metrics.json",
+  "rubric_score": null,
+  "end_review_error_count": 0,
+  "tools_used": ["complete_review", "grep_files", "list_directory", "patch_file", "read_file", "read_file_range", "start_spec", "verify_rubrics", "write_file"]
+}
