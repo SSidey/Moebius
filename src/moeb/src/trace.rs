@@ -118,6 +118,17 @@ pub struct CacheUsageEvent {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TokenUsageEvent {
+    pub attempt: u32,
+    pub turn: u32,
+    pub input_tokens: u64,
+    pub output_tokens: u64,
+    pub cache_read_tokens: u64,
+    pub cache_creation_tokens: u64,
+    pub total_tokens: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CompactionEvent {
     pub attempt: u32,
     pub turn: u32,
@@ -145,6 +156,7 @@ pub enum TraceEvent {
     TurnEnd(TurnEndEvent),
     AgentFinished(AgentFinishedEvent),
     CacheUsage(CacheUsageEvent),
+    TokenUsage(TokenUsageEvent),
     Compaction(CompactionEvent),
     ThinkingBlock(ThinkingBlockEvent),
     MetricsEvent { metrics: RunMetrics },

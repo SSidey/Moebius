@@ -212,6 +212,52 @@ Parse the returned `ReviewSignalReport` JSON:
    - `run_id`: the current run identifier
    - `timestamp`: ISO 8601 current time
 
+### Budget Breach Check
+
+After the QA Architect review and before writing signals, call `get_run_status` and
+inspect the `budget breaches:` section of the output.
+
+For each breach listed, apply the granularity rule:
+- If any breach has `level=tool`: emit one tool-level signal per unique (phase, turn) combination.
+- Else if any breach has `level=phase`: emit one phase-level signal per unique phase.
+- Else if any breach has `level=run`: emit one run-level signal.
+
+Tool-level signal template:
+```json
+{
+  "category": "SkillImprovement",
+  "severity": "Major",
+  "title": "Token budget exceeded at tool-call level: phase=<phase_id> turn=<n>",
+  "description": "Tool call in phase <phase_id> at turn <n> used <total> tokens, exceeding the per-tool budget of <threshold>.",
+  "proposed_resolution": "Review the tool call in phase <phase_id> that produced the most output. Consider splitting the operation into smaller steps or raising TOKEN_BUDGET_TOOL if the threshold is too conservative.",
+  "gating_condition": null
+}
+```
+
+Phase-level signal template:
+```json
+{
+  "category": "SkillImprovement",
+  "severity": "Major",
+  "title": "Token budget exceeded at phase level: phase=<phase_id>",
+  "description": "Phase <phase_id> consumed <total> tokens in aggregate, exceeding the per-phase budget of <threshold>.",
+  "proposed_resolution": "Review whether phase <phase_id> can be decomposed, or raise TOKEN_BUDGET_PHASE if the threshold is too conservative.",
+  "gating_condition": null
+}
+```
+
+Run-level signal template:
+```json
+{
+  "category": "SkillImprovement",
+  "severity": "Major",
+  "title": "Token budget exceeded at run level",
+  "description": "The run consumed <total> tokens in total, exceeding the run budget of <threshold>.",
+  "proposed_resolution": "Enable conversation compaction (COMPACTION_ENABLED), reduce the number of phases, or raise TOKEN_BUDGET_RUN if the threshold is appropriate for this workload.",
+  "gating_condition": null
+}
+```
+
 ## Canonical Signal Dedup-and-Write Procedure
 
 # Identity key: "<category>-<title-slug>"  (slug = lowercase, [^a-z0-9]+ → '-', strip edges, max 80 chars)
@@ -326,6 +372,7 @@ Continue to Phase 6 — Metrics Recording regardless of signal count.
    - `end_review_error_count`: written by the kernel from RunState — do NOT compute or write this field.
    - `wall_time_ms`: elapsed milliseconds since run start
    - `tools_used`: sorted array of tool names from `get_run_status`.
+   - `token_usage`: object with fields `input_tokens`, `output_tokens`, `cache_read_tokens`, `cache_creation_tokens`, `total_tokens` — read from the `token usage:` line in `get_run_status` output.
 
 2. Write the `RunMetrics` object to `.moeb/metrics/{{run_id}}.metrics.json` as JSON.
 
@@ -341,11 +388,18 @@ Continue to Phase 6 — Metrics Recording regardless of signal count.
      "metrics_path": ".moeb/metrics/{{run_id}}.metrics.json",
      "rubric_score": <from verify_rubrics output>,
      "end_review_error_count": <count of Critical signals>,
-     "tools_used": <sorted array from get_run_status>
+     "tools_used": <sorted array from get_run_status>,
+     "token_usage": {
+       "input_tokens": <from get_run_status>,
+       "output_tokens": <from get_run_status>,
+       "cache_read_tokens": <from get_run_status>,
+       "cache_creation_tokens": <from get_run_status>,
+       "total_tokens": <from get_run_status>
+     }
    }
    ```
 
-   > `tools_used`: call `get_run_status` immediately before writing the run file and extract the `tools used:` line as a sorted JSON array.
+   > `tools_used` and `token_usage`: call `get_run_status` immediately before writing the run file and extract the `tools used:` line as a sorted JSON array and the `token usage:` line for the token counts.
 
    Use `write_file` with path `{{run_file_path}}`. The `spec_path` is the spec file
    path as provided in the prompt context. The timestamp is the session start time (the

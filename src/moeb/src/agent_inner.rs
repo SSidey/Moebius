@@ -58,6 +58,7 @@ pub(super) fn run_agent_loop_inner(
                 .collect(),
         }));
 
+        state.lock().unwrap().reset_tool_usage();
         let response = adapter
             .send(&messages, tools)
             .with_context(|| format!("AI adapter call failed on turn {}", turn_num))?;

@@ -115,10 +115,47 @@ pub fn run_configure(key: &str, value: &str) -> Result<()> {
             cfg.save()?;
             println!("METRICS_DEGRADATION_MARGIN set to {}.", parsed);
         }
+        "TOKEN_BUDGET_TOOL" => {
+            let parsed: u64 = value.parse().map_err(|_| {
+                anyhow::anyhow!(
+                    "TOKEN_BUDGET_TOOL must be a non-negative integer. Got: \"{}\"",
+                    value
+                )
+            })?;
+            let mut cfg = MoebConfig::load()?;
+            cfg.token_budget_tool = Some(parsed);
+            cfg.save()?;
+            println!("TOKEN_BUDGET_TOOL set to {}", cfg.effective_token_budget_tool());
+        }
+        "TOKEN_BUDGET_PHASE" => {
+            let parsed: u64 = value.parse().map_err(|_| {
+                anyhow::anyhow!(
+                    "TOKEN_BUDGET_PHASE must be a non-negative integer. Got: \"{}\"",
+                    value
+                )
+            })?;
+            let mut cfg = MoebConfig::load()?;
+            cfg.token_budget_phase = Some(parsed);
+            cfg.save()?;
+            println!("TOKEN_BUDGET_PHASE set to {}", cfg.effective_token_budget_phase());
+        }
+        "TOKEN_BUDGET_RUN" => {
+            let parsed: u64 = value.parse().map_err(|_| {
+                anyhow::anyhow!(
+                    "TOKEN_BUDGET_RUN must be a non-negative integer. Got: \"{}\"",
+                    value
+                )
+            })?;
+            let mut cfg = MoebConfig::load()?;
+            cfg.token_budget_run = Some(parsed);
+            cfg.save()?;
+            println!("TOKEN_BUDGET_RUN set to {}", cfg.effective_token_budget_run());
+        }
         other => anyhow::bail!(
             "Unknown configuration key \"{}\". Valid keys: RUN_RETENTION, LOG_FILE_CONTENT, \
              PROMPT_CACHE, COMPACTION_ENABLED, COMPACTION_THRESHOLD, COMPACTION_KEEP_TURNS, \
-             METRICS_WINDOW, METRICS_DEGRADATION_MARGIN",
+             METRICS_WINDOW, METRICS_DEGRADATION_MARGIN, TOKEN_BUDGET_TOOL, TOKEN_BUDGET_PHASE, \
+             TOKEN_BUDGET_RUN",
             other
         ),
     }
@@ -135,6 +172,9 @@ pub fn run_list() -> Result<()> {
     let compaction_keep_turns = cfg.effective_compaction_keep_turns();
     let metrics_window = cfg.effective_metrics_window();
     let metrics_margin = cfg.effective_metrics_degradation_margin();
+    let token_budget_tool = cfg.effective_token_budget_tool();
+    let token_budget_phase = cfg.effective_token_budget_phase();
+    let token_budget_run = cfg.effective_token_budget_run();
     println!(
         "{:<28} {:<8} {:<10} {}",
         "KEY", "VALUE", "DEFAULT", "DESCRIPTION"
@@ -178,6 +218,21 @@ pub fn run_list() -> Result<()> {
         "{:<28} {:<8} {:<10} {}",
         "METRICS_DEGRADATION_MARGIN", metrics_margin, "0.10",
         "Fraction below rolling average that triggers a DegradationSignal"
+    );
+    println!(
+        "{:<28} {:<8} {:<10} {}",
+        "TOKEN_BUDGET_TOOL", token_budget_tool, "0",
+        "Max tokens per single tool-call turn (0=disabled)"
+    );
+    println!(
+        "{:<28} {:<8} {:<10} {}",
+        "TOKEN_BUDGET_PHASE", token_budget_phase, "0",
+        "Max tokens per phase aggregate (0=disabled)"
+    );
+    println!(
+        "{:<28} {:<8} {:<10} {}",
+        "TOKEN_BUDGET_RUN", token_budget_run, "0",
+        "Max tokens for the entire run (0=disabled)"
     );
     Ok(())
 }

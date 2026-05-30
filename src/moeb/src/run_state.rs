@@ -1,6 +1,44 @@
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex};
 
+#[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
+pub struct TokenUsage {
+    pub input_tokens: u64,
+    pub output_tokens: u64,
+    pub cache_read_tokens: u64,
+    pub cache_creation_tokens: u64,
+}
+
+impl TokenUsage {
+    pub fn total_tokens(&self) -> u64 {
+        self.input_tokens + self.output_tokens + self.cache_read_tokens + self.cache_creation_tokens
+    }
+
+    pub fn accumulate(&mut self, other: &TokenUsage) {
+        self.input_tokens += other.input_tokens;
+        self.output_tokens += other.output_tokens;
+        self.cache_read_tokens += other.cache_read_tokens;
+        self.cache_creation_tokens += other.cache_creation_tokens;
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum BudgetBreachLevel {
+    Tool,
+    Phase,
+    Run,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct BudgetBreach {
+    pub level: String,
+    pub phase_id: Option<String>,
+    pub attempt: u32,
+    pub turn: u32,
+    pub total_tokens: u64,
+    pub threshold: u64,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum TaskStatus {
     Pending,
@@ -48,6 +86,12 @@ pub struct RunState {
     pub current_phase: Option<String>,
     pub phase_tool_map: HashMap<String, Vec<String>>,
     pub thinking_blocks: Vec<String>,
+    pub current_tool_usage: TokenUsage,
+    pub current_phase_usage: TokenUsage,
+    pub run_total_usage: TokenUsage,
+    pub over_budget_phase: Option<String>,
+    pub over_budget_run: bool,
+    pub budget_breaches: Vec<BudgetBreach>,
 }
 
 impl RunState {
@@ -107,6 +151,64 @@ impl RunState {
     pub fn push_thinking_blocks(&mut self, texts: Vec<String>) {
         self.thinking_blocks.extend(texts);
     }
+
+    pub fn record_token_usage(
+        &mut self,
+        usage: &TokenUsage,
+        tool_budget: u64,
+        phase_budget: u64,
+        run_budget: u64,
+    ) -> Option<BudgetBreachLevel> {
+        self.current_tool_usage.accumulate(usage);
+        self.current_phase_usage.accumulate(usage);
+        self.run_total_usage.accumulate(usage);
+
+        if tool_budget > 0 && self.current_tool_usage.total_tokens() > tool_budget {
+            return Some(BudgetBreachLevel::Tool);
+        }
+        if phase_budget > 0 && self.current_phase_usage.total_tokens() > phase_budget {
+            self.over_budget_phase = self.current_phase.clone();
+            return Some(BudgetBreachLevel::Phase);
+        }
+        if run_budget > 0 && self.run_total_usage.total_tokens() > run_budget {
+            self.over_budget_run = true;
+            return Some(BudgetBreachLevel::Run);
+        }
+        None
+    }
+
+    pub fn reset_tool_usage(&mut self) {
+        self.current_tool_usage = TokenUsage::default();
+    }
+
+    pub fn reset_phase_usage(&mut self) {
+        self.current_phase_usage = TokenUsage::default();
+        self.over_budget_phase = None;
+    }
+
+    pub fn record_budget_breach(
+        &mut self,
+        level: BudgetBreachLevel,
+        phase_id: Option<String>,
+        attempt: u32,
+        turn: u32,
+        total_tokens: u64,
+        threshold: u64,
+    ) {
+        let level_str = match level {
+            BudgetBreachLevel::Tool => "tool",
+            BudgetBreachLevel::Phase => "phase",
+            BudgetBreachLevel::Run => "run",
+        };
+        self.budget_breaches.push(BudgetBreach {
+            level: level_str.to_string(),
+            phase_id,
+            attempt,
+            turn,
+            total_tokens,
+            threshold,
+        });
+    }
 }
 
 pub type SharedRunState = Arc<Mutex<RunState>>;
@@ -154,3 +256,7 @@ mod tests {
         assert!(state.task_list_created());
     }
 }
+
+#[cfg(test)]
+#[path = "run_state_tests.rs"]
+mod run_state_tests;

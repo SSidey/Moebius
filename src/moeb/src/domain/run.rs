@@ -9,6 +9,8 @@ use crate::config::MoebConfig;
 use crate::ports::AdapterFactoryPort;
 #[cfg(test)]
 use crate::ports::AiPort;
+#[cfg(test)]
+use crate::run_state::SharedRunState;
 use crate::trace::{
     FileContentMode, TraceCommand, TraceConfig, TraceContext, TraceOutcome,
 };
@@ -38,7 +40,7 @@ struct FixedAdapterFactory(Arc<dyn AiPort>);
 
 #[cfg(test)]
 impl AdapterFactoryPort for FixedAdapterFactory {
-    fn build(&self, _trace: Arc<TraceContext>) -> anyhow::Result<Arc<dyn AiPort>> {
+    fn build(&self, _trace: Arc<TraceContext>, _run_state: Option<SharedRunState>) -> anyhow::Result<Arc<dyn AiPort>> {
         Ok(Arc::clone(&self.0))
     }
 }
@@ -155,10 +157,10 @@ impl RunService {
             .replace(RUN_ID_TOKEN, &run_id)
             .replace(RUN_FILE_PATH_TOKEN, &run_file_path);
 
-        let ai = self.factory.build(Arc::clone(&trace))?;
         let working_dir = Path::new(".");
         let state = crate::run_state::new_shared_run_state();
         state.lock().unwrap().set_run_id(run_id.clone());
+        let ai = self.factory.build(Arc::clone(&trace), Some(Arc::clone(&state)))?;
         let executor = crate::tools::RealToolExecutor::new_coordinator(
             std::sync::Arc::clone(&state),
             std::sync::Arc::clone(&ai),
@@ -258,16 +260,11 @@ fn check_run_outputs(run_id: &str, run_file_path: &str, command: &str) {
     if !std::path::Path::new(run_file_path).exists() {
         eprintln!("[moeb] warning: run file not written by agent — writing fallback stub");
         let _ = std::fs::create_dir_all(".moeb/runs");
-        let stub = serde_json::json!({
-            "run_id": run_id,
-            "timestamp": chrono::Utc::now().to_rfc3339(),
-            "command": command,
+        let stub = serde_json::json!({"run_id": run_id,
+            "timestamp": chrono::Utc::now().to_rfc3339(), "command": command,
             "signals_path": format!(".moeb/signals/{}.signals.json", run_id),
             "metrics_path": format!(".moeb/metrics/{}.metrics.json", run_id),
-            "rubric_score": 0.0,
-            "end_review_error_count": 0,
-            "kernel_fallback": true
-        });
+            "rubric_score": 0.0, "end_review_error_count": 0, "kernel_fallback": true});
         let _ = std::fs::write(run_file_path, serde_json::to_string_pretty(&stub)
             .unwrap_or_else(|_| "{}".to_string()));
     }

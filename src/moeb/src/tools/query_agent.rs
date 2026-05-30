@@ -149,7 +149,7 @@ impl QueryAgentTool {
             file_content_mode: crate::trace::FileContentMode::Embed,
         }));
         crate::adapters::DefaultAdapterFactory
-            .build(noop_trace)
+            .build(noop_trace, None)
             .context("query_agent: failed to build adapter from config")
     }
 }

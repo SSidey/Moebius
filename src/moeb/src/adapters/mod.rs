@@ -12,21 +12,26 @@ use std::sync::Arc;
 
 use crate::config::MoebConfig;
 use crate::ports::{AdapterFactoryPort, AiPort};
+use crate::run_state::SharedRunState;
 use crate::trace::TraceContext;
 
 pub struct DefaultAdapterFactory;
 
 impl AdapterFactoryPort for DefaultAdapterFactory {
-    fn build(&self, trace: Arc<TraceContext>) -> Result<Arc<dyn AiPort>> {
+    fn build(&self, trace: Arc<TraceContext>, run_state: Option<SharedRunState>) -> Result<Arc<dyn AiPort>> {
         let cfg = MoebConfig::load().unwrap_or_default();
         let name = cfg.active_adapter.clone().unwrap_or_default();
         match name.as_str() {
-            "openai" => Ok(Arc::new(
-                crate::adapters::openai::OpenAiAdapter::from_secrets_and_config_with_trace(trace)?
-            )),
-            "anthropic" => Ok(Arc::new(
-                crate::adapters::anthropic::AnthropicAdapter::from_secrets_and_config_with_trace(trace)?
-            )),
+            "openai" => {
+                let mut adapter = crate::adapters::openai::OpenAiAdapter::from_secrets_and_config_with_trace(trace)?;
+                adapter.run_state = run_state;
+                Ok(Arc::new(adapter))
+            }
+            "anthropic" => {
+                let mut adapter = crate::adapters::anthropic::AnthropicAdapter::from_secrets_and_config_with_trace(trace)?;
+                adapter.run_state = run_state;
+                Ok(Arc::new(adapter))
+            }
             "gemini" => Ok(Arc::new(
                 crate::adapters::gemini::GeminiAdapter::from_secrets_and_config_with_trace(trace)?
             )),

@@ -1,0 +1,57 @@
+[
+  {
+    "signal_id": "3f2e1d0c-b9a8-4765-8b3c-2a1d0e9f8c7b",
+    "run_id": "b84c5bc1-0903-441e-af80-56342cc9bd71",
+    "timestamp": "2026-05-30T21:25:00Z",
+    "category": "Error",
+    "severity": "Critical",
+    "title": "Tool error not recovered: patch_file on config.rs",
+    "description": "patch_file returned 'old_string not found' on src/moeb/src/config.rs. Cause: CRLF line endings on Windows. Recovered via write_file fallback with complete file content. No intended change was lost.",
+    "proposed_resolution": "Verify that moeb.patch-file-crlf-normalize CRLF normalization covers the exact-string replacement path introduced by moeb.patch-file-exact-string-rewrite.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "7a6b5c4d-3e2f-4190-9765-4321fedcba09",
+    "run_id": "b84c5bc1-0903-441e-af80-56342cc9bd71",
+    "timestamp": "2026-05-30T21:25:00Z",
+    "category": "Error",
+    "severity": "Critical",
+    "title": "Tool error not recovered: patch_file on query_agent.rs",
+    "description": "patch_file returned 'old_string not found' on src/moeb/src/tools/query_agent.rs. Cause: CRLF line endings on Windows. Recovered via write_file fallback.",
+    "proposed_resolution": "Verify that moeb.patch-file-crlf-normalize CRLF normalization covers the exact-string replacement path.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "1c2d3e4f-5a6b-4c7d-ae9f-0a1b2c3d4e5f",
+    "run_id": "b84c5bc1-0903-441e-af80-56342cc9bd71",
+    "timestamp": "2026-05-30T21:25:00Z",
+    "category": "ToolImprovement",
+    "severity": "Major",
+    "title": "patch_file CRLF normalization incomplete in exact-string mode",
+    "description": "Two patch_file calls failed with 'old_string not found' on Windows CRLF files in this run. moeb.patch-file-crlf-normalize added normalize_line_endings but moeb.patch-file-exact-string-rewrite replaced the diff engine with exact substring matching, which may not apply the same normalization. Result: patch_file is unreliable on Windows for files with CRLF endings, requiring write_file fallback on every affected file.",
+    "proposed_resolution": "Run moeb spec to verify and extend CRLF normalization to the exact-string matching path in patch_file.rs, ensuring both old_string and file content are normalized before the substring search.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "f7e8d9c0-b1a2-4e3f-8d5c-6a7b9c0d1e2f",
+    "run_id": "b84c5bc1-0903-441e-af80-56342cc9bd71",
+    "timestamp": "2026-05-30T21:25:00Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: Read (large tool output)",
+    "description": "The start_spec tool consistently returns results exceeding the inline response limit (~140K characters), saved to disk. An external Read tool is required to access this content in chunks on every spec run. No moeb tool exists for reading harness-saved large tool result files.",
+    "proposed_resolution": "Run moeb spec to introduce a moeb tool (e.g. read_tool_result) that accepts a saved tool result path and returns it in paginated chunks, eliminating the need for external Read calls on oversized tool outputs.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "7d8e9f0a-1b2c-3d4e-5f6a-7b8c9d0e1f2a",
+    "run_id": "b84c5bc1-0903-441e-af80-56342cc9bd71",
+    "timestamp": "2026-05-30T21:25:00Z",
+    "category": "NewCapability",
+    "severity": "Major",
+    "title": "Missing moeb tool: Bash (cargo_test)",
+    "description": "Used Bash to run cargo build --release and cargo test in src/moeb/ for build and test verification. No moeb tool exists for executing the project test suite, forcing moeb-tool-origin Fail.",
+    "proposed_resolution": "Run moeb spec to introduce a run_tests tool that executes cargo test in a specified directory and returns the result.",
+    "gating_condition": null
+  }
+]

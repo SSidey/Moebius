@@ -9,6 +9,8 @@ use crate::config::MoebConfig;
 use crate::ports::AdapterFactoryPort;
 #[cfg(test)]
 use crate::ports::AiPort;
+#[cfg(test)]
+use crate::run_state::SharedRunState;
 use crate::trace::{
     FileContentMode, TraceCommand, TraceConfig, TraceContext, TraceOutcome,
 };
@@ -44,7 +46,7 @@ struct FixedAdapterFactory(Arc<dyn AiPort>);
 
 #[cfg(test)]
 impl AdapterFactoryPort for FixedAdapterFactory {
-    fn build(&self, _trace: Arc<TraceContext>) -> anyhow::Result<Arc<dyn AiPort>> {
+    fn build(&self, _trace: Arc<TraceContext>, _run_state: Option<SharedRunState>) -> anyhow::Result<Arc<dyn AiPort>> {
         Ok(Arc::clone(&self.0))
     }
 }
@@ -178,7 +180,7 @@ impl SpecService {
 
         eprintln!("[moeb] generating specification (up to {} attempt(s))...", retry_limit);
 
-        let ai = self.factory.build(Arc::clone(&trace))?;
+        let ai = self.factory.build(Arc::clone(&trace), None)?;
 
         let mut last_err: anyhow::Error = anyhow::anyhow!("no attempts made");
         let mut total_attempts = 0u32;

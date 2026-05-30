@@ -157,7 +157,7 @@ Record a StepMetric for `step_id: "emit-event"`.
 0. **Error preflight.** If the preceding write returned an error (result contains
    "failed", "error", or "could not"): Record StepMetric with
    `step_id: "event-artifact"`, `iteration_count = 0`, `acceptance_rate = 1.0`,
-   `delta_scores = []`. Do NOT call `complete_review`. Proceed to Phase 6. Skip steps 1–8.
+   `delta_scores = []`. Do NOT call `complete_review`. Proceed to Phase 5b. Skip steps 1–8.
 
 1. **Inline Reviewer.** Without calling any tool, adopt the Reviewer Persona. Evaluate
    the event artifact: the JSON must contain `type`, `event_id`, `signal_id`, `repo`,
@@ -189,6 +189,18 @@ Record a StepMetric for `step_id: "emit-event"`.
 7. Record StepMetric with `step_id: "event-artifact"`.
 
 8. Call `complete_review` with `.moeb/events/<signal_id>.event.json`.
+
+## Phase 5b — Budget Breach Check
+
+Call `get_run_status` and inspect the `budget breaches:` section of the output.
+
+For each breach listed, apply the granularity rule:
+- If any breach has `level=tool`: emit one tool-level signal per unique (phase, turn) combination.
+- Else if any breach has `level=phase`: emit one phase-level signal per unique phase.
+- Else if any breach has `level=run`: emit one run-level signal.
+
+Use the same signal templates defined in run.skill.md's Budget Breach Check section.
+Write each signal via the Canonical Signal Dedup-and-Write Procedure in Phase 7.
 
 ## Phase 6 — Verify
 
@@ -257,6 +269,7 @@ Assemble `RunMetrics`:
 - `wall_time_ms`: elapsed milliseconds since fix_signal run start
 - `rubric_score` and `end_review_error_count`: written by kernel — do NOT compute
 - `tools_used`: sorted array of tool names from `get_run_status`.
+- `token_usage`: object with fields `input_tokens`, `output_tokens`, `cache_read_tokens`, `cache_creation_tokens`, `total_tokens` — read from the `token usage:` line in `get_run_status` output.
 
 Write to `.moeb/metrics/{{run_id}}.metrics.json`.
 
@@ -271,11 +284,18 @@ Write the run file to `{{run_file_path}}`:
   "metrics_path": ".moeb/metrics/{{run_id}}.metrics.json",
   "rubric_score": "<from verify_rubrics output>",
   "end_review_error_count": "<count of Critical signals>",
-  "tools_used": <sorted array from get_run_status>
+  "tools_used": <sorted array from get_run_status>,
+  "token_usage": {
+    "input_tokens": <from get_run_status>,
+    "output_tokens": <from get_run_status>,
+    "cache_read_tokens": <from get_run_status>,
+    "cache_creation_tokens": <from get_run_status>,
+    "total_tokens": <from get_run_status>
+  }
 }
 ```
 
-> `tools_used`: call `get_run_status` immediately before writing the run file and extract the `tools used:` line as a sorted JSON array.
+> `tools_used` and `token_usage`: call `get_run_status` immediately before writing the run file and extract the `tools used:` line as a sorted JSON array and the `token usage:` line for the token counts.
 
 ## Commit
 

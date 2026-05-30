@@ -47,6 +47,15 @@ pub struct StepMetric {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TokenUsageSummary {
+    pub input_tokens: u64,
+    pub output_tokens: u64,
+    pub cache_read_tokens: u64,
+    pub cache_creation_tokens: u64,
+    pub total_tokens: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RunMetrics {
     pub run_id: String,
     pub timestamp: String,
@@ -54,4 +63,8 @@ pub struct RunMetrics {
     pub step_metrics: Vec<StepMetric>,
     pub end_review_error_count: u32,
     pub wall_time_ms: u64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub token_usage: Option<TokenUsageSummary>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tools_used: Option<Vec<String>>,
 }

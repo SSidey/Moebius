@@ -45,6 +45,7 @@ impl ToolHandler for EnterPhaseTool {
 
         let mut state = self.state.lock().unwrap();
         state.set_current_phase(Some(phase_id.clone()));
+        state.reset_phase_usage();
         let allowed = state.allowed_tools_for_phase(&phase_id).cloned();
         drop(state);
 

@@ -67,6 +67,12 @@ pub struct MoebConfig {
     pub metrics_degradation_margin: Option<f32>,
     #[serde(default, skip_serializing_if = "HashMap::is_empty")]
     pub adapters: HashMap<String, AdapterConfig>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub token_budget_tool: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub token_budget_phase: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub token_budget_run: Option<u64>,
 }
 
 impl MoebConfig {
@@ -104,6 +110,18 @@ impl MoebConfig {
 
     pub fn effective_metrics_degradation_margin(&self) -> f32 {
         self.metrics_degradation_margin.unwrap_or(0.10)
+    }
+
+    pub fn effective_token_budget_tool(&self) -> u64 {
+        self.token_budget_tool.unwrap_or(0)
+    }
+
+    pub fn effective_token_budget_phase(&self) -> u64 {
+        self.token_budget_phase.unwrap_or(0)
+    }
+
+    pub fn effective_token_budget_run(&self) -> u64 {
+        self.token_budget_run.unwrap_or(0)
     }
 
     pub fn adapter_config(&self, name: &str) -> AdapterConfig {

@@ -4,7 +4,8 @@ use std::sync::Arc;
 
 use crate::config::{MoebConfig, Secrets};
 use crate::ports::AiPort;
-use crate::trace::{CacheUsageEvent, HttpRequestEvent, HttpRetryEvent, QuotaWarningEvent, TraceContext, TraceEvent};
+use crate::run_state::{BudgetBreachLevel, SharedRunState, TokenUsage};
+use crate::trace::{CacheUsageEvent, HttpRequestEvent, HttpRetryEvent, QuotaWarningEvent, TokenUsageEvent, TraceContext, TraceEvent};
 use super::{retry, Adapter, AgentResponse, Message, ToolCall, ToolDef};
 
 #[path = "openai_io.rs"]
@@ -20,6 +21,7 @@ pub struct OpenAiAdapter {
     pub retries: u32,
     client: reqwest::blocking::Client,
     trace: Arc<TraceContext>,
+    pub run_state: Option<SharedRunState>,
 }
 
 impl OpenAiAdapter {
@@ -49,6 +51,7 @@ impl OpenAiAdapter {
             retries: adapter_cfg.effective_retries(),
             client: reqwest::blocking::Client::new(),
             trace,
+            run_state: None,
         })
     }
 }
@@ -159,10 +162,20 @@ impl Adapter for OpenAiAdapter {
             }));
 
             if status.is_success() {
+                let input = response_body
+                    .pointer("/usage/prompt_tokens")
+                    .and_then(|v| v.as_u64())
+                    .unwrap_or(0);
+                let output = response_body
+                    .pointer("/usage/completion_tokens")
+                    .and_then(|v| v.as_u64())
+                    .unwrap_or(0);
                 let cache_read = response_body
                     .pointer("/usage/prompt_tokens_details/cached_tokens")
                     .and_then(|v| v.as_u64())
                     .unwrap_or(0);
+
+                // Existing CacheUsageEvent — unchanged.
                 if cache_read > 0 {
                     self.trace.push(TraceEvent::CacheUsage(CacheUsageEvent {
                         attempt,
@@ -170,6 +183,56 @@ impl Adapter for OpenAiAdapter {
                         cache_read_tokens: cache_read,
                         cache_created_tokens: 0,
                     }));
+                }
+
+                // New TokenUsageEvent.
+                let total = input + output + cache_read;
+                if total > 0 {
+                    self.trace.push(TraceEvent::TokenUsage(TokenUsageEvent {
+                        attempt,
+                        turn,
+                        input_tokens: input,
+                        output_tokens: output,
+                        cache_read_tokens: cache_read,
+                        cache_creation_tokens: 0,
+                        total_tokens: total,
+                    }));
+                }
+
+                // Budget accumulation via RunState.
+                if let Some(ref rs) = self.run_state {
+                    let cfg = MoebConfig::load().unwrap_or_default();
+                    let usage = TokenUsage {
+                        input_tokens: input,
+                        output_tokens: output,
+                        cache_read_tokens: cache_read,
+                        cache_creation_tokens: 0,
+                    };
+                    let mut state = rs.lock().unwrap();
+                    let breach = state.record_token_usage(
+                        &usage,
+                        cfg.effective_token_budget_tool(),
+                        cfg.effective_token_budget_phase(),
+                        cfg.effective_token_budget_run(),
+                    );
+                    if let Some(level) = breach {
+                        let (total_tokens, threshold) = match &level {
+                            BudgetBreachLevel::Tool => (
+                                state.current_tool_usage.total_tokens(),
+                                cfg.effective_token_budget_tool(),
+                            ),
+                            BudgetBreachLevel::Phase => (
+                                state.current_phase_usage.total_tokens(),
+                                cfg.effective_token_budget_phase(),
+                            ),
+                            BudgetBreachLevel::Run => (
+                                state.run_total_usage.total_tokens(),
+                                cfg.effective_token_budget_run(),
+                            ),
+                        };
+                        let phase_id = state.current_phase.clone();
+                        state.record_budget_breach(level, phase_id, attempt, turn, total_tokens, threshold);
+                    }
                 }
             }
 

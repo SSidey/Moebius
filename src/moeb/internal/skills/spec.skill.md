@@ -182,7 +182,7 @@ After writing `.moeb/README.md`:
      `acceptance_rate = 1.0`, `delta_scores = []`.
    - Call `complete_review` with `.moeb/README.md` (no-op at kernel level; included for
      symmetry).
-   - Proceed to Phase 6 — Verify. The error is recorded in RunState.tool_errors.
+   - Proceed to Phase 5b — Budget Breach Check. The error is recorded in RunState.tool_errors.
    Skip steps 1–5 below for this invocation.
 
 1. **Inline Reviewer.** Without calling any tool, adopt the **Reviewer Persona**
@@ -215,6 +215,18 @@ After writing `.moeb/README.md`:
 5. Call `complete_review` with `.moeb/README.md`.
    This is a no-op at the kernel level (path starts with `.moeb/`) but makes the review
    obligation explicit and maintains symmetry with the run skill.
+
+## Phase 5b — Budget Breach Check
+
+Call `get_run_status` and inspect the `budget breaches:` section of the output.
+
+For each breach listed, apply the granularity rule:
+- If any breach has `level=tool`: emit one tool-level signal per unique (phase, turn) combination.
+- Else if any breach has `level=phase`: emit one phase-level signal per unique phase.
+- Else if any breach has `level=run`: emit one run-level signal.
+
+Use the same signal templates defined in run.skill.md's Budget Breach Check section.
+Write each signal via the Canonical Signal Dedup-and-Write Procedure in Phase 7.
 
 ## Phase 6 — Verify
 
@@ -385,6 +397,7 @@ Continue to Phase 8 — Metrics Recording regardless of signal count.
    - `end_review_error_count`: written by the kernel from RunState — do NOT compute or write this field.
    - `wall_time_ms`: elapsed milliseconds since run start
    - `tools_used`: sorted array of tool names from `get_run_status`.
+   - `token_usage`: object with fields `input_tokens`, `output_tokens`, `cache_read_tokens`, `cache_creation_tokens`, `total_tokens` — read from the `token usage:` line in `get_run_status` output.
 
 2. Write to `.moeb/metrics/{{run_id}}.metrics.json`.
 
@@ -400,11 +413,18 @@ Continue to Phase 8 — Metrics Recording regardless of signal count.
      "metrics_path": ".moeb/metrics/{{run_id}}.metrics.json",
      "rubric_score": <from rubric_score above>,
      "end_review_error_count": <count of Critical signals>,
-     "tools_used": <sorted array from get_run_status>
+     "tools_used": <sorted array from get_run_status>,
+     "token_usage": {
+       "input_tokens": <from get_run_status>,
+       "output_tokens": <from get_run_status>,
+       "cache_read_tokens": <from get_run_status>,
+       "cache_creation_tokens": <from get_run_status>,
+       "total_tokens": <from get_run_status>
+     }
    }
    ```
 
-   > `tools_used`: call `get_run_status` immediately before writing the run file and extract the `tools used:` line as a sorted JSON array.
+   > `tools_used` and `token_usage`: call `get_run_status` immediately before writing the run file and extract the `tools used:` line as a sorted JSON array and the `token usage:` line for the token counts.
 
    Use `write_file` with path `{{run_file_path}}`. The `spec_path` is the path of the
    spec file authored in Phase 4 (`.moeb/specifications/<domain>/<domain>.<slug>.md`
