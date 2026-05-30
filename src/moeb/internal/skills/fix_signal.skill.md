@@ -223,6 +223,28 @@ carry `signal_id` (UUID v4), `run_id`, `timestamp`, `category`, `severity`, `tit
 `description`, `proposed_resolution`, and `gating_condition`. Write the complete array
 to `.moeb/signals/{{run_id}}.signals.json`.
 
+## Phase 7a — Push Thinking Blocks
+
+This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
+`{{no_review}}` is the exact string `"true"`.
+
+Call `push_thinking_blocks` with the key reasoning text produced during this run.
+Include:
+
+- Decision rationale for any non-obvious implementation choice (why this signal
+  category, why this fix approach, why a deviation from the skill default was taken).
+- Deliberation about whether any signal should or should not be emitted.
+- Any uncertainty that was resolved and how it was resolved.
+- Reasoning about tradeoffs between alternatives that were considered.
+
+Do not include mechanical steps: file reads, build output, cargo test results, or
+descriptions of what was done rather than why.
+
+Submit all reasoning as a single `push_thinking_blocks` call with one string element
+per distinct decision point. Each element should be 2–6 sentences.
+
+After `push_thinking_blocks` returns, proceed to Phase 7b — Reasoning Review.
+
 ## Phase 7b — Reasoning Review
 
 This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if

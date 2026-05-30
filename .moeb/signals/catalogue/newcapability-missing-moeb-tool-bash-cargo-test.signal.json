@@ -7,12 +7,13 @@
   "proposed_resolution": "Run moeb spec to introduce a run_tests tool that executes cargo test in a specified directory and returns the result.",
   "gating_condition": null,
   "status": "open",
-  "occurrence_count": 3,
+  "occurrence_count": 4,
   "first_seen": "2026-05-30T15:45:00Z",
-  "last_seen": "2026-05-30T21:25:00Z",
+  "last_seen": "2026-05-31T00:00:00Z",
   "occurrences": [
     {"timestamp": "2026-05-30T15:45:00Z", "run_id": "84a4a5ed-f656-4ae3-9f00-79a912d2019b"},
     {"timestamp": "2026-05-30T16:15:00Z", "run_id": "7c7b0441-87c2-4176-a065-3afcd18f2131"},
-    {"timestamp": "2026-05-30T21:25:00Z", "run_id": "b84c5bc1-0903-441e-af80-56342cc9bd71"}
+    {"timestamp": "2026-05-30T21:25:00Z", "run_id": "b84c5bc1-0903-441e-af80-56342cc9bd71"},
+    {"timestamp": "2026-05-31T00:00:00Z", "run_id": "b36c714a-2e80-4a06-a95c-540e231b37c3"}
   ]
 }

@@ -1,0 +1,16 @@
+{
+  "signal_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
+  "category": "SkillImprovement",
+  "severity": "Minor",
+  "title": "push_thinking_blocks tool unavailable in MCP session until server restart after first build",
+  "description": "In the first run after implementing push_thinking_blocks, the tool exists in the new binary but the currently-running MCP server process uses the old binary and does not expose the tool. Phase 5a called push_thinking_blocks and received 'No such tool available', so thinking blocks were not captured and Phase 5b was skipped. The tool will be available in subsequent MCP sessions after the server is restarted with the new binary.",
+  "proposed_resolution": "This is a bootstrap limitation inherent to adding new MCP tools. No code change is needed. Users should restart the MCP server after deploying a new binary that adds tools. Optionally, document this in the skill file: after adding a new tool, the first run on the updated binary may not be able to use it if the server was started before the build.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-31T00:00:00Z",
+  "last_seen": "2026-05-31T00:00:00Z",
+  "occurrences": [
+    {"timestamp": "2026-05-31T00:00:00Z", "run_id": "b36c714a-2e80-4a06-a95c-540e231b37c3"}
+  ]
+}
