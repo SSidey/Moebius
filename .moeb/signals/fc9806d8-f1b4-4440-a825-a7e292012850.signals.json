@@ -1,0 +1,27 @@
+[
+  {
+    "signal_id": "b7c8d9e0-f1a2-4b3c-8d4e-5f6a7b8c9d0e",
+    "run_id": "fc9806d8-f1b4-4440-a825-a7e292012850",
+    "timestamp": "2026-05-31T00:00:00Z",
+    "category": "SkillImprovement",
+    "severity": "Minor",
+    "title": "fix_signal.skill.md Phase 3 still uses patch_file as primary write despite deprecate-patch-file spec",
+    "description": "Phase 3 of fix_signal.skill.md directs the agent to call patch_file first to add picked_up_at and fix_branch fields to the signal record, with write_file as a fallback on error. The moeb.deprecate-patch-file-as-default-write-path spec promotes write_file as the unconditional default for all file modifications. In this run patch_file failed immediately on the CRLF-encoded signal file, requiring the fallback. The skill should be updated to use write_file directly, consistent with the deprecation spec.",
+    "proposed_resolution": "Update Phase 3 of fix_signal.skill.md to use write_file directly for the signal pickup patch rather than patch_file-first with a write_file fallback, aligning with the moeb.deprecate-patch-file-as-default-write-path decision.",
+    "gating_condition": null
+  },
+  {
+    "signal_id": "c8d9e0f1-a2b3-4c4d-9e5f-6a7b8c9d0e1f",
+    "run_id": "fc9806d8-f1b4-4440-a825-a7e292012850",
+    "timestamp": "2026-05-31T00:00:00Z",
+    "category": "SkillImprovement",
+    "severity": "Minor",
+    "title": "fix_signal moeb-tool-origin always fails in Claude Code MCP mode due to infrastructure tool dependencies",
+    "description": "In Claude Code MCP sessions, deferred tool schemas must be loaded via ToolSearch before any moeb MCP tool can be called, and oversized tool results (such as the fix_signal prompt) must be read via the external Read tool. Both ToolSearch and Read are not in the moeb tool registry. This causes moeb-tool-origin to fail on every fix_signal invocation driven from Claude Code, even when the agent uses exclusively moeb tools for domain operations. The rubric criterion does not distinguish infrastructure-required external tool calls from avoidable ones.",
+    "proposed_resolution": "Either (a) update the moeb-tool-origin rubric criterion to exempt known infrastructure-only external tool calls (ToolSearch for schema loading, Read for oversized MCP results) from the fail verdict, or (b) add moeb-native equivalents so no external tools are needed. Existing signals 9e8d7c6b (ToolSearch) and f7e8d9c0 (Read large output) track the capability gaps; this signal tracks the rubric mismatch.",
+    "gating_condition": null
+  },
+  {
+    "summary": "The fix_signal run for signal e9f0a1b2 completed successfully. The signal was marked as picked up, isolation branch feat/moeb-start-spec-signal-id-lookup-fails-for-catalogue-on was created, and the signal.accepted event was emitted. Two SkillImprovement signals were raised: Phase 3 still uses the deprecated patch_file-first pattern (which failed immediately on CRLF content), and moeb-tool-origin structurally fails in Claude Code MCP mode due to infrastructure tool dependencies. No Critical or Error signals were emitted. Rubric result: 4 pass, 2 fail (moeb-tool-origin and one kernel-authoritative criterion)."
+  }
+]

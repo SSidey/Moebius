@@ -6,6 +6,8 @@
   "description": "start_spec returned 'No signal found with signal_id c7d8e9f0-a1b2-4c3d-8e4f-5a6b7c8d9e0f' despite the signal being present in .moeb/signals/index.md and .moeb/signals/catalogue/. The tool appears to search only run-level .signals.json files, not the canonical catalogue. This forces agents to pass the requirement text directly instead of using the signal_id parameter, breaking the correlation token injection and signal ID tracking.",
   "proposed_resolution": "Update start_spec signal resolution to search .moeb/signals/catalogue/ (and .moeb/signals/index.md) when the signal_id is not found in any run-level .signals.json file. The catalogue is the authoritative signal store per moeb.signal-deduplication-and-lifecycle.",
   "gating_condition": null,
+  "picked_up_at": "2026-05-31T00:00:00Z",
+  "fix_branch": "feat/moeb-start-spec-signal-id-lookup-fails-for-catalogue-on",
   "status": "open",
   "occurrence_count": 1,
   "first_seen": "2026-05-30T00:00:00Z",
