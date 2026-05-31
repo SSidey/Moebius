@@ -371,6 +371,11 @@ After `push_thinking_blocks` returns, proceed to Phase 7b — Reasoning Review.
 
 ## Phase 7b — Reasoning Review
 
+> **MCP/inline mode note:** Do not call `query_agent` in this phase. When running
+> inline (via `start_spec` or `start_run` MCP tools), the agent IS the model and must
+> use only inline persona reasoning. The Reasoning Reviewer Persona is pre-loaded in
+> your context for exactly this purpose.
+
 This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
 `{{no_review}}` is the exact string `"true"`.
 
@@ -380,16 +385,16 @@ queue but do not affect the rubric verdict or run pass/fail.
 1. If `RunState.thinking_blocks` is empty, skip this phase entirely and proceed to
    Phase 8.
 
-2. Call `query_agent` with:
-   - `role`: `"reasoning-reviewer"`
-   - `prompt`: a JSON string `{ "thinking_blocks": [<the accumulated thinking block strings>] }`
-   - `expected_response_type`: `"json"`
-   - `context_files`: `["src/moeb/internal/rubrics/reasoning.rubrics.md"]`
+2. Without calling any tool, adopt the **Reasoning Reviewer Persona** pre-loaded in
+   your context. Evaluate the accumulated thinking block strings from this run against
+   the reasoning quality criteria. Produce a raw JSON array of signal objects (each
+   with `"category": "ReasoningImprovement"`) in working memory, or an empty array
+   `[]` if no improvements are identified.
 
-3. Parse the returned value as a JSON array of signal objects, each with
-   `"category": "ReasoningImprovement"`.
+3. Parse the returned JSON array. If it is not valid JSON or is not an array, treat it
+   as an empty array and proceed.
 
-4. For each signal S in the returned array, assign:
+4. For each signal S in the array, assign:
    - `signal_id`: a fresh UUID v4
    - `run_id`: the current run identifier (`{{run_id}}`)
    - `timestamp`: ISO 8601 current time
@@ -399,8 +404,8 @@ queue but do not affect the rubric verdict or run pass/fail.
 
 5. After all signals are processed, run the Index Update sub-procedure.
 
-6. Read `.moeb/signals/{{run_id}}.signals.json`, append the reasoning signal objects
-   to the array, and write the complete updated file.
+6. Append each emitted signal's `{ "id": signal_id, "description": title }` to the
+   run file's `emittedSignals` array.
 
 Continue to Phase 8 — Metrics Recording regardless of signal count.
 

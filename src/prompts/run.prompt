@@ -55,3 +55,6 @@ HARD RULES — any violation is a critical failure and the run must not be consi
 
 === QA Architect Persona ===
 {{qa_architect_role_content}}
+
+=== Reasoning Reviewer Persona ===
+{{reasoning_reviewer_persona}}

@@ -1,0 +1,23 @@
+{
+  "run_id": "bb689526-3382-4151-8b6a-f79913a3362d",
+  "timestamp": "2026-05-31T12:34:47Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.reasoning-review-inline-persona.md",
+  "metrics_path": ".moeb/metrics/bb689526-3382-4151-8b6a-f79913a3362d.metrics.json",
+  "emittedSignals": [
+    { "id": "a9c7e5b3-d1f2-4e8a-b6c4-2d3e4f5a6b7c", "description": "Missing moeb tool: Read" },
+    { "id": "b8d6f4c2-e3a1-4f9b-c7d5-3e4f5a6b7c8d", "description": "Missing moeb tool: Bash" },
+    { "id": "c2d3e4f5-a6b7-4c8d-9e0f-1a2b3c4d5e6f", "description": "Tool error not recovered: patch_file on src/moeb/src/tools/fix_signal.rs" },
+    { "id": "d3e4f5a6-b7c8-4d9e-0f1a-2b3c4d5e6f7a", "description": "Tool error not recovered: patch_file on src/prompts/spec.prompt" },
+    { "id": "e4f5a6b7-c8d9-4e0f-1a2b-3c4d5e6f7a8b", "description": "fix_signal.prompt missing Reviewer, Moderator, and QA Architect persona sections" }
+  ],
+  "end_review_error_count": 2,
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

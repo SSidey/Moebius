@@ -26,3 +26,6 @@ Repository boundary — read this carefully before using any file tool:
 - Signal files live under `.moeb/signals/`. Use `.moeb/`-prefixed paths for all harness
   artefacts: `.moeb/signals/`, `.moeb/specifications/`, `.moeb/metrics/`, `.moeb/runs/`.
 - Implementation source code lives under `src/` at the repository root.
+
+=== Reasoning Reviewer Persona ===
+{{reasoning_reviewer_persona}}

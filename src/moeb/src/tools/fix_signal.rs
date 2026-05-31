@@ -51,6 +51,7 @@ impl ToolHandler for FixSignalTool {
             .unwrap_or_else(|_| "(not found)".to_string());
 
         let role_content = crate::skills::load_role(&moeb_dir, "run");
+        let reasoning_reviewer_role = crate::skills::load_role(&moeb_dir, "reasoning-reviewer");
         let skill_content = crate::skills::load_skill(&moeb_dir, "fix_signal")?;
 
         let command_rubrics = build_fix_signal_rubrics(&moeb_dir);
@@ -66,7 +67,8 @@ impl ToolHandler for FixSignalTool {
             .replace("{{command_rubrics}}", &command_rubrics)
             .replace(RUN_ID_TOKEN, &run_id)
             .replace(RUN_FILE_PATH_TOKEN, &run_file_path)
-            .replace(SIGNAL_ID_TOKEN, &signal_id);
+            .replace(SIGNAL_ID_TOKEN, &signal_id)
+            .replace("{{reasoning_reviewer_persona}}", &reasoning_reviewer_role);
 
         Ok(prompt)
     }
