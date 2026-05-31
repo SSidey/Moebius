@@ -12,5 +12,7 @@
   "last_seen": "2026-05-29T00:00:00Z",
   "occurrences": [
     { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
-  ]
+  ],
+  "picked_up_at": "2026-05-31T16:45:00Z",
+  "fix_branch": "feat/moeb-run-skill-must-only-emit-candidate-tag-when-qa-rev"
 }
