@@ -1,3 +1,0 @@
-{
-  "$comment": "Canonical schema is bundled in the binary at src/moeb/internal/signal.schema.json. This file should be removed."
-}
