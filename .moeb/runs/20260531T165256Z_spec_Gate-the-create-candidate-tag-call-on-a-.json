@@ -1,0 +1,21 @@
+{
+  "run_id": "3bf20026-90d6-4f59-a9d2-d3480d0a8ee4",
+  "timestamp": "2026-05-31T16:52:56Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.run-skill-must-only-emit-candidate-tag-when-qa-rev.md",
+  "metrics_path": ".moeb/metrics/3bf20026-90d6-4f59-a9d2-d3480d0a8ee4.metrics.json",
+  "emittedSignals": [
+    { "id": "f7e8d9c0-b1a2-4e3f-8d5c-6a7b9c0d1e2f", "description": "Missing moeb tool: Read (large tool output)" },
+    { "id": "e6a12400-0529-4001-8001-000000000001", "description": "spec.skill.md Phase 5 should use write_file instead of patch_file for README row registration" },
+    { "id": "5f3a7b2c-1d8e-4f9a-b0c3-6e7f8a9b0c1d", "description": "Tool error not recovered: patch_file attempt 1 on .moeb/README.md" },
+    { "id": "6a4b8c3d-2e9f-4a0b-c1d4-7f8a9b0c1d2e", "description": "Tool error not recovered: patch_file attempt 2 on .moeb/README.md" }
+  ],
+  "tools_used": ["complete_review", "get_run_status", "grep_files", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "start_spec", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
