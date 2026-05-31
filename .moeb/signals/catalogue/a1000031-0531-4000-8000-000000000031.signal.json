@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000031-0531-4000-8000-000000000031",
+  "category": "ProcessImprovement",
+  "severity": "Major",
+  "title": "Signal status and index.md not updated as signals progress through canonical skill pipeline",
+  "description": "The fix_signal, spec, and run canonical skills execute their lifecycle phases but never update the signal's `status` field in the catalogue JSON or its corresponding row in `signals/index.md`. Signals remain `\"open\"` indefinitely regardless of whether they have been picked up, had a spec written, reached candidate, or been resolved. The conductor and human operators cannot determine pipeline position from the catalogue alone — they must cross-reference run artefacts and git tags. The index.md is similarly stale: status cells are never updated after initial write.",
+  "proposed_resolution": "1. fix_signal Phase 3 (Mark): after writing `picked_up_at` and `fix_branch`, also set `status` to `\"in_progress\"` in the signal JSON, then update the corresponding index.md row's Status cell via the Index Update sub-procedure.\n2. spec skill: after the spec file is linked to the README, read the signal identified by the run's `signal_id` context variable, set `status` to `\"spec_written\"`, and run the Index Update sub-procedure.\n3. run skill: after `End-of-Skill Review` returns a passing result, set signal `status` to `\"candidate\"` and run the Index Update sub-procedure.\n4. Introduce an `accept_candidate` MCP command that accepts `signal_id` as its sole parameter. It must: (a) read the signal catalogue entry, (b) set `status` to `\"resolved\"` with a `resolved_at` ISO 8601 timestamp, (c) run the Index Update sub-procedure, and (d) write a `signal.resolved` event to `.moeb/events/<signal_id>.resolved.event.json`. The command should be wired into the event bus so that merging a PR tagged with a candidate tag can trigger it automatically.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-05-31T00:00:00Z",
+  "last_seen": "2026-05-31T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-31T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0531-000000000000" }
+  ]
+}
