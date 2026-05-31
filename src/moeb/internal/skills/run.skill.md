@@ -319,6 +319,8 @@ After completing the Dedup-and-Write Procedure for all signals:
 
     `| <signal_id> | <title> | <category> | <severity> | <status> | <occurrence_count> | <last_seen> | [catalogue/<signal_id>.signal.json](catalogue/<signal_id>.signal.json) |`
 
+After all Phase 5 signals are processed, evaluate the ReviewSignalReport produced above. Set working memory `qa_passed = true` if the signals array contains no entry with `"severity": "Critical"`; otherwise set `qa_passed = false`.
+
 2. Do not fail or abort the skill if critical signals are present. Continue to the
    Metrics Recording phase.
 
@@ -414,6 +416,7 @@ Continue to Phase 6 — Metrics Recording regardless of signal count.
      ],
      "rubric_score": <from verify_rubrics output>,
      "end_review_error_count": <count of Critical signals>,
+     "qa_passed": <qa_passed>,
      "tools_used": <sorted array from get_run_status>,
      "token_usage": {
        "input_tokens": <from get_run_status>,
@@ -483,6 +486,18 @@ versioning and provides per-run traceability: any commit produced by moeb can be
 identified by its run tag.
 
 ## Phase 9 — Version and Tag
+
+**QA Gate.** Before proceeding, check working memory `qa_passed`. If `qa_passed` is `false`:
+1. Collect all Critical signals from the Phase 5 ReviewSignalReport. Format each as `"<title>"`.
+2. Emit a signal via the Canonical Signal Dedup-and-Write Procedure with:
+   - `category`: `"Error"`
+   - `severity`: `"Major"`
+   - `title`: `"Candidate tag suppressed: QA gate failed"`
+   - `description`: `"QA Architect review produced Critical signals; qa_passed is false. Failing signals: <comma-separated list of formatted Critical signal titles>."`
+   - `proposed_resolution`: `"Resolve all Critical signals listed above and re-run to obtain a candidate tag."`
+   - `gating_condition`: `"NoCandidateBranch"`
+3. Append this signal to the run file `emittedSignals` array.
+4. Skip the remainder of Phase 9 entirely (do not call `bump_version` or `create_candidate_tag`). Proceed directly to Phase 10 — Complete.
 
 Classify the change implemented in Phases 1–3 as one of `"major"`, `"minor"`, or
 `"patch"` using SemVer 2.0.0 semantics:

@@ -1,0 +1,20 @@
+{
+  "run_id": "f01e53ed-320f-4a4d-8c9b-64dc632bde59",
+  "timestamp": "2026-05-31T17:45:37Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.run-skill-must-only-emit-candidate-tag-when-qa-rev.md",
+  "metrics_path": ".moeb/metrics/f01e53ed-320f-4a4d-8c9b-64dc632bde59.metrics.json",
+  "emittedSignals": [
+    { "id": "c8d9e0f1-a2b3-4c4d-8e5f-6a7b8c9d0e1f", "description": "moeb-tool-origin failed: Read and ToolSearch used without MissingMoebTool signals" },
+    { "id": "d1e2f3a4-b5c6-4d7e-9f0a-1b2c3d4e5f6a", "description": "run.skill.md Phase 3 retains patch_file preference contrary to deprecate-patch-file spec" }
+  ],
+  "qa_passed": true,
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "list_directory", "push_thinking_blocks", "read_file", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
