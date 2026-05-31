@@ -42,12 +42,13 @@ Proceed with Phase 1 and Phase 2 as defined below.
 
 Call `enter_phase` with `phase_id: "phase-1"` as the first action in this phase.
 
-Call `list_directory` on `.moeb/signals/`. For each entry ending with `.signals.json`,
-call `read_file` on that path. Parse the JSON array. Collect every signal object where
-`picked_up_at` is absent or null. Record each signal alongside its source file path.
+Call `list_directory` on `.moeb/signals/catalogue/`. For each entry ending with
+`.signal.json`, call `read_file` on that path. Parse the JSON object. Collect every
+signal object where `picked_up_at` is absent or null and `status` is `"open"` or
+`"reopened"`. Record each signal alongside its file path.
 
-If no `.signals.json` files exist or all signals have `picked_up_at` set, skip to
-Phase 12 with the message: `"No unresolved signals found."`.
+If no `.signal.json` files exist in the catalogue or all signals have `picked_up_at`
+set, skip to Phase 12 with the message: `"No unresolved signals found."`.
 
 ## Phase 2 — Select
 
@@ -215,13 +216,83 @@ table. Do not supply verdicts for kernel-authoritative criteria (`tool-errors`,
 
 Call `enter_phase` with `phase_id: "phase-7"` as the first action in this phase.
 
-Act as a QA Architect: evaluate the fix_signal workflow outputs (signal marking patch,
-branch creation, event artifact, accumulated StepMetrics). Produce a
-`ReviewSignalReport` JSON with four categories (`"Error"`, `"SkillImprovement"`,
-`"ToolImprovement"`, `"NewCapability"`) and a `"summary"` paragraph. Each signal must
-carry `signal_id` (UUID v4), `run_id`, `timestamp`, `category`, `severity`, `title`,
-`description`, `proposed_resolution`, and `gating_condition`. Write the complete array
-to `.moeb/signals/{{run_id}}.signals.json`.
+Without calling any tool, adopt the **QA Architect Persona** pre-loaded in your context.
+Evaluate the fix_signal workflow outputs (signal marking patch, branch creation, event
+artifact, accumulated StepMetrics). Produce a `ReviewSignalReport` JSON matching the
+schema defined in the QA Architect Persona. Hold the result in working memory.
+
+Parse the returned `ReviewSignalReport` JSON:
+
+1. Assign each signal:
+   - `signal_id`: a fresh UUID v4
+   - `run_id`: the current run identifier (`{{run_id}}`)
+   - `timestamp`: ISO 8601 current time
+
+Write each signal via the **Canonical Signal Dedup-and-Write Procedure** defined below.
+
+## Canonical Signal Dedup-and-Write Procedure
+
+# Identity key: "<category>-<title-slug>"  (slug = lowercase, [^a-z0-9]+ → '-', strip edges, max 80 chars)
+# Canonical path: .moeb/signals/catalogue/<signal_id>.signal.json
+# Severity order: Info < Minor < Major < Critical
+# current_run_id: the run identifier from the current run session ({{run_id}} in the rendered prompt)
+# Note: .moeb/signals/catalogue/ is created on first use.
+# write_file creates parent directories automatically — no explicit mkdir required.
+#
+# Canonical signal record schema (all fields in this order):
+# { "signal_id", "category", "severity", "title", "description", "proposed_resolution",
+#   "gating_condition", "status", "occurrence_count", "first_seen", "last_seen", "occurrences" }
+
+For each signal S in the ReviewSignalReport:
+  1. Compute identity_key as described above.
+  2. Attempt to read `.moeb/signals/catalogue/<identity_key>.signal.json` using read_file.
+     If the file does not exist (read returns an error), treat as not_found.
+  3. If not_found:
+       Assign S.signal_id = new UUID v4.
+       Set S.status         = "open".
+       Set S.occurrence_count = 1.
+       Set S.first_seen     = current ISO 8601 timestamp.
+       Set S.last_seen      = current ISO 8601 timestamp.
+       Set S.occurrences    = [{ "timestamp": S.first_seen, "run_id": current_run_id }].
+       Write canonical record to `.moeb/signals/catalogue/<signal_id>.signal.json`.
+  4. If found:
+       Parse existing record E.
+       If severity_rank(S.severity) > severity_rank(E.severity): E.severity = S.severity.
+       If E.status == "resolved": E.status = "reopened".
+       E.occurrence_count += 1.
+       E.last_seen = current ISO 8601 timestamp.
+       Append { "timestamp": E.last_seen, "run_id": current_run_id } to E.occurrences.
+       Write updated E back to `.moeb/signals/catalogue/<signal_id>.signal.json`.
+       S.signal_id = E.signal_id.
+  5. After processing all signals, update `.moeb/signals/index.md` (see Index Update below).
+
+After all catalogue writes complete, add each emitted signal as { "id": signal_id, "description": title } to the emittedSignals array in the run file (written in the Metrics Recording phase).
+
+### Index Update
+
+After completing the Dedup-and-Write Procedure for all signals:
+- Attempt to read `.moeb/signals/index.md` using `read_file`. If missing, create it with
+  `write_file` using this header:
+
+  ```markdown
+  # Signal Index
+
+  | Signal ID | Title | Category | Severity | Status | Occurrences | Last Seen | File |
+  |-----------|-------|----------|----------|--------|-------------|-----------|------|
+  ```
+
+- For each canonical signal written in the current run, search the existing table for a
+  row whose `Signal ID` cell matches the canonical `signal_id`.
+  - If found: replace that row in the in-memory content with updated values for
+    `Severity`, `Status`, `Occurrences`, and `Last Seen`, then write the complete
+    updated file using `write_file`.
+  - If not found: append a new row to the in-memory content, then write the complete
+    updated file using `write_file`:
+
+    `| <signal_id> | <title> | <category> | <severity> | <status> | <occurrence_count> | <last_seen> | [catalogue/<signal_id>.signal.json](catalogue/<signal_id>.signal.json) |`
+
+2. Do not fail or abort the skill if critical signals are present. Continue to the
+   Metrics Recording phase.
 
 ## Phase 7a — Push Thinking Blocks
 
@@ -302,8 +373,10 @@ Write the run file to `{{run_file_path}}`:
   "timestamp": "<ISO 8601 start time>",
   "command": "fix_signal",
   "event_path": ".moeb/events/<signal_id>.event.json",
-  "signals_path": ".moeb/signals/{{run_id}}.signals.json",
   "metrics_path": ".moeb/metrics/{{run_id}}.metrics.json",
+  "emittedSignals": [
+    { "id": "<signal_id_1>", "description": "<title_1>" }
+  ],
   "rubric_score": "<from verify_rubrics output>",
   "end_review_error_count": "<count of Critical signals>",
   "tools_used": <sorted array from get_run_status>,

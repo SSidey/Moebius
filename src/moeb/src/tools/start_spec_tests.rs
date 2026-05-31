@@ -104,37 +104,70 @@ fn test_resolve_requirement_errors_on_both_empty() {
 }
 
 #[test]
-fn test_resolve_requirement_finds_signal_by_id() {
+fn test_resolve_requirement_finds_signal_via_index() {
     let dir = TempDir::new().unwrap();
-    let signals_dir = dir.path().join(".moeb/signals");
-    std::fs::create_dir_all(&signals_dir).unwrap();
-    let signals_json = serde_json::json!([{
-        "signal_id": "abc-123",
+    let uuid = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
+    let catalogue_dir = dir.path().join(".moeb/signals/catalogue");
+    std::fs::create_dir_all(&catalogue_dir).unwrap();
+    let signal_json = serde_json::json!({
+        "signal_id": uuid,
         "proposed_resolution": "Run moeb spec to add XYZ feature",
         "title": "Missing XYZ feature",
         "description": "The XYZ feature is not implemented"
-    }]).to_string();
-    std::fs::write(signals_dir.join("test.signals.json"), &signals_json).unwrap();
+    }).to_string();
+    std::fs::write(catalogue_dir.join(format!("{}.signal.json", uuid)), &signal_json).unwrap();
 
-    let result = super::resolve_requirement(dir.path(), "", "abc-123")
-        .expect("should resolve signal by id");
+    let index_content = format!(
+        "# Signal Index\n\n\
+         | Signal ID | Title | Category | Severity | Status | Occurrences | Last Seen | File |\n\
+         |-----------|-------|----------|----------|--------|-------------|-----------|------|\n\
+         | {uuid} | Missing XYZ feature | NewCapability | Major | open | 1 | 2026-01-01T00:00:00Z | \
+         [catalogue/{uuid}.signal.json](catalogue/{uuid}.signal.json) |\n",
+        uuid = uuid
+    );
+    let signals_dir = dir.path().join(".moeb/signals");
+    std::fs::create_dir_all(&signals_dir).unwrap();
+    std::fs::write(signals_dir.join("index.md"), &index_content).unwrap();
+
+    let result = super::resolve_requirement(dir.path(), "", uuid)
+        .expect("should resolve signal via index");
     assert_eq!(result, "Run moeb spec to add XYZ feature");
 }
 
 #[test]
-fn test_resolve_requirement_falls_back_to_title_description() {
+fn test_resolve_requirement_finds_signal_via_direct_filename() {
     let dir = TempDir::new().unwrap();
-    let signals_dir = dir.path().join(".moeb/signals");
-    std::fs::create_dir_all(&signals_dir).unwrap();
-    let signals_json = serde_json::json!([{
-        "signal_id": "def-456",
-        "proposed_resolution": "",
-        "title": "Test Title",
-        "description": "Test description"
-    }]).to_string();
-    std::fs::write(signals_dir.join("test.signals.json"), &signals_json).unwrap();
+    let uuid = "b2c3d4e5-f6a7-8901-bcde-f01234567891";
+    let catalogue_dir = dir.path().join(".moeb/signals/catalogue");
+    std::fs::create_dir_all(&catalogue_dir).unwrap();
+    let signal_json = serde_json::json!({
+        "signal_id": uuid,
+        "proposed_resolution": "Add delete-file capability to moeb",
+        "title": "Missing delete tool",
+        "description": "No moeb tool for file deletion"
+    }).to_string();
+    std::fs::write(catalogue_dir.join(format!("{}.signal.json", uuid)), &signal_json).unwrap();
 
-    let result = super::resolve_requirement(dir.path(), "", "def-456")
+    let result = super::resolve_requirement(dir.path(), "", uuid)
+        .expect("should resolve signal via direct filename");
+    assert_eq!(result, "Add delete-file capability to moeb");
+}
+
+#[test]
+fn test_resolve_requirement_title_description_fallback() {
+    let dir = TempDir::new().unwrap();
+    let uuid = "c3d4e5f6-a7b8-9012-cdef-012345678912";
+    let catalogue_dir = dir.path().join(".moeb/signals/catalogue");
+    std::fs::create_dir_all(&catalogue_dir).unwrap();
+    let signal_json = serde_json::json!({
+        "signal_id": uuid,
+        "proposed_resolution": "",
+        "title": "Missing tool",
+        "description": "No moeb equivalent"
+    }).to_string();
+    std::fs::write(catalogue_dir.join(format!("{}.signal.json", uuid)), &signal_json).unwrap();
+
+    let result = super::resolve_requirement(dir.path(), "", uuid)
         .expect("should fall back to title + description");
-    assert_eq!(result, "Test Title. Test description");
+    assert_eq!(result, "Missing tool. No moeb equivalent");
 }

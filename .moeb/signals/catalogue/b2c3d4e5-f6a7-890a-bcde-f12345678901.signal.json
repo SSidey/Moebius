@@ -1,0 +1,18 @@
+{
+  "signal_id": "b2c3d4e5-f6a7-890a-bcde-f12345678901",
+  "category": "NewCapability",
+  "severity": "Minor",
+  "title": "Missing moeb tool: Read (oversized README JSON)",
+  "description": "Used Claude Code Read tool to read the harness-persisted JSON output from read_file on .moeb/README.md (54KB+) after the inline result was truncated. No moeb tool for reading these harness JSON artifacts.",
+  "proposed_resolution": "Run moeb spec to introduce a moeb equivalent for reading large harness-persisted JSON output files, or extend read_file with a paginated/range mode to avoid inline truncation.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 3,
+  "first_seen": "2026-05-31T11:05:00Z",
+  "last_seen": "2026-05-31T11:50:00Z",
+  "occurrences": [
+    { "timestamp": "2026-05-31T11:05:00Z", "run_id": "3d58180f-1286-4409-8b7c-9ce97b8d38eb" },
+    { "timestamp": "2026-05-31T11:40:00Z", "run_id": "97681321-e388-405d-b2b2-660c928d8386" },
+    { "timestamp": "2026-05-31T11:50:00Z", "run_id": "ed5f3802-f871-4dc6-b917-586b3dddc16e" }
+  ]
+}

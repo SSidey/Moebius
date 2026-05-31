@@ -1,0 +1,24 @@
+{
+  "run_id": "599c7619-2a90-4a49-9798-ef0fc07a9c8e",
+  "timestamp": "2026-05-31T11:55:41Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.signal-catalogue-id-based-naming.md",
+  "metrics_path": ".moeb/metrics/599c7619-2a90-4a49-9798-ef0fc07a9c8e.metrics.json",
+  "emittedSignals": [
+    { "id": "a7f3e2b1-9d4c-4a8f-b6e5-1c2d3e4f5a6b", "description": "Stale .signals.json references remain in reasoning review phase after signals file elimination" },
+    { "id": "b8f4e3c2-0e5d-4b9a-c7f6-2d3e4f5a6b7c", "description": "Canonical dedup procedure reads identity_key-named files that no longer exist after UUID migration" },
+    { "id": "c9f5e4d3-1f6e-4c0b-d8a7-3e4f5a6b7c8d", "description": "Missing moeb tool: Bash (delete file, rename file for catalogue migration)" },
+    { "id": "d0a6f5e4-2a7f-4d1c-e9b8-4f5a6b7c8d9e", "description": "Missing moeb tool: Bash (cargo build and cargo test)" },
+    { "id": "e1b7f5c4-3b8d-4e2f-c0a9-5b6c7d8e9f0a", "description": "patch_file fails on old_string containing Unicode special characters (en-dash U+2013)" }
+  ],
+  "rubric_score": null,
+  "end_review_error_count": 0,
+  "tools_used": ["complete_review", "create_task_list", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "query_agent", "read_file", "read_file_range", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

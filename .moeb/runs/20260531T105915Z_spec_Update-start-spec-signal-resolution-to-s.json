@@ -1,0 +1,16 @@
+{
+  "run_id": "3d58180f-1286-4409-8b7c-9ce97b8d38eb",
+  "timestamp": "2026-05-31T10:59:15Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.start-spec-signal-catalogue-fallback.md",
+  "signals_path": ".moeb/signals/3d58180f-1286-4409-8b7c-9ce97b8d38eb.signals.json",
+  "metrics_path": ".moeb/metrics/3d58180f-1286-4409-8b7c-9ce97b8d38eb.metrics.json",
+  "tools_used": ["complete_review", "get_run_status", "patch_file", "push_thinking_blocks", "query_agent", "read_file", "start_spec", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

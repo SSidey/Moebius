@@ -120,40 +120,50 @@ fn resolve_requirement(
     if signal_id.is_empty() {
         return Err("Either 'requirement' or 'signal_id' must be provided".to_string());
     }
-    let signals_dir = working_dir.join(".moeb/signals");
-    let entries = std::fs::read_dir(&signals_dir)
-        .map_err(|e| format!("Signals directory not found: {}", e))?;
-    for entry in entries.flatten() {
-        let path = entry.path();
-        let name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
-        if !name.ends_with(".signals.json") {
-            continue;
-        }
-        let content = match std::fs::read_to_string(&path) {
-            Ok(c) => c,
-            Err(_) => continue,
-        };
-        let signals: serde_json::Value = match serde_json::from_str(&content) {
-            Ok(v) => v,
-            Err(_) => continue,
-        };
-        let arr = match signals.as_array() {
-            Some(a) => a,
-            None => continue,
-        };
-        for signal in arr {
-            if signal["signal_id"].as_str() == Some(signal_id) {
-                let proposed = signal["proposed_resolution"].as_str().unwrap_or("");
-                if !proposed.is_empty() {
-                    return Ok(proposed.to_string());
+
+    // Pass 1: look up signal_id in .moeb/signals/index.md
+    let index_path = working_dir.join(".moeb/signals/index.md");
+    if let Ok(index_content) = std::fs::read_to_string(&index_path) {
+        for line in index_content.lines() {
+            let cells: Vec<&str> = line.split('|').map(str::trim).collect();
+            // Table row: | signal_id | title | category | severity | status | occurrences | last_seen | file |
+            if cells.len() >= 9 && cells[1] == signal_id {
+                if let Some(href) = extract_md_link_href(cells[8]) {
+                    let file_path = working_dir.join(".moeb/signals").join(href);
+                    if let Ok(resolved) = read_signal_from_file(&file_path) {
+                        return Ok(resolved);
+                    }
                 }
-                let title = signal["title"].as_str().unwrap_or("");
-                let description = signal["description"].as_str().unwrap_or("");
-                return Ok(format!("{}. {}", title, description));
             }
         }
     }
-    Err(format!("No signal found with signal_id '{}'", signal_id))
+
+    // Pass 2: direct filename fallback
+    let direct = working_dir
+        .join(".moeb/signals/catalogue")
+        .join(format!("{}.signal.json", signal_id));
+    read_signal_from_file(&direct)
+        .map_err(|_| format!("No signal found with signal_id '{}'", signal_id))
+}
+
+fn extract_md_link_href(cell: &str) -> Option<&str> {
+    let start = cell.find('(')? + 1;
+    let end = cell.rfind(')')?;
+    if start < end { Some(&cell[start..end]) } else { None }
+}
+
+fn read_signal_from_file(path: &std::path::Path) -> Result<String, String> {
+    let content = std::fs::read_to_string(path)
+        .map_err(|e| format!("Cannot read {:?}: {}", path, e))?;
+    let record: serde_json::Value = serde_json::from_str(&content)
+        .map_err(|e| format!("Cannot parse {:?}: {}", path, e))?;
+    let resolution = record.get("proposed_resolution").and_then(|v| v.as_str()).unwrap_or("");
+    if !resolution.is_empty() {
+        return Ok(resolution.to_string());
+    }
+    let title = record.get("title").and_then(|v| v.as_str()).unwrap_or("");
+    let desc = record.get("description").and_then(|v| v.as_str()).unwrap_or("");
+    Ok(format!("{}. {}", title, desc))
 }
 
 fn build_spec_rubrics(moeb_dir: &Path) -> String {

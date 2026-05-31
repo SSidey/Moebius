@@ -9,3 +9,4 @@ in the specification's own `## Rubric` section.
 | `binary-builds` | `cargo build --release` completes without error | Zero errors | CI build exits 0 |
 | `all-tests-pass` | `cargo test` completes without failure | Zero failures | `cargo test` exits 0 |
 | `no-test-regression` | All tests present before this change pass without modification to test code | Zero failures | `cargo test` exits 0; no test file edited |
+| `new-artifact-naming-schema` | Any specification that introduces a new persisted artifact type must ship with a machine-readable naming schema in `src/moeb/internal/schemas/` whose `filename_convention` field documents the exact file naming pattern. | One schema file per new artifact type | Run review: confirm `src/moeb/internal/schemas/<artifact>.schema.json` exists for each new artifact type and its `filename_convention` field is present and non-empty |

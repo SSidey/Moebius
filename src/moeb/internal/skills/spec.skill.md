@@ -287,7 +287,7 @@ Parse the returned `ReviewSignalReport` JSON:
 ## Canonical Signal Dedup-and-Write Procedure
 
 # Identity key: "<category>-<title-slug>"  (slug = lowercase, [^a-z0-9]+ → '-', strip edges, max 80 chars)
-# Canonical path: .moeb/signals/catalogue/<identity-key>.signal.json
+# Canonical path: .moeb/signals/catalogue/<signal_id>.signal.json
 # Severity order: Info < Minor < Major < Critical
 # current_run_id: the run identifier injected via {{run_id}} in the spec prompt template
 # Note: .moeb/signals/catalogue/ is created on first use.
@@ -308,7 +308,7 @@ For each signal S in the ReviewSignalReport:
        Set S.first_seen     = current ISO 8601 timestamp.
        Set S.last_seen      = current ISO 8601 timestamp.
        Set S.occurrences    = [{ "timestamp": S.first_seen, "run_id": current_run_id }].
-       Write canonical record to `.moeb/signals/catalogue/<identity_key>.signal.json`.
+       Write canonical record to `.moeb/signals/catalogue/<signal_id>.signal.json`.
   4. If found:
        Parse existing record E.
        If severity_rank(S.severity) > severity_rank(E.severity): E.severity = S.severity.
@@ -316,12 +316,11 @@ For each signal S in the ReviewSignalReport:
        E.occurrence_count += 1.
        E.last_seen = current ISO 8601 timestamp.
        Append { "timestamp": E.last_seen, "run_id": current_run_id } to E.occurrences.
-       Write updated E back to `.moeb/signals/catalogue/<identity_key>.signal.json`.
+       Write updated E back to `.moeb/signals/catalogue/<signal_id>.signal.json`.
        S.signal_id = E.signal_id.
   5. After processing all signals, update `.moeb/signals/index.md` (see Index Update below).
 
-The run-based signals file `.moeb/signals/{{run_id}}.signals.json` is then written as normal,
-using the signal_id values assigned in steps 3–4 above.
+After all catalogue writes complete, add each emitted signal as { "id": signal_id, "description": title } to the emittedSignals array in the run file (written in the Metrics Recording phase).
 
 ### Index Update
 
@@ -344,11 +343,9 @@ After completing the Dedup-and-Write Procedure for all signals:
   - If not found: append a new row to the in-memory content, then write the complete
     updated file using `write_file`:
 
-    `| <signal_id> | <title> | <category> | <severity> | <status> | <occurrence_count> | <last_seen> | [catalogue/<identity_key>.signal.json](catalogue/<identity_key>.signal.json) |`
+    `| <signal_id> | <title> | <category> | <severity> | <status> | <occurrence_count> | <last_seen> | [catalogue/<signal_id>.signal.json](catalogue/<signal_id>.signal.json) |`
 
-2. Write signals to `.moeb/signals/{{run_id}}.signals.json`.
-
-3. Continue to Metrics Recording regardless of critical signal presence.
+2. Continue to Metrics Recording regardless of critical signal presence.
 
 ## Phase 7a — Push Thinking Blocks
 
@@ -431,8 +428,10 @@ Continue to Phase 8 — Metrics Recording regardless of signal count.
      "timestamp": "<ISO 8601 start time>",
      "command": "spec",
      "spec_path": "<path of the spec file authored in Phase 4>",
-     "signals_path": ".moeb/signals/{{run_id}}.signals.json",
      "metrics_path": ".moeb/metrics/{{run_id}}.metrics.json",
+     "emittedSignals": [
+       { "id": "<signal_id_1>", "description": "<title_1>" }
+     ],
      "rubric_score": <from rubric_score above>,
      "end_review_error_count": <count of Critical signals>,
      "tools_used": <sorted array from get_run_status>,

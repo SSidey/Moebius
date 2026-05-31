@@ -14,12 +14,8 @@
     { "timestamp": "2026-05-29T21:22:47Z", "run_id": "e22533c1-7842-425d-b65a-34cee93b9f89" }
   ],
   "picked_up_at": "2026-05-30T00:00:00Z",
-<<<<<<< Updated upstream
-  "fix_branch": "feat/moeb-run-skill-md-missing-post-candidate-signal-retrosp"
-=======
   "links": [
     { "artifactType": "branch", "id": "feat/moeb-run-skill-md-missing-post-candidate-signal-retrosp", "type": "fix" },
     { "artifactType": "spec", "id": "moeb.run-skill-retrospective-and-signal-schema", "type": "resolved_by" }
   ]
->>>>>>> Stashed changes
 }
