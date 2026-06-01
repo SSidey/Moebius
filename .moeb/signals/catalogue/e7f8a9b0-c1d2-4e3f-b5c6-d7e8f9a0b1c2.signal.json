@@ -1,0 +1,19 @@
+{
+  "signal_id": "e7f8a9b0-c1d2-4e3f-b5c6-d7e8f9a0b1c2",
+  "category": "SkillImprovement",
+  "severity": "Major",
+  "title": "run.skill.md Phase 9 QA gate failure emits post-tag harness files creating untagged commit",
+  "description": "When qa_passed is false, Phase 9 writes a suppression signal catalogue entry and updates index.md and the run file's emittedSignals array. These writes happen after Phase 7 (Commit) and Phase 8 (Tag) have already executed, so git_commit must be called a second time to capture them. The result is two commits with identical messages and the run tag pointing to the first commit, which lacks the suppression signal and the final run file state. Run traceability is degraded: the canonical tag does not cover all harness artifacts produced by the run.",
+  "proposed_resolution": "Reorder run.skill.md so that Phase 8 (Tag) follows Phase 9 (Version and Tag) rather than preceding it. This ensures the run tag is always placed on the final commit regardless of whether QA passed or failed. Alternatively, buffer suppression signal writes to Phase 6 (Metrics Recording) so all harness artifact writes complete before Phase 7 (Commit).",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-02T00:00:00Z",
+  "last_seen": "2026-06-02T00:00:00Z",
+  "occurrences": [
+    {
+      "timestamp": "2026-06-02T00:00:00Z",
+      "run_id": "caa3bb83-8852-4f01-a9dd-392d05069c39"
+    }
+  ]
+}
