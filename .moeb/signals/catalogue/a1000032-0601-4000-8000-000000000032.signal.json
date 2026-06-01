@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000032-0601-4000-8000-000000000032",
+  "category": "Error",
+  "severity": "Major",
+  "title": "moeb init does not create signals/catalogue subdirectory or stub index.md",
+  "description": "Running `moeb init` creates `.moeb/signals/` but does not create the required `.moeb/signals/catalogue/` subdirectory or the stub `signals/index.md` file. Any subsequent `moeb fix-signal` or signal-writing operation assumes both exist and will fail or produce unexpected state. A freshly initialised project cannot be used with the canonical fix-signal skill without manual directory creation.",
+  "proposed_resolution": "In `src/moeb/src/commands/init.rs`, after `fs::create_dir_all(&signals_dst)`: (1) add `fs::create_dir_all(signals_dst.join(\"catalogue\"))?`; (2) write a stub `index.md` to `signals_dst` containing the canonical header:\n# Signal Index\n\n| Signal ID | Title | Category | Severity | Status | Occurrences | Last Seen | File |\n|-----------|-------|----------|----------|--------|-------------|-----------|------|",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-01T00:00:00Z",
+  "last_seen": "2026-06-01T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-01T00:00:00Z", "run_id": "00000000-0601-4000-8000-000000000000" }
+  ]
+}

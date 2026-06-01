@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000037-0601-4000-8000-000000000037",
+  "category": "NewCapability",
+  "severity": "Major",
+  "title": "GitHub Issues ingest: capture remote issues as local signals with full lifecycle updates",
+  "description": "The existing signal a1000016 covers pushing moeb signals out to GitHub Issues. There is no complementary ingest path. GitHub Issues created externally (by collaborators, automated tools, or users) should be captured as local signal files in the catalogue rather than interfaced with directly at runtime. A local-first model means the pipeline never depends on GitHub connectivity for normal operation. The full lifecycle requires five updates back to the originating GitHub Issue: (1) issue created → ingest as local signal + post 'ingested by moeb as signal <id>' comment; (2) spec raised → post 'fix in progress on <branch>'; (3) candidate tag emitted → post 'fix implemented in candidate <tag>'; (4) release published → post 'fixed in v<version>' + close issue.",
+  "proposed_resolution": "1. Add a conductor event handler that polls GitHub Issues (or receives webhook) and writes a new signal JSON to the catalogue for each new issue, deriving category and severity from issue labels using a configurable label-to-severity mapping. 2. After ingesting, post a standardised comment on the GitHub Issue containing the moeb signal ID and ingestion timestamp. Record the GitHub issue URL in the signal JSON as `source_url`. 3. Extend the conductor state machine to post lifecycle comments to the linked GitHub Issue at each relevant state transition. 4. On release, close the issue with a resolution comment referencing the release version. 5. Define and document the label convention that maps GitHub Issue labels to moeb signal categories and severities.",
+  "gating_condition": "Requires conductor event ingestion (Ouro project signal b0000003) for webhook-driven ingest.",
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-01T00:00:00Z",
+  "last_seen": "2026-06-01T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-01T00:00:00Z", "run_id": "00000000-0601-4000-8000-000000000000" }
+  ]
+}

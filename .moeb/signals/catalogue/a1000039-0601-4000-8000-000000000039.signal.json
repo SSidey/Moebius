@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000039-0601-4000-8000-000000000039",
+  "category": "ProcessImprovement",
+  "severity": "Major",
+  "title": "moeb CLI should expose only `init` and `serve`; all harness commands migrate to MCP tools",
+  "description": "moeb currently exposes a broad CLI surface (use, spec, run, fix, signal add, adapter management, replay, etc.). The intended architecture is that human operators touch moeb directly only at project setup (`moeb init`) and server start (`moeb serve`). All subsequent harness interactions — spec authoring, run execution, signal management, adapter configuration — are driven by events from Ouro or by Claude Code communicating with the MCP server. Maintaining the wide CLI surface creates a dual-entry-point problem: behaviour diverges between direct CLI invocation and MCP-driven invocation, the CLI implies a direct-API model that conflicts with the MCP-first architecture, and every new capability must be implemented twice.",
+  "proposed_resolution": "1. Audit every CLI subcommand in `src/moeb/src/commands/` and classify as: (a) keep — `init`, `serve`; (b) migrate to MCP tool — adapter management, signal operations; (c) remove — commands already fully covered by MCP tools. 2. Deprecate removed commands with clear error messages pointing to the MCP equivalent. 3. Update `moeb --help` to reflect the slimmed surface with a note explaining the MCP-first model. 4. Any command needed for local debugging (e.g. `replay`) should be retained as a dev-only subcommand behind a `--dev` flag, clearly separated from the production surface and excluded from release builds.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-01T00:00:00Z",
+  "last_seen": "2026-06-01T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-01T00:00:00Z", "run_id": "00000000-0601-4000-8000-000000000000" }
+  ]
+}

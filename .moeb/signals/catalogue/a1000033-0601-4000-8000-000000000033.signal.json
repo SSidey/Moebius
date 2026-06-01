@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000033-0601-4000-8000-000000000033",
+  "category": "Error",
+  "severity": "Minor",
+  "title": "moeb init creates rubric-audit directory which is not a documented .moeb concern",
+  "description": "`src/moeb/src/commands/init.rs` unconditionally creates `.moeb/rubric-audit/` during init. This directory does not appear in the canonical `.moeb/` structure of the moeb project itself, is not referenced by any skill, and has no documented purpose. It pollutes fresh project directories with an unexplained folder, and any tooling that enumerates `.moeb/` will encounter it unexpectedly.",
+  "proposed_resolution": "Remove the `rubric_audit_dst` creation block (lines 37-38) from `src/moeb/src/commands/init.rs`. If `rubric-audit/` serves a legitimate archival or QA purpose, document it in `.moeb/README.md` and add it to the skill that writes to it before re-adding the init step. Existing `.moeb/rubric-audit/` directories in active projects should be reviewed and removed if empty.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-01T00:00:00Z",
+  "last_seen": "2026-06-01T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-01T00:00:00Z", "run_id": "00000000-0601-4000-8000-000000000000" }
+  ]
+}

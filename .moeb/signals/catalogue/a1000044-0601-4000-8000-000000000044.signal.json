@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000044-0601-4000-8000-000000000044",
+  "category": "NewCapability",
+  "severity": "Major",
+  "title": "Candidate retry loop must enforce attempt limits and escalate to human after repeated goal-proximity failures",
+  "description": "Without bounds on the fix-retry cycle, a signal that consistently fails the goal-proximity gate can spiral: fix attempted → candidate fails gate → new signal raised → fix attempted → repeat indefinitely. The system needs structural guard rails: a per-signal maximum attempt count, detection of repeated same-criterion proximity failures, and a defined escalation path that surfaces the situation to the human operator with enough context to decide whether to redefine the approach, relax the criterion, or close the signal as won't-fix. Unbounded retry is indistinguishable from an infinite loop from the outside.",
+  "proposed_resolution": "1. Add `max_attempts` field to the signal JSON schema with a default of 3. 2. Each time `fix_signal` picks up a signal, increment `attempt_count` in the signal JSON. 3. After each candidate that fails the goal-proximity gate, the conductor checks `attempt_count >= max_attempts`; if true, it sets `status: escalated` and writes an escalation event to `.moeb/events/<signal_id>.escalated.event.json` containing: full attempt history, rubric results per attempt, goal-proximity deltas per attempt, and a summary of which criteria failed to advance across all attempts. 4. `moeb serve` and `moeb goal status` surface escalated signals prominently with an `[ESCALATED]` marker. 5. The human resolves an escalation by one of: (a) editing the signal's `proposed_resolution` and running `moeb signal reset-attempts <id>` to clear the count and resume; (b) running `moeb signal dismiss <id>` to close as won't-fix with a reason; (c) running `moeb introspect` to determine whether the goal criterion itself needs refinement before retrying.",
+  "gating_condition": ["a1000043-0601-4000-8000-000000000043"],
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-01T00:00:00Z",
+  "last_seen": "2026-06-01T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-01T00:00:00Z", "run_id": "00000000-0601-4000-8000-000000000000" }
+  ]
+}
