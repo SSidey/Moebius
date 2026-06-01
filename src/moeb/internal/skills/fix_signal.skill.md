@@ -79,6 +79,9 @@ and `new_string` set to the same closing `}` preceded by the two new fields:
 If `patch_file` returns an error, add the two fields in working memory and call
 `write_file` to overwrite the source file with the complete updated content.
 
+5. Parse the signal JSON in memory. Set `"status"` to `"in_progress"`. Write the updated signal back to `.moeb/signals/catalogue/<signal_id>.signal.json` using `write_file`.
+6. Run the **Index Update sub-procedure**: read `.moeb/signals/index.md`, find the row whose `Signal ID` cell matches the selected signal's `signal_id`, update its `Status` cell to `in_progress`, write the complete updated `index.md` using `write_file`. If no matching row exists, append a new row with the current signal's field values.
+
 ### Per-Step Review Sub-Loop (signal pickup)
 
 0. **Error preflight.** If the preceding write returned an error (result contains

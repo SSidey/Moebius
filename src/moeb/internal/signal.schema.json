@@ -67,10 +67,14 @@
       "type": "string",
       "enum": [
         "open",
+        "in_progress",
+        "spec_written",
+        "candidate",
         "resolved",
-        "superseded"
+        "superseded",
+        "reopened"
       ],
-      "description": "Lifecycle state of the signal. open: the issue persists and no fix has been applied; the signal is eligible for fix_signal selection. resolved: the specific issue described was directly fixed by a spec or run — the proposed_resolution was implemented. superseded: a different design decision made the proposed_resolution unnecessary; the problem class is addressed by a change of approach rather than a direct fix. Use links[] to reference the artifact that resolved or superseded this signal."
+      "description": "Lifecycle state of the signal. open: the issue persists and no fix has been applied; eligible for fix_signal selection. in_progress: fix_signal has selected and marked this signal with picked_up_at; spec authoring is in progress. spec_written: a specification has been authored and registered in the harness README. candidate: the run implementing the specification passed QA review and a candidate tag was created. resolved: the issue was accepted via accept_candidate and a resolved event was emitted. superseded: a different design decision made the proposed_resolution unnecessary. reopened: a previously resolved signal has recurred and is eligible for re-selection by fix_signal."
     },
     "links": {
       "type": "array",
@@ -144,6 +148,11 @@
       "type": "string",
       "format": "date-time",
       "description": "ISO 8601 timestamp set by fix_signal when this signal is selected for autonomous resolution. Absence means the signal has not been picked up. Presence prevents re-selection by subsequent fix_signal invocations."
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp set by accept_candidate when the signal is marked resolved. Absent on all other status values."
     }
   }
 }

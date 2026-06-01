@@ -3,18 +3,19 @@
   "category": "NewCapability",
   "severity": "Major",
   "title": "Missing moeb tool: ToolSearch (deferred schema loading)",
-  "description": "ToolSearch called 3 times to load deferred MCP tool schemas before implementation could begin. No moeb equivalent exists for loading deferred tool schemas in the Claude Code environment. Causes moeb-tool-origin to fail on every run.",
-  "proposed_resolution": "Pre-include required tool schemas in start_run output, or introduce a schema-preload mechanism that eliminates ToolSearch calls during moeb runs.",
+  "description": "ToolSearch called multiple times to load deferred MCP tool schemas before implementation could begin. No moeb equivalent exists for loading deferred tool schemas in the Claude Code environment. Causes moeb-tool-origin to fail on every run.",
+  "proposed_resolution": "Pre-include required tool schemas in start_run and start_spec output, or introduce a schema-preload mechanism that eliminates ToolSearch calls during moeb runs.",
   "gating_condition": null,
   "status": "open",
-  "occurrence_count": 5,
+  "occurrence_count": 6,
   "first_seen": "2026-05-28T16:15:00Z",
-  "last_seen": "2026-05-31T16:45:00Z",
+  "last_seen": "2026-06-01T21:33:38Z",
   "occurrences": [
     { "timestamp": "2026-05-28T16:15:00Z", "run_id": "6025fff1-96b2-456b-880d-c89bb2bfd3f7" },
     { "timestamp": "2026-05-28T18:26:21Z", "run_id": "a735facc-5979-429f-8024-6e9f0fc0786a" },
     { "timestamp": "2026-05-29T23:46:00Z", "run_id": "9d5a69df-ac3a-4af4-a140-9aae58bd25d1" },
     { "timestamp": "2026-05-29T00:35:23Z", "run_id": "e1e59193-e8e0-44f3-b1f3-50576b129a7a" },
-    { "timestamp": "2026-05-31T16:45:00Z", "run_id": "63b19c35-1809-43e6-bdaf-45dce7be78ca" }
+    { "timestamp": "2026-05-31T16:45:00Z", "run_id": "63b19c35-1809-43e6-bdaf-45dce7be78ca" },
+    { "timestamp": "2026-06-01T21:33:38Z", "run_id": "ec08d9d8-9cf7-4261-8089-cbae83e5686c" }
   ]
 }

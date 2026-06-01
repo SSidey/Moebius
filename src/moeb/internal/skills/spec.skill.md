@@ -37,6 +37,7 @@ Write the complete specification document conforming to the schema:
   - `status` must be `active` for all newly authored specifications. Use `draft` only
     when explicitly instructed by the user. Never set `status: superseded` when authoring
     a new specification.
+  - If the session context variable `signal_id` is non-empty, include `signal_id: <value>` in the frontmatter immediately after the `status: active` line.
   - When `supersedes` is included, use this syntax:
     ```
     supersedes:
@@ -182,7 +183,7 @@ After writing `.moeb/README.md`:
      `acceptance_rate = 1.0`, `delta_scores = []`.
    - Call `complete_review` with `.moeb/README.md` (no-op at kernel level; included for
      symmetry).
-   - Proceed to Phase 5b — Budget Breach Check. The error is recorded in RunState.tool_errors.
+   - Proceed to Phase 5a — Signal Status Update. The error is recorded in RunState.tool_errors.
    Skip steps 1–5 below for this invocation.
 
 1. **Inline Reviewer.** Without calling any tool, adopt the **Reviewer Persona**
@@ -215,6 +216,15 @@ After writing `.moeb/README.md`:
 5. Call `complete_review` with `.moeb/README.md`.
    This is a no-op at the kernel level (path starts with `.moeb/`) but makes the review
    obligation explicit and maintains symmetry with the run skill.
+
+## Phase 5a — Signal Status Update <!-- condition: signal_id non-empty -->
+
+If the session context variable `signal_id` is empty or absent, skip this phase entirely and proceed to Phase 5b.
+
+1. Call `read_file` on `.moeb/signals/catalogue/<signal_id>.signal.json` where `<signal_id>` is the `signal_id` context variable. If the file does not exist, skip the remaining steps and proceed to Phase 5b.
+2. Parse the returned JSON. Set `"status"` to `"spec_written"`. Do not alter any other field.
+3. Write the updated JSON back to the same path using `write_file`.
+4. Run the **Index Update sub-procedure**: read `.moeb/signals/index.md`, find the row whose `Signal ID` cell matches `signal_id`, update its `Status` cell to `spec_written`, write the complete updated `index.md` using `write_file`. If no matching row is found, append a new row with current field values.
 
 ## Phase 5b — Budget Breach Check
 

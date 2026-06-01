@@ -49,6 +49,11 @@ spec:
   # then in the bundled binary assets. Omit to use the default: run.role.md.
   # Example: "rust-tdd"
 
+  signal_id: string      # optional
+  # UUID of the signal in .moeb/signals/catalogue/ that this specification was authored to resolve.
+  # Written by spec.skill.md when the signal_id session context variable is non-empty.
+  # Consumed by run.skill.md to update signal status after candidate tagging.
+
   # ---------------------------------------------------------------------------
   # Requirement
   # ---------------------------------------------------------------------------

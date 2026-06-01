@@ -1,0 +1,19 @@
+{
+  "run_id": "ec08d9d8-9cf7-4261-8089-cbae83e5686c",
+  "timestamp": "2026-06-01T21:33:38Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.signal-status-lifecycle-tracking.md",
+  "metrics_path": ".moeb/metrics/ec08d9d8-9cf7-4261-8089-cbae83e5686c.metrics.json",
+  "emittedSignals": [
+    { "id": "f0bf5e4b-0001-4001-8001-000000000001", "description": "Missing moeb tool: Read (start_spec result file)" },
+    { "id": "9e8d7c6b-5a4f-3e2d-1c0b-9a8f7e6d5c4b", "description": "Missing moeb tool: ToolSearch (deferred schema loading)" }
+  ],
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "patch_file", "push_thinking_blocks", "read_file", "search_files", "start_spec", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

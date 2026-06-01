@@ -527,6 +527,14 @@ correctly.
    { "domain": "<domain>", "slug": "<slug>", "force": true }
    ```
 
+**Signal status update (conditional on signal_id in spec frontmatter)**:
+1. Call `read_file` on the spec file at `spec_path`.
+2. Parse the YAML frontmatter. If `signal_id` is absent or empty, skip steps 3–6 entirely.
+3. Construct the catalogue path: `.moeb/signals/catalogue/<signal_id>.signal.json`.
+4. Call `read_file` on that path. If the file does not exist, skip steps 5–6.
+5. Parse the signal JSON. Set `"status"` to `"candidate"`. Write the updated JSON back using `write_file`.
+6. Run the **Index Update sub-procedure**: read `.moeb/signals/index.md`, find the row matching `signal_id`, update its `Status` cell to `candidate`, write the complete updated `index.md` using `write_file`.
+
 ## Phase 10 — Complete
 
 Respond with a concise summary of every file created or updated.

@@ -1,3 +1,4 @@
+pub mod accept_candidate;
 pub mod bump_version;
 pub mod complete_review;
 pub mod create_candidate_tag;
@@ -123,6 +124,7 @@ impl ToolRegistry {
         r.register(Box::new(start_spec::StartSpecTool));
         // fix_signal is MCP-only per moeb.signal-fix-command Decision 1; not in standard()
         r.register(Box::new(fix_signal::FixSignalTool));
+        r.register(Box::new(accept_candidate::AcceptCandidateTool));
         r.register(Box::new(get_run_status::GetRunStatusTool { state: std::sync::Arc::clone(&state) }));
         r
     }
@@ -143,6 +145,7 @@ impl ToolRegistry {
         r.register(Box::new(start_spec::StartSpecTool));
         // fix_signal is MCP-only per moeb.signal-fix-command Decision 1; not in standard()
         r.register(Box::new(fix_signal::FixSignalTool));
+        r.register(Box::new(accept_candidate::AcceptCandidateTool));
         r.register(Box::new(get_run_status::GetRunStatusTool {
             state: std::sync::Arc::clone(&state),
         }));
@@ -180,7 +183,7 @@ impl ToolRegistry {
             "create_branch", "git_commit",
             "bump_version", "create_candidate_tag",
             "get_version", "tag_run", "tag_signal", "query_agent", "github_releases",
-            "start_run", "start_spec", "fix_signal", "get_run_status",
+            "start_run", "start_spec", "fix_signal", "accept_candidate", "get_run_status",
         ];
         order.iter()
             .filter_map(|name| self.handlers.get(name).map(|h| h.definition()))
