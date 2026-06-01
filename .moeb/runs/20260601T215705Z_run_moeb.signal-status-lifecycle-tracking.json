@@ -7,7 +7,8 @@
   "emittedSignals": [
     {"id": "a2f1e0d9-c8b7-4a65-b4c3-d2e1f0a9b8c7", "description": "Tool error not recovered: patch_file (signal.schema.json)"},
     {"id": "b3e2d1c0-a9b8-4c76-a5d4-e3f2a1b0c9d8", "description": "Tool error not recovered: patch_file (.moeb/spec-schema.yaml)"},
-    {"id": "c4d3e2f1-b0a9-4d87-b6e5-f4a3b2c1d0e9", "description": "Tool error not recovered: write_file scope enforcement (accept_candidate_tests.rs)"}
+    {"id": "c4d3e2f1-b0a9-4d87-b6e5-f4a3b2c1d0e9", "description": "Tool error not recovered: write_file scope enforcement (accept_candidate_tests.rs)"},
+    {"id": "d5e4f3c2-a1b0-4c98-b7d6-e5f4a3b2c1d0", "description": "Candidate tag suppressed: QA gate failed"}
   ],
   "rubric_score": 0.889,
   "end_review_error_count": 3,

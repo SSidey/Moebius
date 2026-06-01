@@ -1,0 +1,19 @@
+{
+  "signal_id": "d5e4f3c2-a1b0-4c98-b7d6-e5f4a3b2c1d0",
+  "category": "Error",
+  "severity": "Major",
+  "title": "Candidate tag suppressed: QA gate failed",
+  "description": "QA Architect review produced Critical signals; qa_passed is false. Failing signals: \"Tool error not recovered: patch_file (signal.schema.json)\", \"Tool error not recovered: patch_file (.moeb/spec-schema.yaml)\", \"Tool error not recovered: write_file scope enforcement (accept_candidate_tests.rs)\".",
+  "proposed_resolution": "Resolve all Critical signals listed above and re-run to obtain a candidate tag.",
+  "gating_condition": "NoCandidateBranch",
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-02T00:00:00Z",
+  "last_seen": "2026-06-02T00:00:00Z",
+  "occurrences": [
+    {
+      "timestamp": "2026-06-02T00:00:00Z",
+      "run_id": "caa3bb83-8852-4f01-a9dd-392d05069c39"
+    }
+  ]
+}
