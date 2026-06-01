@@ -1,0 +1,16 @@
+{
+  "signal_id": "6bfc810c-afd9-4ab8-bbeb-ef9f8858b860",
+  "category": "ProcessImprovement",
+  "severity": "Minor",
+  "title": "Signal dedup identity key incorrectly scoped to file path rather than title and category",
+  "description": "During the signal-status-lifecycle-tracking run (caa3bb83), the agent raised three Critical Error signals for tool failures (two patch_file failures and one write_file scope enforcement rejection) and reasoned that each was unique because the specific file being patched or written had not appeared in a prior error. This reasoning is incorrect: the canonical dedup procedure defines the identity key as category + title, not category + title + file path. A signal titled 'Tool error not recovered: patch_file' in category Error is a duplicate of any prior signal with the same title and category regardless of which file was involved. The file-path distinction belongs in the signal description and occurrence record, not in the uniqueness determination.\n\nThe consequence was three distinct catalogue entries for what are structurally the same signal pattern (patch_file returns an error and write_file recovers). A correct dedup would have produced one signal with occurrence_count incremented or a single new signal with a generalised title.",
+  "proposed_resolution": "Add an explicit clarification to the Canonical Signal Dedup-and-Write Procedure in the skill files: 'The identity key is derived from category and title only. File paths, run IDs, and other contextual details are not part of the identity key. Two signals with the same category and title are duplicates regardless of the files or operations involved — increment occurrence_count on the existing record rather than creating a new one.'",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-01T21:57:05Z",
+  "last_seen": "2026-06-01T21:57:05Z",
+  "occurrences": [
+    { "timestamp": "2026-06-01T21:57:05Z", "run_id": "caa3bb83-8852-4f01-a9dd-392d05069c39" }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "signal_id": "6458affb-5d94-4350-9125-f08b2ee8af9a",
+  "category": "SkillImprovement",
+  "severity": "Major",
+  "title": "Reasoning reviewer inline persona missing canonical rubrics table in context",
+  "description": "During the signal-status-lifecycle-tracking run (caa3bb83), Phase 7b adopted the Reasoning Reviewer inline persona and explicitly stated: 'I don't have the actual rubric file in context, but based on the Reasoning Reviewer Persona, I'm evaluating whether these decisions measurably reduce future token consumption, improve decision linearity, or reduce repeated re-derivations.' The reviewer improvised an informal two-criterion summary rather than evaluating against the seven canonical criteria (decision-linearity, spec-citation-discipline, tool-selection-directness, scope-containment, context-retention, confidence-calibration, proportionality) defined in src/moeb/internal/rubrics/reasoning.rubrics.md.\n\nRoot cause: the reasoning-review-inline-persona spec converted Phase 7b from a query_agent call to an inline persona via the {{reasoning_reviewer_persona}} template variable, but the reasoning.rubrics.md content was never added as a second template variable. The role file was written for query_agent mode and says the reviewer 'will receive the contents of reasoning.rubrics.md as a context file' — that delivery mechanism ceased to exist when query_agent was removed. No corresponding {{reasoning_rubrics}} variable was added to spec.prompt or run.prompt.",
+  "proposed_resolution": "1. In start_spec.rs and start_run.rs, add loading of reasoning.rubrics.md using the same project-override-with-binary-fallback pattern used for the existing role files. 2. Add a {{reasoning_rubrics}} substitution alongside {{reasoning_reviewer_persona}} in the template substitution call. 3. In spec.prompt and run.prompt, append the rubrics content immediately after the === Reasoning Reviewer Persona === section. 4. Update reasoning-reviewer.role.md to replace the 'context file' delivery language with 'pre-loaded in your context via {{reasoning_rubrics}}'.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-01T21:57:05Z",
+  "last_seen": "2026-06-01T21:57:05Z",
+  "occurrences": [
+    { "timestamp": "2026-06-01T21:57:05Z", "run_id": "caa3bb83-8852-4f01-a9dd-392d05069c39" }
+  ]
+}
