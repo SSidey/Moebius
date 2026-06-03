@@ -1,0 +1,22 @@
+{
+  "run_id": "fcecd8a6-4b29-4aef-9b2f-306d9a2733ee",
+  "timestamp": "2026-06-03T23:38:00Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.spec-skill-must-not-exit-with-uncommitted-changes.md",
+  "metrics_path": ".moeb/metrics/fcecd8a6-4b29-4aef-9b2f-306d9a2733ee.metrics.json",
+  "emittedSignals": [
+    {
+      "id": "b4e7f2a1-9d3c-4e8f-b6a5-1c2d3e4f5a6b",
+      "description": "patch_file failed on spec.skill.md due to substring mismatch on Windows"
+    }
+  ],
+  "qa_passed": true,
+  "tools_used": ["complete_review", "create_task_list", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

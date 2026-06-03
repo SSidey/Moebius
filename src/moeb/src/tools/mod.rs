@@ -9,6 +9,7 @@ pub mod get_run_status;
 pub mod push_thinking_blocks;
 pub mod get_version;
 pub mod git_commit;
+pub mod git_status;
 pub mod github_releases;
 pub mod grep_files;
 pub mod list_directory;
@@ -93,6 +94,7 @@ impl ToolRegistry {
         r.register(Box::new(push_thinking_blocks::PushThinkingBlocksTool { state: Arc::clone(&state) }));
         r.register(Box::new(create_branch::CreateBranchTool));
         r.register(Box::new(git_commit::GitCommitTool));
+        r.register(Box::new(git_status::GitStatusTool));
         r.register(Box::new(bump_version::BumpVersionTool));
         r.register(Box::new(create_candidate_tag::CreateCandidateTagTool));
         r.register(Box::new(get_version::GetVersionTool));
@@ -227,7 +229,7 @@ impl ToolRegistry {
             "search_files", "grep_files", "read_files", "read_file_range",
             "create_task_list", "update_task", "verify_rubrics", "complete_review",
             "enter_phase", "push_thinking_blocks",
-            "create_branch", "git_commit",
+            "create_branch", "git_commit", "git_status",
             "bump_version", "create_candidate_tag",
             "get_version", "tag_run", "tag_signal", "query_agent", "github_releases",
             "start_run", "start_spec", "fix_signal", "accept_candidate", "get_run_status",

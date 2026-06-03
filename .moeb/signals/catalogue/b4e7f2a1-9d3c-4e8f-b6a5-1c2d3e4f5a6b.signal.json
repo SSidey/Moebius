@@ -1,0 +1,19 @@
+{
+  "signal_id": "b4e7f2a1-9d3c-4e8f-b6a5-1c2d3e4f5a6b",
+  "category": "SkillImprovement",
+  "severity": "Minor",
+  "title": "patch_file failed on spec.skill.md due to substring mismatch on Windows",
+  "description": "The patch_file call for inserting Phase 9a into spec.skill.md returned 'old_string not found', requiring fallback to write_file with full content. The exact cause is unclear — possible CRLF/LF difference not fully resolved before comparison, or a character encoding issue with the em dash in the heading. The fallback worked correctly but incurred a tool error.",
+  "proposed_resolution": "Investigate patch_file CRLF normalisation on Windows paths. Ensure em dash characters in headings are byte-for-byte identical between the read result and the old_string supplied to patch_file.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-04T00:00:00Z",
+  "last_seen": "2026-06-04T00:00:00Z",
+  "occurrences": [
+    {
+      "timestamp": "2026-06-04T00:00:00Z",
+      "run_id": "fcecd8a6-4b29-4aef-9b2f-306d9a2733ee"
+    }
+  ]
+}

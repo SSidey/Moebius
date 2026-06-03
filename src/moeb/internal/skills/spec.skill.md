@@ -483,6 +483,31 @@ Call `git_commit` with:
 - `readme_path`: `.moeb/README.md`
 - `domain` and `slug` from frontmatter.
 
+## Phase 9a — Exit Cleanliness Check
+
+Call `git_status` (no input required) to retrieve the current working-tree state as a `--porcelain` string.
+
+If the output is empty, the branch is clean — proceed to Phase 10.
+
+If the output is non-empty, parse each line and classify each reported path:
+
+- A **recognized spec output** is a path matching `.moeb/specifications/<domain>/<domain>.<slug>.md` or `.moeb/README.md`, where `<domain>` and `<slug>` are the values from the spec frontmatter authored in Phase 2.
+- All other paths are **unrecognized**.
+
+**Case A — only recognized spec outputs are uncommitted:**
+Phase 9 `git_commit` did not persist these files. Call `git_commit` with `kind: "spec"`, using the same `spec_path`, `readme_path`, `domain`, and `slug` values used in Phase 9. Proceed to Phase 10.
+
+**Case B — one or more unrecognized files are uncommitted (whether or not recognized outputs are also uncommitted):**
+1. For each unrecognized path `P`, write a signal via the Canonical Signal Dedup-and-Write Procedure:
+   - `category`: `"SkillImprovement"`
+   - `severity`: `"Minor"`
+   - `title`: `"Uncommitted path at spec skill exit: <P>"`
+   - `description`: `"spec.skill.md exited with <P> uncommitted. This path is not a recognised spec output and was not staged by any git_commit call in this run."`
+   - `proposed_resolution`: `"Determine whether <P> should be committed in an existing skill phase or handled by a dedicated cleanup step in spec.skill.md."`
+   - `gating_condition`: `null`
+2. After writing all signals, call `git_commit` with `kind: "run"` to stage and commit all remaining working-tree changes, including the newly written signal files. This achieves branch cleanliness.
+3. Proceed to Phase 10.
+
 ## Phase 10 — Tag
 
 Call `tag_run` with:
