@@ -1,0 +1,16 @@
+{
+  "signal_id": "7f3d5a9b-2c4e-4a8f-b6d0-1e3c5a7b9d2f",
+  "category": "SkillImprovement",
+  "severity": "Minor",
+  "title": "Session-startup ToolSearch for start_spec/start_run schema not addressed by schema preload",
+  "description": "The schema preload spec (moeb.start-commands-tool-schema-preload) eliminates ToolSearch calls made after start_spec/start_run returns. However, the orchestrating agent must still call ToolSearch to load start_spec/start_run own schemas before invoking them. This session-startup ToolSearch continues to fail moeb-tool-origin on every run, meaning one external tool call remains even after the schema preload spec is fully implemented.",
+  "proposed_resolution": "Investigate whether the moeb MCP server can keep start_spec and start_run schema payloads small enough that Claude Code does not defer them. Alternatively, document this as a known per-session overhead in fix_signal.skill.md and update the moeb-tool-origin rubric guidance to acknowledge it as a gated exception until a server-side solution is found.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-03T18:06:15Z",
+  "last_seen": "2026-06-03T18:06:15Z",
+  "occurrences": [
+    { "timestamp": "2026-06-03T18:06:15Z", "run_id": "4d294b8b-0d5d-4a21-9934-9ce43e1a0965" }
+  ]
+}

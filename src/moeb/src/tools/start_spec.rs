@@ -9,7 +9,9 @@ use super::ToolHandler;
 const RUN_ID_TOKEN: &str = "{{run_id}}";
 const RUN_FILE_PATH_TOKEN: &str = "{{run_file_path}}";
 
-pub struct StartSpecTool;
+pub struct StartSpecTool {
+    pub tool_schemas_block: String,
+}
 
 impl ToolHandler for StartSpecTool {
     fn name(&self) -> &'static str {
@@ -92,6 +94,7 @@ impl ToolHandler for StartSpecTool {
         let run_file_path = format!(".moeb/runs/{}_spec_{}.json", run_ts, input_slug);
 
         let prompt = template
+            .replace("{{tool_schemas}}", &self.tool_schemas_block)
             .replace("{{role_content}}", &role_content)
             .replace("{{readme_content}}", &readme_content)
             .replace("{{spec_schema_content}}", &spec_schema_content)

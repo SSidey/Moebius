@@ -13,6 +13,7 @@ const RUN_FILE_PATH_TOKEN: &str = "{{run_file_path}}";
 
 pub struct StartRunTool {
     pub state: SharedRunState,
+    pub tool_schemas_block: String,
 }
 
 impl ToolHandler for StartRunTool {
@@ -97,6 +98,7 @@ impl ToolHandler for StartRunTool {
             .map_err(|e| anyhow::anyhow!("start_run: run.prompt not valid UTF-8: {}", e))?;
 
         let prompt = template
+            .replace("{{tool_schemas}}", &self.tool_schemas_block)
             .replace("{{role_content}}", &role_content)
             .replace("{{spec}}", &rel_spec_path)
             .replace("{{readme_content}}", &readme_content)

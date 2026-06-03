@@ -6,7 +6,7 @@
   "description": "ToolSearch called multiple times to load deferred MCP tool schemas before implementation could begin. No moeb equivalent exists for loading deferred tool schemas in the Claude Code environment. Causes moeb-tool-origin to fail on every run.",
   "proposed_resolution": "Pre-include required tool schemas in start_run and start_spec output, or introduce a schema-preload mechanism that eliminates ToolSearch calls during moeb runs.",
   "gating_condition": null,
-  "status": "in_progress",
+  "status": "spec_written",
   "occurrence_count": 6,
   "first_seen": "2026-05-28T16:15:00Z",
   "last_seen": "2026-06-01T21:33:38Z",
@@ -19,5 +19,8 @@
     { "timestamp": "2026-06-01T21:33:38Z", "run_id": "ec08d9d8-9cf7-4261-8089-cbae83e5686c" }
   ],
   "picked_up_at": "2026-06-03T17:56:38Z",
-  "fix_branch": "feat/moeb-missing-moeb-tool-toolsearch-deferred-schema-loadi"
+  "fix_branch": "feat/moeb-missing-moeb-tool-toolsearch-deferred-schema-loadi",
+  "spec_path": ".moeb/specifications/moeb/moeb.start-commands-tool-schema-preload.md",
+  "spec_written_at": "2026-06-03T18:06:15Z",
+  "spec_run_id": "4d294b8b-0d5d-4a21-9934-9ce43e1a0965"
 }

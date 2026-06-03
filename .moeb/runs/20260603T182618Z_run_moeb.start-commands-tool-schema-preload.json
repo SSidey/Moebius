@@ -1,0 +1,23 @@
+{
+  "run_id": "95ee798e-a7aa-4df6-8f80-2ac2827b7295",
+  "timestamp": "2026-06-03T18:26:18Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.start-commands-tool-schema-preload.md",
+  "metrics_path": ".moeb/metrics/95ee798e-a7aa-4df6-8f80-2ac2827b7295.metrics.json",
+  "emittedSignals": [
+    {"id": "a4c6e8f0-b1d3-4e5f-9a7b-2c0d4e6f8a0b", "description": "Missing moeb tool: Bash (cargo build)"},
+    {"id": "b5d7f9a1-c2e4-4f6a-0b8c-3d1e5f7a9b0c", "description": "Missing moeb tool: Bash (cargo test)"},
+    {"id": "c6e8a0b2-d3f5-4a7b-1c9d-4e2f6a8b0c1d", "description": "no-test-regression criterion fails for spec-required test edits"}
+  ],
+  "rubric_score": 0.875,
+  "end_review_error_count": 0,
+  "qa_passed": true,
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

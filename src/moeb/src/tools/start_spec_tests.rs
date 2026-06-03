@@ -14,7 +14,7 @@ fn start_spec_returns_rendered_prompt_with_requirement() {
     let dir = TempDir::new().unwrap();
     setup_moeb_dir(&dir);
 
-    let tool = StartSpecTool;
+    let tool = StartSpecTool { tool_schemas_block: String::new() };
     let args = serde_json::json!({ "requirement": "Add token rotation feature" });
     let result = tool.execute(&args, dir.path()).unwrap();
 
@@ -37,7 +37,7 @@ fn start_spec_binary_rubrics_appear_in_output() {
     let dir = TempDir::new().unwrap();
     setup_moeb_dir(&dir);
 
-    let tool = StartSpecTool;
+    let tool = StartSpecTool { tool_schemas_block: String::new() };
     let args = serde_json::json!({ "requirement": "Some requirement" });
     let result = tool.execute(&args, dir.path()).unwrap();
 
@@ -56,7 +56,7 @@ fn start_spec_missing_requirement_returns_error() {
     let dir = TempDir::new().unwrap();
     setup_moeb_dir(&dir);
 
-    let tool = StartSpecTool;
+    let tool = StartSpecTool { tool_schemas_block: String::new() };
     let args = serde_json::json!({});
     let err = tool.execute(&args, dir.path()).unwrap_err();
 
@@ -69,7 +69,7 @@ fn start_spec_missing_requirement_returns_error() {
 
 #[test]
 fn test_start_spec_signal_id_optional() {
-    let tool = StartSpecTool;
+    let tool = StartSpecTool { tool_schemas_block: String::new() };
     let def = tool.definition();
     let required = def.parameters["required"].as_array()
         .expect("required must be a JSON array");

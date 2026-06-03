@@ -11,7 +11,7 @@ fn setup_moeb_dir(dir: &TempDir) {
 }
 
 fn make_tool() -> StartRunTool {
-    StartRunTool { state: new_shared_run_state() }
+    StartRunTool { state: new_shared_run_state(), tool_schemas_block: String::new() }
 }
 
 #[test]
@@ -125,7 +125,7 @@ fn start_run_parses_phase_tool_map_from_skill() {
     std::fs::write(dir.path().join("spec.md"), spec_content).unwrap();
 
     let state = new_shared_run_state();
-    let tool = StartRunTool { state: std::sync::Arc::clone(&state) };
+    let tool = StartRunTool { state: std::sync::Arc::clone(&state), tool_schemas_block: String::new() };
     let args = serde_json::json!({ "spec_path": "spec.md" });
     tool.execute(&args, dir.path()).unwrap();
 

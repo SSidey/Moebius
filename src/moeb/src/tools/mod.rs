@@ -119,9 +119,33 @@ impl ToolRegistry {
 
     /// Register the MCP tools (standard tools + start_run + start_spec + get_run_status).
     pub fn mcp(state: SharedRunState, read_paths: Arc<Mutex<HashSet<String>>>) -> Self {
-        let mut r = Self::standard(std::sync::Arc::clone(&state), Arc::clone(&read_paths));
-        r.register(Box::new(start_run::StartRunTool { state: Arc::clone(&state) }));
-        r.register(Box::new(start_spec::StartSpecTool));
+        let mut r = Self::standard(Arc::clone(&state), Arc::clone(&read_paths));
+
+        // Collect definitions for all MCP tools (standard + MCP-only)
+        let mut all_defs = r.definitions();
+        all_defs.extend([
+            start_run::StartRunTool {
+                state: Arc::clone(&state),
+                tool_schemas_block: String::new(),
+            }.definition(),
+            start_spec::StartSpecTool {
+                tool_schemas_block: String::new(),
+            }.definition(),
+            fix_signal::FixSignalTool.definition(),
+            accept_candidate::AcceptCandidateTool.definition(),
+            get_run_status::GetRunStatusTool {
+                state: Arc::clone(&state),
+            }.definition(),
+        ]);
+        let schema_block = build_functions_block(&all_defs);
+
+        r.register(Box::new(start_run::StartRunTool {
+            state: Arc::clone(&state),
+            tool_schemas_block: schema_block.clone(),
+        }));
+        r.register(Box::new(start_spec::StartSpecTool {
+            tool_schemas_block: schema_block,
+        }));
         // fix_signal is MCP-only per moeb.signal-fix-command Decision 1; not in standard()
         r.register(Box::new(fix_signal::FixSignalTool));
         r.register(Box::new(accept_candidate::AcceptCandidateTool));
@@ -141,8 +165,31 @@ impl ToolRegistry {
             std::sync::Arc::clone(&adapter),
             Arc::clone(&read_paths),
         );
-        r.register(Box::new(start_run::StartRunTool { state: Arc::clone(&state) }));
-        r.register(Box::new(start_spec::StartSpecTool));
+
+        let mut all_defs = r.definitions();
+        all_defs.extend([
+            start_run::StartRunTool {
+                state: Arc::clone(&state),
+                tool_schemas_block: String::new(),
+            }.definition(),
+            start_spec::StartSpecTool {
+                tool_schemas_block: String::new(),
+            }.definition(),
+            fix_signal::FixSignalTool.definition(),
+            accept_candidate::AcceptCandidateTool.definition(),
+            get_run_status::GetRunStatusTool {
+                state: Arc::clone(&state),
+            }.definition(),
+        ]);
+        let schema_block = build_functions_block(&all_defs);
+
+        r.register(Box::new(start_run::StartRunTool {
+            state: Arc::clone(&state),
+            tool_schemas_block: schema_block.clone(),
+        }));
+        r.register(Box::new(start_spec::StartSpecTool {
+            tool_schemas_block: schema_block,
+        }));
         // fix_signal is MCP-only per moeb.signal-fix-command Decision 1; not in standard()
         r.register(Box::new(fix_signal::FixSignalTool));
         r.register(Box::new(accept_candidate::AcceptCandidateTool));
@@ -189,6 +236,20 @@ impl ToolRegistry {
             .filter_map(|name| self.handlers.get(name).map(|h| h.definition()))
             .collect()
     }
+}
+
+fn build_functions_block(defs: &[crate::adapters::ToolDef]) -> String {
+    let mut lines = vec!["<functions>".to_string()];
+    for def in defs {
+        let obj = serde_json::json!({
+            "description": def.description,
+            "name": def.name,
+            "parameters": def.parameters
+        });
+        lines.push(format!("<function>{}</function>", obj));
+    }
+    lines.push("</functions>".to_string());
+    lines.join("\n")
 }
 
 #[cfg(test)]
