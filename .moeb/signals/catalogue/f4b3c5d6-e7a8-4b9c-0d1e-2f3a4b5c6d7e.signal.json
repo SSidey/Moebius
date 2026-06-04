@@ -1,0 +1,16 @@
+{
+  "signal_id": "f4b3c5d6-e7a8-4b9c-0d1e-2f3a4b5c6d7e",
+  "category": "ProcessImprovement",
+  "severity": "Minor",
+  "title": "MissingMoebTool signals not emitted for Read and ToolSearch in fix_signal run",
+  "description": "Used Claude Code native Read tool to read oversized fix_signal output file and ToolSearch to load deferred moeb tool schemas, without emitting MissingMoebTool signals after each call, causing moeb-tool-origin to fail.",
+  "proposed_resolution": "Emit MissingMoebTool signals immediately after each external tool call, or address root cause: provide a moeb tool that reads oversized output files, and embed moeb tool schemas in the fix_signal prompt to eliminate ToolSearch.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-04T15:27:10Z",
+  "last_seen": "2026-06-04T15:27:10Z",
+  "occurrences": [
+    { "timestamp": "2026-06-04T15:27:10Z", "run_id": "5c926773-19da-47cb-8c5e-0ea534227e8d" }
+  ]
+}

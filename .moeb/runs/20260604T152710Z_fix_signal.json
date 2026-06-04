@@ -1,0 +1,20 @@
+{
+  "run_id": "5c926773-19da-47cb-8c5e-0ea534227e8d",
+  "timestamp": "2026-06-04T15:27:10Z",
+  "command": "fix_signal",
+  "event_path": ".moeb/events/a1000045-0601-4000-8000-000000000045.event.json",
+  "metrics_path": ".moeb/metrics/5c926773-19da-47cb-8c5e-0ea534227e8d.metrics.json",
+  "emittedSignals": [
+    { "id": "f4b3c5d6-e7a8-4b9c-0d1e-2f3a4b5c6d7e", "description": "MissingMoebTool signals not emitted for Read and ToolSearch in fix_signal run" }
+  ],
+  "rubric_score": "5 pass, 1 fail",
+  "end_review_error_count": 0,
+  "tools_used": ["complete_review", "create_branch", "fix_signal", "get_run_status", "patch_file", "push_thinking_blocks", "read_file", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
