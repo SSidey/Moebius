@@ -10,6 +10,7 @@ use super::ToolHandler;
 
 const RUN_ID_TOKEN: &str = "{{run_id}}";
 const RUN_FILE_PATH_TOKEN: &str = "{{run_file_path}}";
+const SIGNAL_ID_TOKEN: &str = "{{signal_id}}";
 
 pub struct StartRunTool {
     pub state: SharedRunState,
@@ -35,6 +36,10 @@ impl ToolHandler for StartRunTool {
                         "type": "string",
                         "description": "Relative path or partial name of the spec file, \
                             e.g. 'moeb.kernel' or '.moeb/specifications/moeb/moeb.kernel.md'."
+                    },
+                    "signal_id": {
+                        "type": "string",
+                        "description": "Optional UUID of the signal in .moeb/signals/catalogue/ that triggered this run. Written to the run file when provided."
                     }
                 },
                 "required": ["spec_path"]
@@ -46,6 +51,7 @@ impl ToolHandler for StartRunTool {
         let spec_path_arg = args["spec_path"]
             .as_str()
             .ok_or_else(|| anyhow::anyhow!("start_run: 'spec_path' must be a string"))?;
+        let signal_id = args["signal_id"].as_str().unwrap_or("").to_string();
 
         let (abs_spec_path, rel_spec_path) = resolve_spec_path(spec_path_arg, working_dir)?;
 
@@ -110,6 +116,7 @@ impl ToolHandler for StartRunTool {
             .replace("{{metrics_degradation_margin}}", &metrics_margin_str)
             .replace(RUN_ID_TOKEN, &run_id)
             .replace(RUN_FILE_PATH_TOKEN, &run_file_path)
+            .replace(SIGNAL_ID_TOKEN, &signal_id)
             .replace("{{reviewer_role_content}}", &reviewer_role)
             .replace("{{moderator_role_content}}", &moderator_role)
             .replace("{{qa_architect_role_content}}", &qa_architect_role)

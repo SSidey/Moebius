@@ -27,6 +27,7 @@ const METRICS_WINDOW_TOKEN: &str = "{{metrics_window}}";
 const METRICS_MARGIN_TOKEN: &str = "{{metrics_degradation_margin}}";
 const RUN_ID_TOKEN: &str = "{{run_id}}";
 const RUN_FILE_PATH_TOKEN: &str = "{{run_file_path}}";
+const SIGNAL_ID_TOKEN: &str = "{{signal_id}}";
 const SPECS_DIR: &str = ".moeb/specifications";
 const README_PATH: &str = ".moeb/README.md";
 const MOEB_DIR: &str = ".moeb";
@@ -155,7 +156,8 @@ impl RunService {
             .replace(METRICS_WINDOW_TOKEN, &metrics_window_str)
             .replace(METRICS_MARGIN_TOKEN, &metrics_margin_str)
             .replace(RUN_ID_TOKEN, &run_id)
-            .replace(RUN_FILE_PATH_TOKEN, &run_file_path);
+            .replace(RUN_FILE_PATH_TOKEN, &run_file_path)
+            .replace(SIGNAL_ID_TOKEN, "");
 
         let working_dir = Path::new(".");
         let state = crate::run_state::new_shared_run_state();
@@ -264,7 +266,8 @@ fn check_run_outputs(run_id: &str, run_file_path: &str, command: &str) {
             "timestamp": chrono::Utc::now().to_rfc3339(), "command": command,
             "signals_path": format!(".moeb/signals/{}.signals.json", run_id),
             "metrics_path": format!(".moeb/metrics/{}.metrics.json", run_id),
-            "rubric_score": 0.0, "end_review_error_count": 0, "kernel_fallback": true});
+            "rubric_score": 0.0, "end_review_error_count": 0, "kernel_fallback": true,
+            "signal_id": null, "candidate_tag": null});
         let _ = std::fs::write(run_file_path, serde_json::to_string_pretty(&stub)
             .unwrap_or_else(|_| "{}".to_string()));
     }

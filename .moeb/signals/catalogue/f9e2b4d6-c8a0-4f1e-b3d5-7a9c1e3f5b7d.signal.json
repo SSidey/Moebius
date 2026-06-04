@@ -1,0 +1,16 @@
+{
+  "signal_id": "f9e2b4d6-c8a0-4f1e-b3d5-7a9c1e3f5b7d",
+  "category": "NewCapability",
+  "severity": "Major",
+  "title": "Missing moeb tool: Bash",
+  "description": "Used Bash to perform cargo build --release and cargo test shell commands during run verification. No moeb equivalent exists for executing arbitrary shell commands.",
+  "proposed_resolution": "Run moeb spec to introduce a moeb equivalent of Bash covering shell command execution for build and test verification steps.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-04T00:48:49Z",
+  "last_seen": "2026-06-04T00:48:49Z",
+  "occurrences": [
+    { "timestamp": "2026-06-04T00:48:49Z", "run_id": "70698c32-2cf0-45f4-bfa4-4d7cf7cdf5f3" }
+  ]
+}

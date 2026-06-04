@@ -282,7 +282,8 @@ fn check_run_outputs(run_id: &str, run_file_path: &str, command: &str) {
         let stub = serde_json::json!({"run_id": run_id, "timestamp": chrono::Utc::now().to_rfc3339(),
             "command": command, "signals_path": format!(".moeb/signals/{}.signals.json", run_id),
             "metrics_path": format!(".moeb/metrics/{}.metrics.json", run_id),
-            "rubric_score": 0.0, "end_review_error_count": 0, "kernel_fallback": true});
+            "rubric_score": 0.0, "end_review_error_count": 0, "kernel_fallback": true,
+            "signal_id": null, "candidate_tag": null});
         let _ = std::fs::write(run_file_path, serde_json::to_string_pretty(&stub)
             .unwrap_or_else(|_| "{}".to_string()));
     }

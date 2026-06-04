@@ -409,6 +409,8 @@ Continue to Phase 6 — Metrics Recording regardless of signal count.
      "run_id": "{{run_id}}",
      "timestamp": "<ISO 8601 start time>",
      "command": "run",
+     "signal_id": "<signal_id session context value if non-empty, else JSON null>",
+     "candidate_tag": null,
      "spec_path": "<path of the spec file being executed>",
      "metrics_path": ".moeb/metrics/{{run_id}}.metrics.json",
      "emittedSignals": [
@@ -526,6 +528,16 @@ correctly.
    ```json
    { "domain": "<domain>", "slug": "<slug>", "force": true }
    ```
+
+**Run file `candidate_tag` update:**
+After `create_candidate_tag` returns a tag name (not an error):
+1. Call `read_file` with path `{{run_file_path}}`.
+2. Parse the JSON content.
+3. Set `"candidate_tag"` to the tag name returned by `create_candidate_tag`.
+4. Write the updated JSON back to `{{run_file_path}}` using `write_file`.
+
+Skip this update if `create_candidate_tag` returned an error string or if the QA gate
+prevented the tag from being created.
 
 **Signal status update (conditional on signal_id in spec frontmatter)**:
 1. Call `read_file` on the spec file at `spec_path`.

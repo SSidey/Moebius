@@ -5,6 +5,7 @@
 Session context:
 - run_id: {{run_id}}
 - run_file_path: {{run_file_path}}
+- signal_id: {{signal_id}}
 
 The following files have been provided to you as context — do not call read_file for them:
 
