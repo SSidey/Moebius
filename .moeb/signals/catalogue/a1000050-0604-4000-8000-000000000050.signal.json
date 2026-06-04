@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000050-0604-4000-8000-000000000050",
+  "category": "SkillImprovement",
+  "severity": "Minor",
+  "title": "Reasoning review executes before Phase 9 artifacts exist, preventing full-run audit",
+  "description": "In all canonical skills, Phases 5a and 5b (Push Thinking Blocks / Reasoning Review) execute before Phase 9 (Version and Tag). The reviewer therefore cannot observe the complete post-run state: the candidate_tag field in the run file is still null, the signal catalogue status update has not happened, and the signal index has not been updated. Additionally, any signals emitted by the reasoning reviewer are themselves loose (uncommitted) at the time of candidate tagging, since Phase 7 already ran and there is no subsequent commit before the tag.",
+  "proposed_resolution": "Move Phases 5a and 5b to after Phase 9 in all canonical skills so the reviewer sees the full run arc. Add a Phase 9c that commits reasoning-review signals (if any were emitted) before creating the candidate tag. The candidate tag must always land after all signal and harness artifact commits are complete.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-04T10:30:00Z",
+  "last_seen": "2026-06-04T10:30:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-04T10:30:00Z", "run_id": "70698c32-2cf0-45f4-bfa4-4d7cf7cdf5f3" }
+  ]
+}

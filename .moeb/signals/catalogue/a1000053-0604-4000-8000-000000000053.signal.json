@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000053-0604-4000-8000-000000000053",
+  "category": "SkillImprovement",
+  "severity": "Major",
+  "title": "Canonical skills lack run state snapshot assembly and post-Phase-9 reviewer placement",
+  "description": "All three canonical skills (run, spec, fix_signal) need three coordinated changes: (1) assemble a run state snapshot (git_status output, files_written list, tool call summary, rubric verdicts) and push it as a [RUN_STATE_SNAPSHOT]-prefixed thinking block before the reviewer phases; (2) relocate the reasoning review phases (Push Thinking Blocks + Reasoning Review) to after Phase 9 — Version and Tag so reviewers see the complete post-run state including candidate tag and committed signal statuses; (3) add a post-review commit phase that stages and commits any signals emitted by reviewers before the candidate tag is created. These three changes must land together since moving the review without the snapshot is incomplete and moving the review without the post-review commit leaves reviewer signals loose.",
+  "proposed_resolution": "Author a spec targeting all three canonical skill files. In each skill: add a snapshot-assembly step that calls git_status and get_run_status, formats the result as a JSON object prefixed with [RUN_STATE_SNAPSHOT], and passes it via push_thinking_blocks; move the existing Push Thinking Blocks and Reasoning Review phases to after Phase 9; add a Phase 9b that commits any reviewer signals (if the reviewer emitted any signals during this invocation) before creating the candidate tag. The run-auditor persona injection (a1000052) must be added to all three skills as part of this same spec.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-04T11:00:00Z",
+  "last_seen": "2026-06-04T11:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-04T11:00:00Z", "run_id": "70698c32-2cf0-45f4-bfa4-4d7cf7cdf5f3" }
+  ]
+}

@@ -3,7 +3,7 @@
   "timestamp": "2026-06-04T00:48:49Z",
   "command": "run",
   "signal_id": null,
-  "candidate_tag": null,
+  "candidate_tag": "v1.22.0-candidate.moeb-run-files-must-record-signal-id-and-candidate-tag",
   "spec_path": ".moeb/specifications/moeb/moeb.run-files-must-record-signal-id-and-candidate-tag.md",
   "metrics_path": ".moeb/metrics/70698c32-2cf0-45f4-bfa4-4d7cf7cdf5f3.metrics.json",
   "emittedSignals": [
