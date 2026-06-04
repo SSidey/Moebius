@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000046-0604-4000-8000-000000000046",
+  "category": "NewCapability",
+  "severity": "Major",
+  "title": "Run files must record signal_id and candidate_tag at the point each is known",
+  "description": "Run files currently record run_id, spec_path, signals_path, and metrics_path but carry no link to the signal that triggered the run or the candidate tag produced at the end. Without these two fields the only way to connect a run to its origin and its output artefact is to search the git log or signal catalogue — both are fragile and expensive for any automated tool watching moeb artefacts.\n\nNote: this signal replaces the in-scope portion of a1000006. That signal's proposed workflow_id, spec_id, and pr_id fields are outside moeb's boundary (workflow_id and pr_id are orchestrator-owned; spec_id introduces a UUID scheme for specs that moeb does not have). Those fields belong in the conductor's own state (see Ouro signal b0000009).",
+  "proposed_resolution": "Extend the run file schema with two nullable fields: signal_id (string | null) and candidate_tag (string | null). Populate signal_id when start_run is invoked with a signal context — the value is passed in as an optional parameter and written to the run file at creation time. Populate candidate_tag when create_candidate_tag is called — the tool writes the tag name back into the run file at that point. No other external IDs (workflow, PR number) are included. Update the fallback stub in check_run_outputs to initialise both fields as null. Document the schema extension in .moeb/README.md.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-04T00:00:00Z",
+  "last_seen": "2026-06-04T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-04T00:00:00Z", "run_id": "00000000-0604-4000-8000-000000000000" }
+  ]
+}
