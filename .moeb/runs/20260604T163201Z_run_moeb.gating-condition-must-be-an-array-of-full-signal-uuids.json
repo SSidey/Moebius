@@ -10,7 +10,8 @@
     { "id": "e8a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b4c", "description": "Tool error not recovered: patch_file (signal.schema.json)" },
     { "id": "f9b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d", "description": "Tool error not recovered: patch_file (spec.skill.md)" },
     { "id": "a2b3c4d5-e6f7-4a8b-9c0d-1e2f3a4b5c6d", "description": "moeb-tool-origin rubric fail: Read tool used without MissingMoebTool signal" },
-    { "id": "b3c4d5e6-f7a8-4b9c-0d1e-2f3a4b5c6d7e", "description": "Missing moeb tool: absolute-path file read for start_run overflow output" }
+    { "id": "b3c4d5e6-f7a8-4b9c-0d1e-2f3a4b5c6d7e", "description": "Missing moeb tool: absolute-path file read for start_run overflow output" },
+    { "id": "c5d6e7f8-a9b0-4c1d-2e3f-4a5b6c7d8e9f", "description": "Candidate tag suppressed: QA gate failed" }
   ],
   "rubric_score": null,
   "end_review_error_count": 2,
