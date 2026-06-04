@@ -1,0 +1,19 @@
+{
+  "run_id": "998364c0-fde7-4480-89f4-6c9d3c6d4503",
+  "timestamp": "2026-06-04T18:22:35Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.signal-source-field.md",
+  "metrics_path": ".moeb/metrics/998364c0-fde7-4480-89f4-6c9d3c6d4503.metrics.json",
+  "emittedSignals": [
+    { "id": "7f000001-0604-4000-8abc-000000000011", "description": "Missing moeb tool: ToolSearch" },
+    { "id": "7f000001-0604-4000-8abc-000000000012", "description": "Missing moeb tool: Read" }
+  ],
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "start_spec", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
