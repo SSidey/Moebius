@@ -269,7 +269,10 @@ Run-level signal template:
 #
 # Canonical signal record schema (all fields in this order):
 # { "signal_id", "category", "severity", "title", "description", "proposed_resolution",
-#   "gating_condition", "status", "occurrence_count", "first_seen", "last_seen", "occurrences" }
+#   "gating_condition": string[] | null  -- UUIDs of signals that must be resolved
+#     before fix_signal may pick up this signal. null = no gate.
+#     Example: ["a1000040-0601-4000-8000-000000000040"]
+#   "status", "occurrence_count", "first_seen", "last_seen", "occurrences" }
 
 For each signal S in the ReviewSignalReport:
   1. Compute identity_key as described above.
@@ -456,7 +459,7 @@ Continue to Phase 6 — Metrics Recording regardless of signal count.
      "title": "Rubric score degraded below rolling baseline",
      "description": "Current rubric_score is more than {{metrics_degradation_margin}}% below the rolling average.",
      "proposed_resolution": "Revert to the git tag preceding this run, create a diagnostic spec identifying the regression cause, and branch from the pre-regression version.",
-     "gating_condition": "NoCandidateBranch"
+     "gating_condition": null
    }
    ```
 
@@ -497,7 +500,7 @@ identified by its run tag.
    - `title`: `"Candidate tag suppressed: QA gate failed"`
    - `description`: `"QA Architect review produced Critical signals; qa_passed is false. Failing signals: <comma-separated list of formatted Critical signal titles>."`
    - `proposed_resolution`: `"Resolve all Critical signals listed above and re-run to obtain a candidate tag."`
-   - `gating_condition`: `"NoCandidateBranch"`
+   - `gating_condition`: `null`
 3. Append this signal to the run file `emittedSignals` array.
 4. Skip the remainder of Phase 9 entirely (do not call `bump_version` or `create_candidate_tag`). Proceed directly to Phase 10 — Complete.
 

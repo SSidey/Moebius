@@ -70,7 +70,22 @@ Compute `fix_branch` before patching:
    collapse consecutive hyphens, strip leading/trailing hyphens, truncate to 50 chars.
 3. `fix_branch` = `"feat/<domain>-<slug>"`.
 
-Call `read_file` on the source file path. Locate the closing `}` of the chosen signal
+Call `read_file` on the source file path.
+
+**Gating Check**: Inspect the selected signal's `gating_condition` field.
+- If `gating_condition` is `null` or an empty array `[]`, proceed to the next step.
+- If `gating_condition` is a non-empty array, for each UUID `gate_id` in the array:
+  1. Read `.moeb/signals/catalogue/<gate_id>.signal.json`.
+     If the file does not exist, treat it as unresolved.
+  2. If the file's `status` field is not `"resolved"`, add `gate_id` to the open-gates list.
+- If the open-gates list is non-empty, do NOT proceed. Instead:
+  a. Write `.moeb/events/<ISO8601timestamp>_<signal_id>.event.json` with content:
+     { "event_type": "signal_fix_rejected", "signal_id": "<signal_id>",
+       "open_gates": [<list of unresolved UUIDs>], "timestamp": "<ISO 8601>" }
+  b. Exit with message: "Signal <signal_id> cannot be picked up: the following gate
+     signals are not yet resolved: <comma-separated list of UUID — title pairs>."
+
+Locate the closing `}` of the chosen signal
 object. Call `patch_file` with `old_string` set to the closing `}` of the signal object
 and `new_string` set to the same closing `}` preceded by the two new fields:
 
@@ -244,7 +259,10 @@ Write each signal via the **Canonical Signal Dedup-and-Write Procedure** defined
 #
 # Canonical signal record schema (all fields in this order):
 # { "signal_id", "category", "severity", "title", "description", "proposed_resolution",
-#   "gating_condition", "status", "occurrence_count", "first_seen", "last_seen", "occurrences" }
+#   "gating_condition": string[] | null  -- UUIDs of signals that must be resolved
+#     before fix_signal may pick up this signal. null = no gate.
+#     Example: ["a1000040-0601-4000-8000-000000000040"]
+#   "status", "occurrence_count", "first_seen", "last_seen", "occurrences" }
 
 For each signal S in the ReviewSignalReport:
   1. Compute identity_key as described above.

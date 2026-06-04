@@ -26,7 +26,7 @@ Return a JSON object matching this schema exactly:
       "title": "short, specific, actionable string",
       "description": "what was observed and why it matters",
       "proposed_resolution": "string describing what a fixing spec should accomplish, or null",
-      "gating_condition": "NoCandidateBranch" | { "Custom": "string" } | null
+      "gating_condition": null // Always null — programmatic gates use UUID arrays in catalogue records, not in review reports.
     }
   ],
   "summary": "One paragraph summary of run quality and key findings."

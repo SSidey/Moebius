@@ -305,7 +305,10 @@ Parse the returned `ReviewSignalReport` JSON:
 #
 # Canonical signal record schema (all fields in this order):
 # { "signal_id", "category", "severity", "title", "description", "proposed_resolution",
-#   "gating_condition", "status", "occurrence_count", "first_seen", "last_seen", "occurrences" }
+#   "gating_condition": string[] | null  -- UUIDs of signals that must be resolved
+#     before fix_signal may pick up this signal. null = no gate.
+#     Example: ["a1000040-0601-4000-8000-000000000040"]
+#   "status", "occurrence_count", "first_seen", "last_seen", "occurrences" }
 
 For each signal S in the ReviewSignalReport:
   1. Compute identity_key as described above.

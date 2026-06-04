@@ -5,7 +5,7 @@
   "title": "Candidate tag suppressed: QA gate failed",
   "description": "QA Architect review produced Critical signals; qa_passed is false. Failing signals: 'patch_file repeatedly failed on fix_signal.skill.md Complete phase', 'patch_file failed on .moeb/README.md due to CRLF despite normalization spec'.",
   "proposed_resolution": "Resolve all Critical signals listed above and re-run to obtain a candidate tag.",
-  "gating_condition": "NoCandidateBranch",
+  "gating_condition": null,
   "status": "open",
   "occurrence_count": 1,
   "first_seen": "2026-06-04T15:06:57Z",

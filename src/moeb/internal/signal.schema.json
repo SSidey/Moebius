@@ -60,8 +60,17 @@
       "description": "Actionable description of what a fixing specification should accomplish. Used verbatim as the requirement passed to start_spec by fix_signal. Null only when no resolution is known at signal creation time."
     },
     "gating_condition": {
-      "type": ["string", "null"],
-      "description": "A prerequisite condition that must be satisfied before this signal can be acted on (e.g. 'requires moeb.some-other-spec to be active'). Null when there is no dependency."
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          }
+        },
+        { "type": "null" }
+      ],
+      "description": "Array of signal_id UUIDs that must each have status: resolved before fix_signal may pick up this signal. null or empty array means no gate. Example: [\"a1000040-0601-4000-8000-000000000040\"]"
     },
     "status": {
       "type": "string",

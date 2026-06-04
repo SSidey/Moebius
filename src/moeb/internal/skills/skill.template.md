@@ -99,7 +99,7 @@ Parse the ReviewSignalReport JSON:
      "title": "Rubric score degraded below rolling baseline",
      "description": "rubric_score is more than {{metrics_degradation_margin}}% below the rolling average.",
      "proposed_resolution": "Revert to the git tag preceding this run, diagnose the regression cause, and branch from the pre-regression version.",
-     "gating_condition": "NoCandidateBranch"
+     "gating_condition": null
    }
    ```
 

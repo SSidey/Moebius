@@ -1,0 +1,26 @@
+{
+  "run_id": "eb360d13-4e1b-449f-9837-732de04f42f6",
+  "timestamp": "2026-06-04T16:32:01Z",
+  "command": "run",
+  "signal_id": null,
+  "candidate_tag": null,
+  "spec_path": ".moeb/specifications/moeb/moeb.gating-condition-must-be-an-array-of-full-signal-uuids.md",
+  "metrics_path": ".moeb/metrics/eb360d13-4e1b-449f-9837-732de04f42f6.metrics.json",
+  "emittedSignals": [
+    { "id": "e8a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b4c", "description": "Tool error not recovered: patch_file (signal.schema.json)" },
+    { "id": "f9b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d", "description": "Tool error not recovered: patch_file (spec.skill.md)" },
+    { "id": "a2b3c4d5-e6f7-4a8b-9c0d-1e2f3a4b5c6d", "description": "moeb-tool-origin rubric fail: Read tool used without MissingMoebTool signal" },
+    { "id": "b3c4d5e6-f7a8-4b9c-0d1e-2f3a4b5c6d7e", "description": "Missing moeb tool: absolute-path file read for start_run overflow output" }
+  ],
+  "rubric_score": null,
+  "end_review_error_count": 2,
+  "qa_passed": false,
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
