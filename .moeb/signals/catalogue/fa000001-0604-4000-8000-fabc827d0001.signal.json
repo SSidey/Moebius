@@ -1,0 +1,16 @@
+{
+  "signal_id": "fa000001-0604-4000-8000-fabc827d0001",
+  "category": "Error",
+  "severity": "Critical",
+  "title": "patch_file repeatedly failed on fix_signal.skill.md Complete phase",
+  "description": "Three patch_file calls on fix_signal.skill.md returned 'old_string not found' despite content being confirmed via grep and re-read. The first patch (Phase 1 no-signal exit) succeeded, but two subsequent patches on the Complete phase failed. Fallback to write_file was used correctly, but patch_file failures were recorded as tool errors causing tool-errors rubric to fail.",
+  "proposed_resolution": "Investigate why patch_file fails on files recently modified by a prior patch_file call in the same run. The exact-string matching may be affected by line-ending normalization differences between the first write and subsequent reads.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-04T13:34:37Z",
+  "last_seen": "2026-06-04T13:34:37Z",
+  "occurrences": [
+    { "timestamp": "2026-06-04T13:34:37Z", "run_id": "fabc827d-9152-497d-9ef4-34db4bedcff0" }
+  ]
+}

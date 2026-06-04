@@ -154,7 +154,7 @@ For each criterion, evaluate pass, fail, or na:
   Do not leave `acknowledged_failures` empty when a failure was observed — omission is
   treated as "no failures observed" and the qualification will not be surfaced.
 
-- `moeb-tool-origin`: Review this conversation for tool calls to non-moeb tools (tools whose names are not in the moeb tool schema, such as Bash, Edit, Write, Read, Glob, Grep, WebFetch, or WebSearch). If no external tool calls appear in the conversation, supply Pass. If external tool calls appear and MissingMoebTool signals were buffered for each one, supply Fail with `acknowledged_failures` listing each signal title. If external tool calls appear without corresponding buffered signals, supply Fail and list the unlogged tool names in the note field.
+- `moeb-tool-origin`: Review this conversation for tool calls to non-moeb tools (tools whose names are not in the moeb tool schema, such as Bash, Edit, Write, Read, Glob, Grep, WebFetch, or WebSearch). If no external tool calls appear in the conversation, supply Pass. If external tool calls appear and MissingMoebTool signals were buffered for each one, supply Fail with `acknowledged_failures` listing each signal title. If external tools were used without corresponding buffered signals, supply Fail and list the unlogged tool names in the note field.
 
 - `no-signal-reoccurrence` check:
   1. Use list_directory on `.moeb/signals/catalogue/` to enumerate *.signal.json files.
@@ -548,6 +548,39 @@ prevented the tag from being created.
 6. Run the **Index Update sub-procedure**: read `.moeb/signals/index.md`, find the row matching `signal_id`, update its `Status` cell to `candidate`, write the complete updated `index.md` using `write_file`.
 
 ## Phase 10 — Complete
+
+Derive the compact ISO timestamp as `yyyyMMddTHHmmssZ` from the current time (e.g.
+`20260604T132045Z`). Using the `run_id`, `signal_id`, and `candidate_tag` values already
+in context from the Metrics Recording phase (no additional file read is required):
+
+If `qa_passed` is `true`, construct `.moeb/events/{compact_timestamp}_{run_id}.event.json`
+and write using `write_file`:
+
+```json
+{
+  "event_type": "run_completed",
+  "run_id": "<run_id>",
+  "signal_id": "<signal_id from run context, or null>",
+  "candidate_tag": "<candidate_tag from create_candidate_tag return value, or null>",
+  "timestamp": "<current ISO 8601 timestamp>"
+}
+```
+
+If `qa_passed` is `false`, construct the same path and write:
+
+```json
+{
+  "event_type": "run_failed",
+  "run_id": "<run_id>",
+  "signal_id": "<signal_id from run context, or null>",
+  "candidate_tag": null,
+  "timestamp": "<current ISO 8601 timestamp>",
+  "reason": "QA gate: Critical signals detected in End-of-Skill Review"
+}
+```
+
+The event write must not interrupt subsequent phases. The closing summary must be issued
+regardless of whether the event write succeeds.
 
 Respond with a concise summary of every file created or updated.
 

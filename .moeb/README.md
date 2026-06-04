@@ -235,6 +235,7 @@ Organised by domain. Add a new `###` subsection for each domain as it is introdu
 | Spec Skill: Git Status Check and Branch Cleanliness at Exit | Adds a `git_status` tool and Phase 9a to spec.skill.md that verifies branch cleanliness at spec skill exit, committing recognised outputs or signalling unexpected uncommitted paths | [specifications/moeb/moeb.spec-skill-must-not-exit-with-uncommitted-changes.md](specifications/moeb/moeb.spec-skill-must-not-exit-with-uncommitted-changes.md) | active |
 | Run Files: Record signal_id and candidate_tag | Extends the run file schema with two nullable fields — signal_id and candidate_tag — populated from the start_run signal context and the create_candidate_tag return value respectively | [specifications/moeb/moeb.run-files-must-record-signal-id-and-candidate-tag.md](specifications/moeb/moeb.run-files-must-record-signal-id-and-candidate-tag.md) | active |
 | Skill Completion Event Files | On completion (success or failure), fix_signal and run skills each write a JSON event file to .moeb/events/ so external watchers can detect completion without coupling to moeb internals | [specifications/moeb/moeb.skill-completion-event-files.md](specifications/moeb/moeb.skill-completion-event-files.md) | active |
+
 ### vcs
 
 | Name | Description | Path | Status |
@@ -243,6 +244,42 @@ Organised by domain. Add a new `###` subsection for each domain as it is introdu
 | Specification Branch and Conventional Commit for Harness Changes | Requires a dedicated git branch and a Conventional Commits message when creating a specification and registering it in the README index | [specifications/vcs/vcs.specification-branch-and-commit.md](specifications/vcs/vcs.specification-branch-and-commit.md) | superseded |
 | Specification Creation: Precise Branch and Commit Format | Supersedes the branch-and-commit decisions with format-precise rules drawn from Conventional Branch 1.0.0 and Conventional Commits 1.0.0: `chore/<domain>-<slug>` branch naming and `docs(<domain>): add <slug> specification` commit messages | [specifications/vcs/vcs.spec-creation-branch-commit-format.md](specifications/vcs/vcs.spec-creation-branch-commit-format.md) | superseded |
 | Specification Creation: Branch Type Correction to `feat/` | Supersedes the `chore/` branch-type decision from vcs.spec-creation-branch-commit-format.md; spec-authoring branches must use `feat/<domain>-<slug>` to reflect their full lifecycle spanning both spec and implementation commits | [specifications/vcs/vcs.spec-branch-type-feat.md](specifications/vcs/vcs.spec-branch-type-feat.md) | active |
+
+---
+
+## Event Files
+
+Event files are written by `fix_signal` and `run` skills to `.moeb/events/` on skill
+completion (success or failure). External watchers detect completion by polling this
+directory without coupling to moeb internals.
+
+**Location**: `.moeb/events/` (gitignored; not committed to history)
+
+**Filename**: `{yyyyMMddTHHmmssZ}_{signal_id_or_run_id}.event.json`
+
+### fix_signal event schema
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `event_type` | `"signal_fixed"` \| `"signal_fix_failed"` | Success or failure |
+| `signal_id` | string | UUID of the resolved signal |
+| `fix_branch` | string \| null | Branch created for the fix; null if not yet created at failure |
+| `timestamp` | ISO 8601 string | Time the event was written |
+| `reason` | string | Failure events only: brief description of the failure |
+
+### run event schema
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `event_type` | `"run_completed"` \| `"run_failed"` | Success or failure |
+| `run_id` | string | UUID of the run |
+| `signal_id` | string \| null | Signal that triggered this run, if any |
+| `candidate_tag` | string \| null | Candidate tag created by this run; null on failure |
+| `timestamp` | ISO 8601 string | Time the event was written |
+| `reason` | string | Failure events only: `"QA gate: Critical signals detected in End-of-Skill Review"` |
+
+**Policy**: No `workflow_id` or other external-system IDs are written. Mapping event IDs
+to orchestrator workflow IDs is the caller's responsibility.
 
 ---
 

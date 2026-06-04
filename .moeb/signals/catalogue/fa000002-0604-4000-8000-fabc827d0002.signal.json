@@ -1,0 +1,16 @@
+{
+  "signal_id": "fa000002-0604-4000-8000-fabc827d0002",
+  "category": "Error",
+  "severity": "Critical",
+  "title": "patch_file failed on .moeb/README.md due to CRLF despite normalization spec",
+  "description": "patch_file could not match old_string in .moeb/README.md even though moeb.patch-file-crlf-normalize.md is implemented. The file confirmed CRLF line endings from the read output preview. Fallback to write_file was used, but this indicates the CRLF normalization is not working for the exact-string-matching implementation introduced by moeb.patch-file-exact-string-rewrite.md.",
+  "proposed_resolution": "Debug patch_file CRLF normalization: verify that normalize_line_endings strips CR from both the file content and the old_string before substring search. The moeb.patch-file-exact-string-rewrite.md may have lost the CRLF normalization that was present in the diffy-based implementation.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-04T13:34:37Z",
+  "last_seen": "2026-06-04T13:34:37Z",
+  "occurrences": [
+    { "timestamp": "2026-06-04T13:34:37Z", "run_id": "fabc827d-9152-497d-9ef4-34db4bedcff0" }
+  ]
+}

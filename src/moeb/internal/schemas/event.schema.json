@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Skill Completion Event",
+  "description": "Schema for skill completion event files written to .moeb/events/ by fix_signal and run skills.",
+  "filename_convention": "{yyyyMMddTHHmmssZ}_{id}.event.json where id is signal_id for fix_signal events or run_id for run events",
+  "location": ".moeb/events/",
+  "type": "object",
+  "required": ["event_type", "timestamp"],
+  "properties": {
+    "event_type": {
+      "type": "string",
+      "enum": ["signal_fixed", "signal_fix_failed", "run_completed", "run_failed"],
+      "description": "Discriminates fix_signal events (signal_fixed, signal_fix_failed) from run events (run_completed, run_failed)."
+    },
+    "signal_id": {
+      "type": ["string", "null"],
+      "format": "uuid",
+      "description": "For fix_signal events: UUID of the resolved signal (required). For run events: signal that triggered the run, or null."
+    },
+    "fix_branch": {
+      "type": ["string", "null"],
+      "description": "fix_signal events only: branch created for the fix; null if branch not yet created at failure time."
+    },
+    "run_id": {
+      "type": ["string", "null"],
+      "format": "uuid",
+      "description": "run events only: UUID of the run."
+    },
+    "candidate_tag": {
+      "type": ["string", "null"],
+      "description": "run events only: candidate tag created by this run; null if QA gate failed or tag not created."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp at which the event was written."
+    },
+    "reason": {
+      "type": "string",
+      "description": "Failure events only (signal_fix_failed, run_failed): brief description of the failure."
+    }
+  }
+}

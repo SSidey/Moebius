@@ -48,7 +48,7 @@ signal object where `picked_up_at` is absent or null and `status` is `"open"` or
 `"reopened"`. Record each signal alongside its file path.
 
 If no `.signal.json` files exist in the catalogue or all signals have `picked_up_at`
-set, skip to Phase 12 with the message: `"No unresolved signals found."`.
+set, skip to Phase 12 with the message: `"No unresolved signals found."`. If no unresolved signal is found, exit without writing a completion event.
 
 ## Phase 2 — Select
 
@@ -440,6 +440,19 @@ making the signal selection decision and its corresponding event traceable in gi
 ## Complete
 
 Call `enter_phase` with `phase_id: "phase-complete"` as the first action in this phase.
+
+Derive the compact ISO timestamp as `yyyyMMddTHHmmssZ` from the current time (e.g.
+`20260604T132045Z`). Construct the path `.moeb/events/{compact_timestamp}_{signal_id}.event.json`.
+Write using `write_file`:
+
+```json
+{
+  "event_type": "signal_fixed",
+  "signal_id": "<signal_id from run context>",
+  "fix_branch": "<branch name from the branch-creation phase>",
+  "timestamp": "<current ISO 8601 timestamp>"
+}
+```
 
 Respond with a concise summary: which signal was selected (signal_id, title, severity),
 which branch was created (Phase 4), which event was emitted (path and type), and whether
