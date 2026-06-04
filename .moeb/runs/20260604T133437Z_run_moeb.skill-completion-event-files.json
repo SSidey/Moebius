@@ -11,7 +11,8 @@
     { "id": "fa000002-0604-4000-8000-fabc827d0002", "description": "patch_file failed on .moeb/README.md due to CRLF despite normalization spec" },
     { "id": "fa000003-0604-4000-8000-fabc827d0003", "description": "context-budget 300-line threshold structurally incompatible with skill markdown files" },
     { "id": "fa000004-0604-4000-8000-fabc827d0004", "description": "No moeb tool for reading overflow output files outside working directory" },
-    { "id": "fa000005-0604-4000-8000-fabc827d0005", "description": "Missing moeb tool: Read (Claude Code native tool)" }
+    { "id": "fa000005-0604-4000-8000-fabc827d0005", "description": "Missing moeb tool: Read (Claude Code native tool)" },
+    { "id": "fa000006-0604-4000-8000-fabc827d0006", "description": "Candidate tag suppressed: QA gate failed" }
   ],
   "rubric_score": null,
   "end_review_error_count": 2,
