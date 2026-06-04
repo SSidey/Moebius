@@ -3,7 +3,7 @@
   "timestamp": "2026-06-04T20:32:35Z",
   "command": "run",
   "signal_id": "a1000012-0529-4000-8000-000000000012",
-  "candidate_tag": null,
+  "candidate_tag": "v1.23.0-candidate.moeb-signal-source-field",
   "spec_path": ".moeb/specifications/moeb/moeb.signal-source-field.md",
   "metrics_path": ".moeb/metrics/4ec859db-b067-4b69-ac84-1780013fa785.metrics.json",
   "emittedSignals": [

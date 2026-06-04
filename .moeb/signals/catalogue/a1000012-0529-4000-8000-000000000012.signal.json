@@ -9,7 +9,7 @@
   "gating_condition": null,
   "picked_up_at": "2026-06-04T18:00:41Z",
   "fix_branch": "feat/moeb-signals-must-be-separable-into-moeb-origin-and-pro",
-  "status": "spec_written",
+  "status": "candidate",
   "occurrence_count": 1,
   "first_seen": "2026-05-29T00:00:00Z",
   "last_seen": "2026-05-29T00:00:00Z",
