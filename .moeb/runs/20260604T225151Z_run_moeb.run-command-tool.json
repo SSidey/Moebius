@@ -1,0 +1,24 @@
+{
+  "run_id": "9ef065cf-469d-4284-ab94-bbee84e3c208",
+  "timestamp": "2026-06-04T22:51:51Z",
+  "command": "run",
+  "signal_id": null,
+  "candidate_tag": null,
+  "spec_path": ".moeb/specifications/moeb/moeb.run-command-tool.md",
+  "metrics_path": ".moeb/metrics/9ef065cf-469d-4284-ab94-bbee84e3c208.metrics.json",
+  "emittedSignals": [
+    { "id": "c5a7e3f1-9b2d-4e8f-a6c4-1d2e3f4a5b6c", "description": "Spec code sample: ToolDef fields use String instead of &'static str" },
+    { "id": "d6b8f4e2-0c3a-4f9b-b7d5-2e3f4a5b6c7d", "description": "standard_registry_has_expected_tool_count requires manual update per tool addition" }
+  ],
+  "rubric_score": 0.875,
+  "end_review_error_count": 0,
+  "qa_passed": true,
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "search_files", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "signal_id": "c5a7e3f1-9b2d-4e8f-a6c4-1d2e3f4a5b6c",
+  "category": "SkillImprovement",
+  "severity": "Minor",
+  "title": "Spec code sample: ToolDef fields use String instead of &'static str",
+  "description": "Step 1 of moeb.run-command-tool.md provided a code sample with `.to_string()` calls on `ToolDef.name` and `ToolDef.description`, but the actual `ToolDef` struct (src/moeb/src/adapters/mod.rs) declares both as `&'static str`. This caused a compile error requiring a post-write patch during run 9ef065cf-469d-4284-ab94-bbee84e3c208.",
+  "proposed_resolution": "When authoring spec code samples that construct ToolDef, use `&'static str` literals (no `.to_string()` calls). Refer to existing tool implementations (e.g. grep_files.rs) for the correct pattern.",
+  "gating_condition": null,
+  "signal_source": "moeb",
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-05T00:00:00Z",
+  "last_seen": "2026-06-05T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-05T00:00:00Z", "run_id": "9ef065cf-469d-4284-ab94-bbee84e3c208" }
+  ]
+}

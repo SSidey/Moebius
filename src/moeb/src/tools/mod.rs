@@ -18,6 +18,7 @@ pub mod query_agent;
 pub mod read_file;
 pub mod read_file_range;
 pub mod read_files;
+pub mod run_command;
 pub mod search_files;
 pub mod start_run;
 pub mod start_spec;
@@ -86,6 +87,7 @@ impl ToolRegistry {
         r.register(Box::new(grep_files::GrepFilesTool));
         r.register(Box::new(read_files::ReadFilesTool));
         r.register(Box::new(read_file_range::ReadFileRangeTool));
+        r.register(Box::new(run_command::RunCommandTool));
         r.register(Box::new(create_task_list::CreateTaskListTool { state: std::sync::Arc::clone(&state) }));
         r.register(Box::new(update_task::UpdateTaskTool { state: std::sync::Arc::clone(&state) }));
         r.register(Box::new(verify_rubrics::VerifyRubricsTool { state: std::sync::Arc::clone(&state) }));
@@ -226,7 +228,7 @@ impl ToolRegistry {
     pub fn definitions(&self) -> Vec<ToolDef> {
         let order = [
             "read_file", "write_file", "patch_file", "list_directory",
-            "search_files", "grep_files", "read_files", "read_file_range",
+            "search_files", "grep_files", "read_files", "read_file_range", "run_command",
             "create_task_list", "update_task", "verify_rubrics", "complete_review",
             "enter_phase", "push_thinking_blocks",
             "create_branch", "git_commit", "git_status",

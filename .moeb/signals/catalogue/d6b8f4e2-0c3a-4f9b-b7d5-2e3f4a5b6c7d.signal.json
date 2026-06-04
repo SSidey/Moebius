@@ -1,0 +1,17 @@
+{
+  "signal_id": "d6b8f4e2-0c3a-4f9b-b7d5-2e3f4a5b6c7d",
+  "category": "SkillImprovement",
+  "severity": "Minor",
+  "title": "standard_registry_has_expected_tool_count requires manual update per tool addition",
+  "description": "Adding RunCommandTool to ToolRegistry::standard() required updating the hardcoded count assertion in tool_executor_tests.rs from 24 to 25, causing no-test-regression to fail in run 9ef065cf-469d-4284-ab94-bbee84e3c208. Every future tool addition to standard() will trigger this same failure unless the test is redesigned.",
+  "proposed_resolution": "Replace the hardcoded count in standard_registry_has_expected_tool_count with per-name assertions (e.g. assert!(defs.iter().any(|d| d.name == \"run_command\"))). This makes the test resilient to additions and only fails when tools are unexpectedly removed.",
+  "gating_condition": null,
+  "signal_source": "moeb",
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-05T00:00:00Z",
+  "last_seen": "2026-06-05T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-05T00:00:00Z", "run_id": "9ef065cf-469d-4284-ab94-bbee84e3c208" }
+  ]
+}
