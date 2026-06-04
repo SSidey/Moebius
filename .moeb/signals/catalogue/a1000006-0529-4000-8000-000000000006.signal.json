@@ -6,7 +6,7 @@
   "description": "Run files currently record run_id, spec_path, signals_path, and metrics_path but carry no upstream correlation to the signal or workflow that initiated the run, and no downstream correlation to the PR or tag produced. The autonomous conductor requires the full chain workflow_id → signal_id → spec_id → run_id → pr_id → tag_id to be traceable through stored artefacts without querying git or GitHub.",
   "proposed_resolution": "Extend the run file schema to include: workflow_id, signal_id, spec_id, pr_id, and tag_id fields (all nullable — populated as the workflow progresses). Update the run, tag_run, git_commit, and create_candidate_tag tools to write their respective IDs into the run file at the point they are known. Document the schema extension.",
   "gating_condition": null,
-  "status": "open",
+  "status": "needs-revision: scope",
   "occurrence_count": 1,
   "first_seen": "2026-05-29T00:00:00Z",
   "last_seen": "2026-05-29T00:00:00Z",
