@@ -1,0 +1,20 @@
+{
+  "run_id": "a989a8bd-8d94-4cff-94d9-a59d079e7203",
+  "timestamp": "2026-06-04T16:03:49Z",
+  "command": "spec",
+  "signal_id": "a1000045-0601-4000-8000-000000000045",
+  "spec_path": ".moeb/specifications/moeb/moeb.gating-condition-must-be-an-array-of-full-signal-uuids.md",
+  "metrics_path": ".moeb/metrics/a989a8bd-8d94-4cff-94d9-a59d079e7203.metrics.json",
+  "emittedSignals": [
+    { "id": "a8b7c6d5-e4f3-4a2b-9c1d-0e9f8a7b6c5d", "description": "MissingMoebTool signals not emitted for ToolSearch and Read in spec session" }
+  ],
+  "end_review_error_count": 0,
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "patch_file", "push_thinking_blocks", "read_file", "start_spec", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
