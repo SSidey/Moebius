@@ -6,11 +6,13 @@
   "description": "signal_fix and run complete with no durable, machine-readable output. Any external tool that needs to react to a moeb skill completion — whether it is a conductor, a CI step, or a developer script — must poll git branches or the signal catalogue, creating fragile coupling to moeb internals. A structured event file written on completion gives any watcher a reliable detection point with no knowledge required of moeb's internal state.\n\nNote: this signal replaces the in-scope portion of a1000010. That signal's proposed workflow_id field is outside moeb's boundary — moeb does not own workflows and should not carry orchestrator IDs. Mapping event signal_ids to workflow_ids is the conductor's responsibility (see Ouro signal b0000010).",
   "proposed_resolution": "On completion (success or failure) each skill writes a JSON event file to .moeb/events/, creating the directory if absent. File name: {iso_timestamp_compact}_{signal_id_or_run_id}.event.json.\n\nFields for signal_fix events: event_type (signal_fixed | signal_fix_failed), signal_id, fix_branch, timestamp. On failure also include a reason field.\n\nFields for run events: event_type (run_completed | run_failed), run_id, signal_id (nullable — read from the run file written by a1000046), candidate_tag (nullable — read from the run file written by a1000046), timestamp. On failure also include a reason field.\n\nNo workflow_id or any other external-system ID is written — those belong to the caller. Document the event schema in .moeb/README.md alongside the run file schema.",
   "gating_condition": ["a1000046-0604-4000-8000-000000000046"],
-  "status": "open",
+  "status": "in_progress",
   "occurrence_count": 1,
   "first_seen": "2026-06-04T00:00:00Z",
   "last_seen": "2026-06-04T00:00:00Z",
   "occurrences": [
     { "timestamp": "2026-06-04T00:00:00Z", "run_id": "00000000-0604-4000-8000-000000000000" }
-  ]
+  ],
+  "picked_up_at": "2026-06-04T11:22:24Z",
+  "fix_branch": "feat/moeb-signal-fix-and-run-skills-must-write-workflow-unaw"
 }

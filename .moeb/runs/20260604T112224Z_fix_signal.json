@@ -1,0 +1,22 @@
+{
+  "run_id": "92a0d940-a652-4011-b177-e253ad4744e3",
+  "timestamp": "2026-06-04T11:22:24Z",
+  "command": "fix_signal",
+  "event_path": ".moeb/events/a1000047-0604-4000-8000-000000000047.event.json",
+  "metrics_path": ".moeb/metrics/92a0d940-a652-4011-b177-e253ad4744e3.metrics.json",
+  "emittedSignals": [
+    { "id": "a5000047-0604-4000-8001-000000000001", "description": "Missing moeb tool: ToolSearch (deferred schema loading)" },
+    { "id": "a5000047-0604-4000-8001-000000000002", "description": "Missing moeb tool: Read (fix_signal result file)" },
+    { "id": "b1000047-0604-4000-8002-000000000001", "description": "MissingMoebTool signals not emitted immediately after ToolSearch and Read calls" }
+  ],
+  "rubric_score": "4 pass, 2 fail",
+  "end_review_error_count": 0,
+  "tools_used": ["complete_review", "create_branch", "fix_signal", "get_run_status", "patch_file", "push_thinking_blocks", "read_file", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
