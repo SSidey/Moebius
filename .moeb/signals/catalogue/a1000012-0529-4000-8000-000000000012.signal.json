@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000012-0529-4000-8000-000000000012",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Signals must be separable into moeb-origin and project-origin categories",
   "description": "All signals are currently stored in a single catalogue without distinguishing whether they relate to the moeb harness itself or to the project under development. When signals are pushed to remote sources (GitHub Issues, telemetry endpoints), moeb-origin signals must route to the moeb repository and project-origin signals to the project repository. Without this separation the routing is impossible and telemetry would be polluted.",

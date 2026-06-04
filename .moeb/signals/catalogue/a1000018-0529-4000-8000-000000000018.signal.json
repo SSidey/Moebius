@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000018-0529-4000-8000-000000000018",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "QA review agent should assess token usage and flag inefficiencies",
   "description": "The QA review at run end assesses spec compliance but does not consider whether the run was cost-efficient. Redundant reads, re-reads of the same file, oversized prompts (start_spec is 144K characters), and unnecessary tool calls inflate cost without adding value. The run phase cost breakdown (see companion signal) will provide the data; the QA agent needs to act on it.",

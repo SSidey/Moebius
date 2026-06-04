@@ -1,6 +1,7 @@
 {
   "signal_id": "f9b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: patch_file (spec.skill.md)",
   "description": "patch_file returned error: 'old_string not found in src/moeb/internal/skills/spec.skill.md'. The intended change was recovered by write_file fallback so the operation completed, but the patch_file failure was recorded as a tool error. Likely caused by CRLF line endings in the file not matching the LF string supplied to patch_file.",

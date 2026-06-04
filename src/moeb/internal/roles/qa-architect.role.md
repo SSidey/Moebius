@@ -22,6 +22,7 @@ Return a JSON object matching this schema exactly:
   "signals": [
     {
       "category": "Error" | "SkillImprovement" | "ToolImprovement" | "NewCapability",
+      "signal_source": "moeb" | "project",
       "severity": "Critical" | "Major" | "Minor",
       "title": "short, specific, actionable string",
       "description": "what was observed and why it matters",
@@ -31,6 +32,8 @@ Return a JSON object matching this schema exactly:
   ],
   "summary": "One paragraph summary of run quality and key findings."
 }
+
+`signal_source`: Set to `"moeb"` for all QA Architect signals by default, because QA review signals assess harness skill quality. Set to `"project"` only when the signal explicitly identifies a failing criterion that belongs to a project-specific rubric layer (layers 3–4, non-moeb domain). Default: `"moeb"`.
 
 Critical severity is reserved for errors that, if left unresolved, would produce
 incorrect outputs, data loss, or repeated run failures. Do not use Critical for

@@ -1,6 +1,7 @@
 {
   "signal_id": "a4c6e8f0-b1d3-4e5f-9a7b-2c0d4e6f8a0b",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Bash (cargo build)",
   "description": "Used Bash to run `cargo build --release` to verify binary compilation. No moeb equivalent exists. This causes moeb-tool-origin to fail on every run that verifies compilation.",

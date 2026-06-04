@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000008-0529-4000-8000-000000000008",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Signal catalogue entries must record a full fix history",
   "description": "Signals currently record picked_up_at and fix_branch for the most recent fix attempt only. When a signal closes and later reopens — as the patch_file errors have done across four separate catalogue entries — there is no record of prior fix attempts. It is impossible to detect that a recurring problem has already been addressed and failed, which would indicate that a redesign rather than another fix is required.",

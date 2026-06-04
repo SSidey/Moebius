@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000005-0529-4000-8000-000000000005",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Run retry should preserve failed run context for diagnosis",
   "description": "When a run fails and is retried, the partial run state — tool errors, signals emitted mid-run, and the point of failure — is not persisted before the retry begins. This means recurring failures (e.g. missing frontmatter, patch errors) cannot be distinguished from first-time failures, and the agent retrying has no access to what was already attempted.",

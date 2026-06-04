@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000004-0529-4000-8000-000000000004",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Spec skill must not exit with uncommitted changes on the working branch",
   "description": "Several spec invocations have ended with uncommitted changes remaining on the working branch, leaving the repository in a dirty state. A spec skill that exits dirty has either failed to commit its outputs or has written files it did not intend to. Both cases are incorrect and leave the project in an ambiguous state for any subsequent operation.",

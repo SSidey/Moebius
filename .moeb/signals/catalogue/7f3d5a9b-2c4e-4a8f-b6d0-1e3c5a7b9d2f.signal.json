@@ -1,6 +1,7 @@
 {
   "signal_id": "7f3d5a9b-2c4e-4a8f-b6d0-1e3c5a7b9d2f",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Session-startup ToolSearch for start_spec/start_run schema not addressed by schema preload",
   "description": "The schema preload spec (moeb.start-commands-tool-schema-preload) eliminates ToolSearch calls made after start_spec/start_run returns. However, the orchestrating agent must still call ToolSearch to load start_spec/start_run own schemas before invoking them. This session-startup ToolSearch continues to fail moeb-tool-origin on every run, meaning one external tool call remains even after the schema preload spec is fully implemented.",

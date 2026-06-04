@@ -1,6 +1,7 @@
 {
   "signal_id": "f0a1b2c3-d4e5-4f6a-b7c8-d9e0f1a2b3c4",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "spec.skill.md Phase 9 git_commit omits run artifact files from commit",
   "description": "After Phases 7–8 write run artifacts to disk — signal catalogue entries (.moeb/signals/catalogue/), the run signals file (.moeb/signals/<run_id>.signals.json), the signals index (.moeb/signals/index.md), the metrics file (.moeb/metrics/<run_id>.metrics.json), and the run file (.moeb/runs/<timestamp>_spec_*.json) — Phase 9 calls git_commit with only spec_path and readme_path. All run artifact files are left as uncommitted modifications in the working tree, requiring a manual follow-up commit to capture them.",

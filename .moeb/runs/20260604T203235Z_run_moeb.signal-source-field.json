@@ -1,0 +1,24 @@
+{
+  "run_id": "4ec859db-b067-4b69-ac84-1780013fa785",
+  "timestamp": "2026-06-04T20:32:35Z",
+  "command": "run",
+  "signal_id": "a1000012-0529-4000-8000-000000000012",
+  "candidate_tag": null,
+  "spec_path": ".moeb/specifications/moeb/moeb.signal-source-field.md",
+  "metrics_path": ".moeb/metrics/4ec859db-b067-4b69-ac84-1780013fa785.metrics.json",
+  "emittedSignals": [
+    { "id": "c5f7a3b1-d2e4-4f6a-8c9b-0e1f2a3b4c5d", "description": "Missing moeb tool: PowerShell bulk JSON field insertion" },
+    { "id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a", "description": "context-budget fires on every skill-file run due to pre-existing oversize" }
+  ],
+  "rubric_score": null,
+  "end_review_error_count": 0,
+  "qa_passed": true,
+  "tools_used": ["complete_review", "create_task_list", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "read_files", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

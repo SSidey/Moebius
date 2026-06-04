@@ -1,6 +1,7 @@
 {
   "signal_id": "f0bf5e4b-0004-4001-8001-000000000004",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "patch_file fails on long README table rows",
   "description": "patch_file consistently fails to apply replacement diffs on long table rows in .moeb/README.md even when content is verified identical via read_file_range and grep_files. Three consecutive attempts with different context configurations all failed. Root cause appears to be that very long table row lines (500+ characters) cause diffy's removed-line matching to malfunction despite CRLF and trailing-whitespace normalization. A write_file fallback is required to complete each README update.",

@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000006-0529-4000-8000-000000000006",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Run files must record the full workflow correlation chain",
   "description": "Run files currently record run_id, spec_path, signals_path, and metrics_path but carry no upstream correlation to the signal or workflow that initiated the run, and no downstream correlation to the PR or tag produced. The autonomous conductor requires the full chain workflow_id → signal_id → spec_id → run_id → pr_id → tag_id to be traceable through stored artefacts without querying git or GitHub.",

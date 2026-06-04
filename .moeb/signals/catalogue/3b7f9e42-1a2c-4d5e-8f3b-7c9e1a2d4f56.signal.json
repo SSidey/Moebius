@@ -1,6 +1,7 @@
 {
   "signal_id": "3b7f9e42-1a2c-4d5e-8f3b-7c9e1a2d4f56",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Bash (delete_file)",
   "description": "Used Bash to delete src/moeb/src/tools/patch_file_impl.rs. No moeb tool exists for file deletion, forcing moeb-tool-origin Fail.",

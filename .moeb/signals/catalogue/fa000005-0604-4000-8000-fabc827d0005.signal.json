@@ -1,6 +1,7 @@
 {
   "signal_id": "fa000005-0604-4000-8000-fabc827d0005",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Read (Claude Code native tool)",
   "description": "Used the Claude Code native Read tool to read a large tool output file saved to the project temp directory outside the working directory after moeb read_file returned a size-overflow result. No moeb equivalent exists for reading files outside the working directory.",

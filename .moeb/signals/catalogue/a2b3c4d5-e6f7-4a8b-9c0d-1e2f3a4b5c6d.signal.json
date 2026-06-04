@@ -1,6 +1,7 @@
 {
   "signal_id": "a2b3c4d5-e6f7-4a8b-9c0d-1e2f3a4b5c6d",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "moeb-tool-origin rubric fail: Read tool used without MissingMoebTool signal",
   "description": "The Claude Code Read tool was used to read the truncated start_run result file at an absolute temp path (C:\\Users\\Simeon\\.claude\\projects\\...\\mcp-moeb-start_run-*.txt) outside the working directory. No MissingMoebTool signal was buffered at the time of the external call, causing the moeb-tool-origin criterion to fail.",

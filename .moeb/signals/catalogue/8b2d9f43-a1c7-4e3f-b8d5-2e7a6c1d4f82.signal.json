@@ -1,6 +1,7 @@
 {
   "signal_id": "8b2d9f43-a1c7-4e3f-b8d5-2e7a6c1d4f82",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: patch_file on spec.skill.md (attempt 2)",
   "description": "Second patch_file attempt also failed with the same error. The write_file fallback completed the change successfully, but two tool errors were recorded.",

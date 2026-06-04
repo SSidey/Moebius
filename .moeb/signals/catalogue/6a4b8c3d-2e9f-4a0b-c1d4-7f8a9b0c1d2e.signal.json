@@ -1,6 +1,7 @@
 {
   "signal_id": "6a4b8c3d-2e9f-4a0b-c1d4-7f8a9b0c1d2e",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: patch_file attempt 2 on .moeb/README.md",
   "description": "patch_file returned 'old_string not found' on a second attempt with an old_string variant that included an explicit blank line between the last moeb row and '### vcs'. This was a retry of attempt 1 with a different old_string hypothesis. The write_file fallback successfully applied the change.",

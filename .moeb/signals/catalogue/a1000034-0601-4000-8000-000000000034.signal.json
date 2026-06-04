@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000034-0601-4000-8000-000000000034",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "run.rubrics.md asset contains moeb-internal rubric content, polluting new project templates on init",
   "description": "The embedded asset `src/moeb/assets/rubrics/run.rubrics.md` contains the `no-dead-code` rubric row, which is a moeb-project-specific internal rule. When `moeb init` copies this asset to a new project's `.moeb/rubrics/run.rubrics.md`, the moeb-internal rubric leaks into every freshly initialised project. Projects should start with an empty run rubric table (header only) and add their own rubrics as they develop. The current asset conflates the moeb project's own runtime state with the template that should be distributed to consumers.",

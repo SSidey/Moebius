@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000046-0604-4000-8000-000000000046",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Run files must record signal_id and candidate_tag at the point each is known",
   "description": "Run files currently record run_id, spec_path, signals_path, and metrics_path but carry no link to the signal that triggered the run or the candidate tag produced at the end. Without these two fields the only way to connect a run to its origin and its output artefact is to search the git log or signal catalogue — both are fragile and expensive for any automated tool watching moeb artefacts.\n\nNote: this signal replaces the in-scope portion of a1000006. That signal's proposed workflow_id, spec_id, and pr_id fields are outside moeb's boundary (workflow_id and pr_id are orchestrator-owned; spec_id introduces a UUID scheme for specs that moeb does not have). Those fields belong in the conductor's own state (see Ouro signal b0000009).",

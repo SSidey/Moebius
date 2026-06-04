@@ -1,6 +1,7 @@
 {
   "signal_id": "b1000047-0604-4000-8002-000000000001",
   "category": "ProcessImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "MissingMoebTool signals not emitted immediately after ToolSearch and Read calls",
   "description": "fix_signal run used ToolSearch and Read (external tools) to load workflow prompt and tool schemas. MissingMoebTool signals were emitted late (during Phase 5b/rubric processing) rather than immediately after each external call as required by the Tool Origin Policy.",

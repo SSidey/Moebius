@@ -1,6 +1,7 @@
 {
   "signal_id": "b4e7f2a1-9d3c-4e8f-b6a5-1c2d3e4f5a6b",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "patch_file failed on spec.skill.md due to substring mismatch on Windows",
   "description": "The patch_file call for inserting Phase 9a into spec.skill.md returned 'old_string not found', requiring fallback to write_file with full content. The exact cause is unclear — possible CRLF/LF difference not fully resolved before comparison, or a character encoding issue with the em dash in the heading. The fallback worked correctly but incurred a tool error.",

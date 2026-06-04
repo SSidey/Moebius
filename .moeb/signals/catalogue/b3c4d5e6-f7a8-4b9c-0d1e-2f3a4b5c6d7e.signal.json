@@ -1,6 +1,7 @@
 {
   "signal_id": "b3c4d5e6-f7a8-4b9c-0d1e-2f3a4b5c6d7e",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: absolute-path file read for start_run overflow output",
   "description": "start_run produced 197,841 chars of output exceeding the MCP response limit; the kernel saved it to a temp file at an absolute path outside the working directory. No moeb tool supports reading files at arbitrary absolute paths, requiring the external Read tool. This recurs whenever start_run output is large.",

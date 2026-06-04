@@ -1,6 +1,7 @@
 {
   "signal_id": "a3b4c5d6-e7f8-4a9b-b0c1-d2e3f4a5b6c7",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "phase-5a-in-all-skills rubric criterion uses hardcoded phase number instead of heading text",
   "description": "The phase-5a-in-all-skills rubric criterion in moeb.mcp-thinking-block-capture checks for the literal string 'Phase 5a' in all three skill files. In spec.skill.md and fix_signal.skill.md the Reasoning Review is Phase 7b, so the Push Thinking Blocks phase is correctly Phase 7a in those files. The criterion should match on heading text ('Push Thinking Blocks') rather than a hardcoded phase number to be robust across skill files with differing phase numbering.",

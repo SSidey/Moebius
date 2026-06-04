@@ -1,6 +1,7 @@
 {
   "signal_id": "7f000001-0604-4000-8abc-000000000012",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Read",
   "description": "Used Claude Code's native Read tool (×3 calls) to read oversized tool result files written by the Claude Code MCP infrastructure to temp paths. No moeb equivalent exists. When a moeb tool response exceeds the MCP output size limit, Claude Code saves the result to a local temp file and the agent must use Read to access it. This creates a dependency on a non-moeb tool for every run where a moeb tool produces large output.",

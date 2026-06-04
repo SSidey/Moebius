@@ -1,6 +1,7 @@
 {
   "signal_id": "f0bf5e4b-0003-4001-8001-000000000003",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Missing moeb tool: Read (pre-authoring file inspection)",
   "description": "Used Read (Claude Code built-in) to inspect .github/workflows/release.yml before spec authoring. The moeb read_file tool was available and should have been used for this operation.",

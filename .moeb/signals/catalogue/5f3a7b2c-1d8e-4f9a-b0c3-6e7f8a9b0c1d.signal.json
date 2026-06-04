@@ -1,6 +1,7 @@
 {
   "signal_id": "5f3a7b2c-1d8e-4f9a-b0c3-6e7f8a9b0c1d",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: patch_file attempt 1 on .moeb/README.md",
   "description": "patch_file returned 'old_string not found' when attempting to insert the new README row using the last moeb spec row followed by '### vcs' as the old_string. The content was verified as present via grep_files and read_file_range before the attempt. The write_file fallback successfully applied the change. This is consistent with the open signal 1c2d3e4f-5a6b-4c7d-ae9f-0a1b2c3d4e5f (patch_file CRLF normalization incomplete in exact-string mode).",

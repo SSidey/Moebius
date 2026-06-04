@@ -1,6 +1,7 @@
 {
   "signal_id": "fa000004-0604-4000-8000-fabc827d0004",
   "category": "ToolImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "No moeb tool for reading overflow output files outside working directory",
   "description": "When moeb read_file returns an output-too-large result and saves to a project temp file, there is no moeb tool to read that saved file (path is outside the repo working directory). The agent must use the external Claude Code Read tool, causing moeb-tool-origin to fail. This pattern occurs whenever a moeb tool call produces output larger than the allowed context window.",

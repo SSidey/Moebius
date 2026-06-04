@@ -1,6 +1,7 @@
 {
   "signal_id": "3dfcd12d-9a84-43ac-ac4f-05a975bf4fe7",
   "category": "ProcessImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Duplicate commit messages obscure actual change content",
   "description": "Commits febab7f197546fff4c90e3f9fd091346566dd03f and 9bef5a3225da14d7e7f6911198c0731aac2030a6 carry the identical message 'feat(moeb): execute signal-status-lifecycle-tracking specification'. Neither message describes what the commit actually contains — both were prospective signals and notes added for future fixes and improvements, not executions of the spec. The duplication means git log provides no way to distinguish the two commits by reading the subject line, and the word 'execute' misrepresents commits whose content is preparatory rather than implementational.",

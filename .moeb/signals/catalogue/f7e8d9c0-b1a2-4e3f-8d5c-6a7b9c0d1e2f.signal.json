@@ -1,6 +1,7 @@
 {
   "signal_id": "f7e8d9c0-b1a2-4e3f-8d5c-6a7b9c0d1e2f",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Read (large tool output)",
   "description": "The start_spec tool consistently returns results exceeding the inline response limit (~140K characters), saved to disk. An external Read tool is required to access this content in chunks on every spec run. No moeb tool exists for reading harness-saved large tool result files.",

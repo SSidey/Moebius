@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000052-0604-4000-8000-000000000052",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Create run-auditor.role.md — observation-first run state auditor role",
   "description": "No run-auditor role file exists. The current reasoning-reviewer.role.md attempts to serve two concerns (reasoning quality and run state observation) in one file, violating the one-concern-per-file AI-first principle. A dedicated run-auditor role is needed to perform observation-first auditing of the complete post-run state (git status, files written, tool return values, rubric verdicts) against a minimal abstract contract. This role is independent of thinking blocks and must fire unconditionally, unlike the reasoning reviewer which is skipped when thinking blocks are empty.",

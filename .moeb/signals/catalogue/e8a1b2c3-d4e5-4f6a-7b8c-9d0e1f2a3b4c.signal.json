@@ -1,6 +1,7 @@
 {
   "signal_id": "e8a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b4c",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: patch_file (signal.schema.json)",
   "description": "patch_file returned error: 'old_string not found in src/moeb/internal/signal.schema.json'. The intended change was recovered by write_file fallback so the operation completed, but the patch_file failure was recorded as a tool error. Likely caused by CRLF line endings in the file not matching the LF string supplied to patch_file.",

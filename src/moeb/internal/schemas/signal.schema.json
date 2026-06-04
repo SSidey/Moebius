@@ -5,10 +5,15 @@
   "filename_convention": "<signal_id>.signal.json",
   "location": ".moeb/signals/catalogue/",
   "type": "object",
-  "required": ["signal_id", "category", "severity", "title", "description", "proposed_resolution", "gating_condition", "status", "occurrence_count", "first_seen", "last_seen", "occurrences"],
+  "required": ["signal_id", "category", "signal_source", "severity", "title", "description", "proposed_resolution", "gating_condition", "status", "occurrence_count", "first_seen", "last_seen", "occurrences"],
   "properties": {
     "signal_id": { "type": "string", "format": "uuid", "description": "UUID v4. Also the filename stem: <signal_id>.signal.json." },
     "category": { "type": "string", "enum": ["Error", "SkillImprovement", "ToolImprovement", "NewCapability", "ReasoningImprovement", "ProcessImprovement"] },
+    "signal_source": {
+      "type": "string",
+      "enum": ["moeb", "project"],
+      "description": "Origin of the signal. 'moeb': relates to the moeb harness itself (baseline rubric criteria, skill execution quality, tool capability gaps, kernel behaviour). 'project': relates to the project under development with moeb (project-specific rubric criteria, layers 3-4). Default when indeterminate: 'moeb'."
+    },
     "severity": { "type": "string", "enum": ["Info", "Minor", "Major", "Critical"] },
     "title": { "type": "string" },
     "description": { "type": "string" },

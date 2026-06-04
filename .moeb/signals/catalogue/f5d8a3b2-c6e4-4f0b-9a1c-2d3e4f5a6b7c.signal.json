@@ -1,6 +1,7 @@
 {
   "signal_id": "f5d8a3b2-c6e4-4f0b-9a1c-2d3e4f5a6b7c",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Rubric criterion Pass with acknowledged failures: no-test-regression",
   "description": "The no-test-regression criterion was passed with acknowledged_failures: 'anthropic_tests.rs was modified to add 4 new test cases as required by Step 2 of the specification; all pre-existing tests pass without change to their logic.' The criterion's pass condition states 'no test file edited', creating unavoidable tension when a spec explicitly requires adding test coverage.",

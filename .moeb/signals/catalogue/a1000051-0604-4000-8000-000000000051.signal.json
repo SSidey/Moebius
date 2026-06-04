@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000051-0604-4000-8000-000000000051",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "No commit-completeness rubric criterion exists for canonical skill runs",
   "description": "The rubric system has no criterion verifying that the working tree is clean (no uncommitted files) before the candidate tag is created. Loose files after Phase 7's git_commit go undetected until post-run manual review. The existing tool-errors criterion covers ToolHandler failures but not incomplete staging. The clean-working-tree condition is objectively verifiable at the shell level and should not depend on the agent or reviewer noticing the gap.",

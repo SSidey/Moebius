@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000023-0529-4000-8000-000000000023",
   "category": "ToolImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Metrics filenames should include a monotonic run number for efficient latest-finding",
   "description": "Finding the latest metrics file currently requires reading all filenames in the metrics directory and sorting by timestamp embedded in the UUID or run file. As the number of runs grows, this becomes an increasingly expensive directory scan. A monotonic run-number prefix would allow the latest metrics file to be located with a single sorted directory read.",

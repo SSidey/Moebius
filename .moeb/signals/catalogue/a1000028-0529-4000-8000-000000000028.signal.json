@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000028-0529-4000-8000-000000000028",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "moeb use command should support specifying agent, workflow, and task",
   "description": "moeb use currently selects an AI adapter but does not allow specifying which agent persona, workflow variant, or task type to apply for a given invocation. When multiple agent roles (architect, reviewer, coder) or workflow variants (run with QA only, run with full review) are available, there is no way to select them without editing the skill file or config.",

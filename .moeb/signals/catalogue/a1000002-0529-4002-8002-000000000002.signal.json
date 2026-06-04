@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000002-0529-4002-8002-000000000002",
   "category": "ToolImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "patch_file does not support pure-insertion unified diffs",
   "description": "Two patch_file calls with pure-insertion diffs (only + lines and context, no - removed lines, orig_count=0) both failed with 'error applying hunk #1'. The diffy crate or the normalization/relocation pipeline does not correctly handle hunks where the original hunk covers zero lines. This forces agents to fall back to write_file for simple insertions, increasing write payload and causing tool-errors rubric failures.",

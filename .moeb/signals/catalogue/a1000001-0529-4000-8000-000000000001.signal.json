@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000001-0529-4000-8000-000000000001",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "GitHub Actions runners will force Node.js 24 from 2026-06-02",
   "description": "actions/cache@v4, actions/checkout@v4, and softprops/action-gh-release@v2 all run on Node.js 20, which is deprecated on GitHub Actions runners from 2026-06-02. The build and release pipeline will fail on that date unless updated. Node.js 20 is removed entirely from runners on 2026-09-16.",

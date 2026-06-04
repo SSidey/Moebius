@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000027-0529-4000-8000-000000000027",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Add moeb interview command to produce a specification through guided conversation",
   "description": "Authoring a spec requires knowledge of the spec schema, existing conventions, and the README index structure. A user with a clear problem statement but no familiarity with the schema must read documentation before they can author a valid spec. This raises the barrier unnecessarily and means specs authored without guidance often omit rubrics, steps, or links.",

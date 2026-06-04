@@ -1,6 +1,7 @@
 {
   "signal_id": "c5d6e7f8-a9b0-4c1d-2e3f-4a5b6c7d8e9f",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Candidate tag suppressed: QA gate failed",
   "description": "QA Architect review produced Critical signals; qa_passed is false. Failing signals: \"Tool error not recovered: patch_file (signal.schema.json)\", \"Tool error not recovered: patch_file (spec.skill.md)\".",

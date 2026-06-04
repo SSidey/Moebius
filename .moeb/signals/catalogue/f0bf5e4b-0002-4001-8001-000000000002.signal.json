@@ -1,6 +1,7 @@
 {
   "signal_id": "f0bf5e4b-0002-4001-8001-000000000002",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Missing moeb tool: Glob (file discovery)",
   "description": "Used Glob (Claude Code built-in) to discover .github/workflows/*.yml files. The moeb list_directory and search_files tools could have served this purpose.",

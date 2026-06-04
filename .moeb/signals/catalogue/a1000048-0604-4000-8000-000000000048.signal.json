@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000048-0604-4000-8000-000000000048",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "accept_candidate returns full run context instead of bounded result",
   "description": "The accept_candidate tool returns a full rendered run prompt (including role, spec, skill, and rubrics) with a new run_id and run_file_path, as if it calls start_run internally. Per its description it should read the signal catalogue entry, set status to 'resolved' with a resolved_at timestamp, update the signal index, and emit a signal.resolved event — returning a short confirmation string. The actual output is ~90 KB across 860 lines, forcing the agent to use an external Read tool to consume the result and creating a spurious nested run session (run_id: dbad8c70).",

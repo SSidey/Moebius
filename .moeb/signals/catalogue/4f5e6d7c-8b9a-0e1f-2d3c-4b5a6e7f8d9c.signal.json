@@ -1,6 +1,7 @@
 {
   "signal_id": "4f5e6d7c-8b9a-0e1f-2d3c-4b5a6e7f8d9c",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Protected-skill guard condition deviates from spec code snippet",
   "description": "Spec Step 2 shows an unconditional guard (`if PROTECTED_SKILLS.contains(&name.as_str()) { return Err() }`), but the implementation uses a conditional check that also verifies local_path.exists(). The conditional approach was required to prevent the kernel itself from failing when loading protected skills internally. The spec raw requirement ('when the kernel discovers a file') supports the conditional approach, but the discrepancy between code snippet and description creates ambiguity for future implementors.",

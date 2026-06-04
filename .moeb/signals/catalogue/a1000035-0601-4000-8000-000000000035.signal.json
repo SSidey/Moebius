@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000035-0601-4000-8000-000000000035",
   "category": "ToolImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "spec-schema-validation.json lifecycle is undocumented and the file is not created by moeb init",
   "description": "`src/moeb/src/domain/spec_schema.rs` reads `spec-schema-validation.json` from the working directory at runtime but falls back to built-in rules when the file is absent. The module is not declared in `domain/mod.rs`, suggesting it may only be referenced from test modules and may be dead code in the production binary. `moeb init` does not copy a starter schema file to new projects, so new projects silently use only the built-in fallback without being informed. The relationship between the filesystem override, the built-in rules, and the module's compilation status is undocumented.",

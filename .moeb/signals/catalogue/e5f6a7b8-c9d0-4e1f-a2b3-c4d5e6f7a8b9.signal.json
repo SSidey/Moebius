@@ -1,6 +1,7 @@
 {
   "signal_id": "e5f6a7b8-c9d0-4e1f-a2b3-c4d5e6f7a8b9",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Read (fix_signal result file)",
   "description": "The fix_signal MCP tool returns a rendered prompt that exceeds the MCP inline response limit. The kernel saves the output to a host-absolute temp file path that moeb tools cannot access (read_file uses project-relative paths only). The external Claude Code Read tool was required to read the fix_signal workflow content before the skill phases could begin.",

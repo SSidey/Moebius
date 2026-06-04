@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000029-0529-4000-8000-000000000029",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "New CLI commands must trigger a help text update as part of the run rubric",
   "description": "When a new command is added to moeb (e.g. signal add, link, interview), the moeb help output is not automatically verified as part of the run. Users discover new commands only through release notes or source inspection. This is an omission in the run rubric, not a code deficiency — the mechanism to update help (clap command descriptions) already exists.",

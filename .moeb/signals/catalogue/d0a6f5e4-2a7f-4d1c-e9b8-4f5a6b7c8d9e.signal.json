@@ -1,6 +1,7 @@
 {
   "signal_id": "d0a6f5e4-2a7f-4d1c-e9b8-4f5a6b7c8d9e",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Bash (cargo build and cargo test)",
   "description": "Used Bash to run cargo build and cargo test in src/moeb/ for Step 9 of the signal-catalogue-id-based-naming specification. No moeb equivalent for executing build or test commands exists in the moeb tool registry. Both build validation and test suite execution require external Bash invocations in every run.",

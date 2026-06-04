@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000013-0529-4000-8000-000000000013",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Add moeb signal add command for direct signal injection",
   "description": "Signals can currently only be created by AI agents at run end. There is no command-line mechanism to inject a signal directly — for example, to record a known issue, a feature request, or a batch of observations from a planning session. This planning session itself required manual JSON file authoring to create signals.",

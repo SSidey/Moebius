@@ -1,6 +1,7 @@
 {
   "signal_id": "a7f3e2b1-9d4c-4a8f-b6e5-1c2d3e4f5a6b",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Stale .signals.json references remain in reasoning review phase after signals file elimination",
   "description": "Phase 5b step 6 (run.skill.md), Phase 7b step 6 (spec.skill.md), and Phase 7b step 6 (fix_signal.skill.md) still instruct agents to 'Read .moeb/signals/<run_id>.signals.json, append the reasoning signal objects to the array, and write the complete updated file.' These files no longer exist after the signal-catalogue-id-based-naming spec eliminated run-level .signals.json files. When the reasoning review phase fires in a future session, agents will encounter a file-read error and the reasoning signals will not be persisted.",

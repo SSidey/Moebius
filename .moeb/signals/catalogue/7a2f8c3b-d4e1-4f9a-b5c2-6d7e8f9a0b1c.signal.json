@@ -1,6 +1,7 @@
 {
   "signal_id": "7a2f8c3b-d4e1-4f9a-b5c2-6d7e8f9a0b1c",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "spec.skill.md Phase 5 patch_file multi-line anchor fails on Windows CRLF README table rows",
   "description": "Phase 5 README row insertion required two failed patch_file attempts before succeeding. Both failures used multi-line old_string patterns spanning a table row plus the adjacent '### vcs' section header; both returned 'old_string not found'. The third attempt used only the single last table row as anchor and succeeded. This re-opens the existing pattern tracked in e6a12400. The root cause is likely line-ending or encoding differences around section boundaries in the CRLF README on Windows.",

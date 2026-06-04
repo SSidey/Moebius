@@ -1,6 +1,7 @@
 {
   "signal_id": "a2b3c4d5-e6f7-4081-92a3-b4c5d6e7f8a0",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "patch_file old_string not found on signal catalogue file",
   "description": "patch_file failed with 'old_string not found' on .moeb/signals/catalogue/a1000012-0529-4000-8000-000000000012.signal.json when adding picked_up_at and fix_branch fields. The moeb.patch-file-crlf-normalize spec is active but did not prevent this failure on a Windows CRLF file.",

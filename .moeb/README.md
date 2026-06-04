@@ -249,6 +249,21 @@ Organised by domain. Add a new `###` subsection for each domain as it is introdu
 
 ---
 
+## Signal Routing
+
+Every signal record in `.moeb/signals/catalogue/` carries a `signal_source` field with one of two values:
+
+| Value | Meaning |
+|-------|---------|
+| `moeb` | The signal relates to the quality or capability of the moeb harness itself — baseline rubric criteria, skill execution quality, missing tool capabilities, kernel behaviour. Route to the moeb repository when pushing to remote issue trackers. |
+| `project` | The signal relates to the quality of the project under development with moeb — project-specific rubric criteria (layers 3–4). Route to the project repository when pushing to remote issue trackers. |
+
+**Population rule.** Signals arising from binary-bundled baseline rubric criteria (layers 1–2) or harness skill execution (QA End-of-Skill Review, budget breaches, missing moeb tools, reasoning review, uncommitted paths, partial recovery) are always `moeb`. Signals arising from project rubric criteria (layers 3–4, `.moeb/rubrics/` files for non-moeb spec domains) are `project`. When the source cannot be determined, default to `moeb`.
+
+**fix_signal filtering.** The `fix_signal` MCP tool accepts an optional `signal_source` parameter. When provided, signal selection is restricted to signals of that origin before severity ranking is applied.
+
+---
+
 ## Event Files
 
 Event files are written by `fix_signal` and `run` skills to `.moeb/events/` on skill

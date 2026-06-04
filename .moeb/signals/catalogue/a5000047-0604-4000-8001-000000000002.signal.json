@@ -1,6 +1,7 @@
 {
   "signal_id": "a5000047-0604-4000-8001-000000000002",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Read (fix_signal result file)",
   "description": "Used Read to read the oversized fix_signal MCP tool result saved to an external temp file. No moeb equivalent exists for reading paginated large tool output.",

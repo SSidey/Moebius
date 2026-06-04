@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000017-0529-4000-8000-000000000017",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Run output must include a per-phase token and cost breakdown",
   "description": "There is no visibility into how tokens are distributed across the phases of a run (spec authoring, run execution, review, rubric verification). Without this data it is impossible to identify which phase dominates cost, optimise prompt sizes, or give a QA agent the information it needs to assess efficiency. The start_spec prompt alone is known to be 144K characters — but the total session cost is unknown.",

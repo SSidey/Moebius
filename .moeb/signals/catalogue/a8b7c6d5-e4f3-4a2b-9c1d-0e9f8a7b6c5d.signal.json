@@ -1,6 +1,7 @@
 {
   "signal_id": "a8b7c6d5-e4f3-4a2b-9c1d-0e9f8a7b6c5d",
   "category": "ProcessImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "MissingMoebTool signals not emitted for ToolSearch and Read in spec session",
   "description": "ToolSearch was used to load deferred moeb tool schemas at session start, and Read was used to read the oversized start_spec output file from the tool-results directory. Neither was followed by a MissingMoebTool signal, causing moeb-tool-origin to fail. This is a recurring pattern across spec and run sessions.",

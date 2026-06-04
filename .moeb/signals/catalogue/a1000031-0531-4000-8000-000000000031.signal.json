@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000031-0531-4000-8000-000000000031",
   "category": "ProcessImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Signal status and index.md not updated as signals progress through canonical skill pipeline",
   "description": "The fix_signal, spec, and run canonical skills execute their lifecycle phases but never update the signal's `status` field in the catalogue JSON or its corresponding row in `signals/index.md`. Signals remain \"open\" indefinitely regardless of whether they have been picked up, had a spec written, reached candidate, or been resolved. The conductor and human operators cannot determine pipeline position from the catalogue alone — they must cross-reference run artefacts and git tags. The index.md is similarly stale: status cells are never updated after initial write.",

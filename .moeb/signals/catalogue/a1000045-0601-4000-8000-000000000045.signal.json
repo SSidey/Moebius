@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000045-0601-4000-8000-000000000045",
   "category": "ToolImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "gating_condition must be an array of full signal UUIDs, not a prose string",
   "description": "The `gating_condition` field in signal JSON files is currently a string (or null). In practice it contains partial UUIDs or prose referencing prerequisite signals. Partial UUIDs are ambiguous when signals share a common prefix (as in the sequential `a1000xxx` naming scheme). A prose string is also not machine-checkable: the conductor cannot verify whether gating conditions are satisfied without parsing free-form text. Both problems are resolved by changing the field to a typed array of full UUID strings, making gating unambiguous and automatically verifiable against the signal catalogue before a signal is picked up.",

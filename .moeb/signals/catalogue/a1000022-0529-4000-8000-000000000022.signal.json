@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000022-0529-4000-8000-000000000022",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Add moeb skill validate command to check skills against the skill schema",
   "description": "There is no tool to validate skill files against the skill schema. Skills may be incomplete, missing required sections, or inconsistent with the schema without any detection. The .moeb/skills/ directory currently contains only a README with no project-level skill files present, and the bundled skills in assets/skills/ have not been validated since the skill schema was introduced.",

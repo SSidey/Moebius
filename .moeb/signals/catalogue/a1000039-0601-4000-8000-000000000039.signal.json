@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000039-0601-4000-8000-000000000039",
   "category": "ProcessImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "moeb CLI should expose only `init` and `serve`; all harness commands migrate to MCP tools",
   "description": "moeb currently exposes a broad CLI surface (use, spec, run, fix, signal add, adapter management, replay, etc.). The intended architecture is that human operators touch moeb directly only at project setup (`moeb init`) and server start (`moeb serve`). All subsequent harness interactions — spec authoring, run execution, signal management, adapter configuration — are driven by events from Ouro or by Claude Code communicating with the MCP server. Maintaining the wide CLI surface creates a dual-entry-point problem: behaviour diverges between direct CLI invocation and MCP-driven invocation, the CLI implies a direct-API model that conflicts with the MCP-first architecture, and every new capability must be implemented twice.",

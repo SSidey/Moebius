@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000030-0529-4000-8000-000000000030",
   "category": "ToolImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Resolve ambiguity between .moeb/skills/ directory and config.toml skill configuration",
   "description": "The .moeb/skills/ directory exists but contains only a README. It is unclear whether skill overrides should live here or be declared in config.toml, and moeb init does not copy skill templates into .moeb/skills/. The moeb.ai-first-artifact-refinement spec placed skill.template.md in src/moeb/internal/skills/ (dev context) rather than .moeb/skills/, deferring this decision. The Skills folder and config.toml may currently be doubling up on the same responsibility.",

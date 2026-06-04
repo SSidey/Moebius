@@ -1,6 +1,7 @@
 {
   "signal_id": "a2b3c4d5-e6f7-4a89-b012-c3d4e5f6a7b8",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: patch_file blocked by read-set enforcement on spec file",
   "description": "patch_file call on '.moeb/specifications/moeb/moeb.deprecate-patch-file-as-default-write-path.md' during the Per-Step Review Sub-Loop returned 'write_file rejected: exists on disk but has not been read during this run.' The spec file was created with write_file in Phase 4 and not added to the read set, so patch_file was rejected by read-set enforcement. The intended improvement (adding no-signal-reoccurrence to the rubric table) was not applied.",

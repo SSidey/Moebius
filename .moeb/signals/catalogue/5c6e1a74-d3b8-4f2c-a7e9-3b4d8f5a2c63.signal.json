@@ -1,6 +1,7 @@
 {
   "signal_id": "5c6e1a74-d3b8-4f2c-a7e9-3b4d8f5a2c63",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Read for large start_run output",
   "description": "Used Read (Claude Code native) to read the start_run output that exceeded token limits and was saved to a Claude Code internal path. No moeb equivalent exists.",

@@ -1,6 +1,7 @@
 {
   "signal_id": "c8d9e0f1-a2b3-4c4d-8e5f-6a7b8c9d0e1f",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "moeb-tool-origin failed: Read and ToolSearch used without MissingMoebTool signals",
   "description": "External tools Read (to read the oversized start_run output redirected by the kernel) and ToolSearch (to load deferred tool schemas) were used without MissingMoebTool signals, causing the moeb-tool-origin criterion to fail. The moeb-tool-origin rubric always fails when external tools are used regardless of signal status.",

@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000002-0529-4003-8003-000000000003",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "run.skill.md should direct agents to use write_file for pure-insertion changes",
   "description": "Phase 3 of run.skill.md instructs agents to prefer patch_file for changes under ~20 lines, but does not distinguish between changes that remove or modify lines (where patch_file works) and pure insertions (where patch_file fails with orig_count=0). Two tool errors were incurred in this run before falling back to write_file.",

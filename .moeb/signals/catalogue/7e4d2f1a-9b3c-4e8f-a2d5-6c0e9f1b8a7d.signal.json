@@ -1,6 +1,7 @@
 {
   "signal_id": "7e4d2f1a-9b3c-4e8f-a2d5-6c0e9f1b8a7d",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: web-search for GitHub Actions version lookup",
   "description": "Step 3 of moeb.github-actions-release-actions-inline-version-resolution required identifying the latest node24-native stable release tags for actions/checkout, actions/cache, and softprops/action-gh-release using inline training knowledge. Training knowledge (cutoff August 2025) was insufficient to confirm specific node24-native tags for releases likely published after that date. All three returned null and the workflow upgrade was not performed, leaving FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true in place. A web-search or GitHub API query tool would allow the agent to resolve current release tags at implementation time without relying on potentially stale training knowledge.",

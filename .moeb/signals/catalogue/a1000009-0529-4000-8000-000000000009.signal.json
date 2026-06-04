@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000009-0529-4000-8000-000000000009",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Signals with repeated failed fixes must escalate to redesign recommendation",
   "description": "No mechanism exists to detect when a signal has been addressed multiple times without resolution. The patch_file case is the proof: four separate Critical signals, multiple specs, repeated engineering time, all converging on the same root cause with no system-level recognition of the recurrence pattern. Without escalation, the pipeline will continue generating fix attempts indefinitely for the same broken component.",

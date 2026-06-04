@@ -1,6 +1,7 @@
 {
   "signal_id": "b2000001-0529-4001-9001-000000000001",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Read (large MCP result files)",
   "description": "Used Claude Code's external Read tool 5 times to access oversized MCP tool result files (mcp-moeb-start_run and mcp-moeb-grep_files outputs saved to .txt paths by the MCP result size limiter). No moeb equivalent exists for reading truncated MCP tool results. This caused a moeb-tool-origin rubric failure.",

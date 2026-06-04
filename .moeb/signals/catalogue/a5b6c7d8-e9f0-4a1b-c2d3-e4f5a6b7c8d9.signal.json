@@ -1,6 +1,7 @@
 {
   "signal_id": "a5b6c7d8-e9f0-4a1b-c2d3-e4f5a6b7c8d9",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "moeb-tool-origin failed: ToolSearch and Read used without MissingMoebTool signals",
   "description": "Session startup used ToolSearch (external) to load moeb tool schemas and Read (external) to read the oversized start_spec result file. Neither external tool call was accompanied by a buffered MissingMoebTool signal in this run. Rubric moeb-tool-origin marked Fail.",

@@ -1,6 +1,7 @@
 {
   "signal_id": "6bfc810c-afd9-4ab8-bbeb-ef9f8858b860",
   "category": "ProcessImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Signal dedup identity key incorrectly scoped to file path rather than title and category",
   "description": "During the signal-status-lifecycle-tracking run (caa3bb83), the agent raised three Critical Error signals for tool failures (two patch_file failures and one write_file scope enforcement rejection) and reasoned that each was unique because the specific file being patched or written had not appeared in a prior error. This reasoning is incorrect: the canonical dedup procedure defines the identity key as category + title, not category + title + file path. A signal titled 'Tool error not recovered: patch_file' in category Error is a duplicate of any prior signal with the same title and category regardless of which file was involved. The file-path distinction belongs in the signal description and occurrence record, not in the uniqueness determination.\n\nThe consequence was three distinct catalogue entries for what are structurally the same signal pattern (patch_file returns an error and write_file recovers). A correct dedup would have produced one signal with occurrence_count incremented or a single new signal with a generalised title.",

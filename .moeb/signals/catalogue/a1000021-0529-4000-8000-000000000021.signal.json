@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000021-0529-4000-8000-000000000021",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Reviews must automatically detect and signal non-moeb tool operations",
   "description": "Non-moeb tool usage (Read, Bash, Glob, ToolSearch) is tracked as a moeb-tool-origin rubric violation but currently requires the reviewer to identify instances manually by reading the trace. The catalogue already contains seven NewCapability signals for missing moeb tools arising from a single planning session. Automated detection would catch these consistently and reduce reviewer workload.",

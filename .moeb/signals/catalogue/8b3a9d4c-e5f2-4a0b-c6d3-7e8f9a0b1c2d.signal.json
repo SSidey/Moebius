@@ -1,6 +1,7 @@
 {
   "signal_id": "8b3a9d4c-e5f2-4a0b-c6d3-7e8f9a0b1c2d",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "moeb-tool-origin failed: ToolSearch and Read used without MissingMoebTool signals",
   "description": "ToolSearch was used multiple times to load deferred moeb tool schemas (start_spec, write_file, patch_file, read_file, enter_phase, verify_rubrics, complete_review, get_run_status, push_thinking_blocks, git_commit, tag_run, create_branch, grep_files, read_file_range). The external Read tool was used to read the start_spec result file (194KB, saved to disk by the kernel due to size). No MissingMoebTool signals were buffered for any of these calls. This is a recurring pattern across multiple spec sessions.",

@@ -1,6 +1,7 @@
 {
   "signal_id": "a9c7e5b3-d1f2-4e8a-b6c4-2d3e4f5a6b7c",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Read",
   "description": "Used the Claude Code native Read tool to read the mcp__moeb__start_run tool result file (161K+ characters saved to a local path by the system due to output size). No moeb equivalent exists for reading oversized tool result files redirected to local file paths.",

@@ -1,6 +1,7 @@
 {
   "signal_id": "d5e6f7a8-b9c0-4d12-e345-f6a7b8c9d0e1",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Phase 4 review sub-loop structurally blocked on newly-created spec files",
   "description": "The Per-Step Review Sub-Loop in Phase 4 of spec.skill.md attempts to modify the spec file via patch_file (or write_file per the new spec) after it was created in Phase 4. However, read-set enforcement rejects any modification to a file that was not read before being modified. Since spec files are created (not read) in Phase 4, the review sub-loop always fails to apply its improvements. StepMetric for spec-file in this run: iteration_count=1, acceptance_rate=0.0. This is a structural gap that prevents every spec session's Phase 4 review loop from functioning.",

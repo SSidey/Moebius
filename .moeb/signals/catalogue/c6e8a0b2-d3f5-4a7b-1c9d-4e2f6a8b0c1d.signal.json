@@ -1,6 +1,7 @@
 {
   "signal_id": "c6e8a0b2-d3f5-4a7b-1c9d-4e2f6a8b0c1d",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "no-test-regression criterion fails for spec-required test edits",
   "description": "The no-test-regression pass condition states 'no test file edited' unconditionally, but some specifications (like moeb.start-commands-tool-schema-preload Step 8) explicitly require editing test construction sites when struct definitions change. This produces a guaranteed criterion failure for structurally compliant runs.",

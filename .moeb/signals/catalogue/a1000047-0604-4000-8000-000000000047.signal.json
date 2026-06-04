@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000047-0604-4000-8000-000000000047",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "signal_fix and run skills must write workflow-unaware completion events to .moeb/events/",
   "description": "signal_fix and run complete with no durable, machine-readable output. Any external tool that needs to react to a moeb skill completion — whether it is a conductor, a CI step, or a developer script — must poll git branches or the signal catalogue, creating fragile coupling to moeb internals. A structured event file written on completion gives any watcher a reliable detection point with no knowledge required of moeb's internal state.\n\nNote: this signal replaces the in-scope portion of a1000010. That signal's proposed workflow_id field is outside moeb's boundary — moeb does not own workflows and should not carry orchestrator IDs. Mapping event signal_ids to workflow_ids is the conductor's responsibility (see Ouro signal b0000010).",

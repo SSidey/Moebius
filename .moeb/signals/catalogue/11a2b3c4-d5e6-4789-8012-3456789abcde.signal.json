@@ -1,6 +1,7 @@
 {
   "signal_id": "11a2b3c4-d5e6-4789-8012-3456789abcde",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Missing moeb tool: Read (oversized tool result)",
   "description": "Used Claude Code Read tool to read start_spec output saved to disk (161KB+) after exceeding MCP inline result limit. No moeb tool exists for reading harness-persisted oversized output artifacts.",

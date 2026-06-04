@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000019-0529-4000-8000-000000000019",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Reviewer should surface improvements beyond spec compliance",
   "description": "The reviewer currently checks only whether the spec was followed. It does not ask whether the implementation could have been better, whether a simpler approach existed, or whether there are adjacent concerns the spec missed. This limits the value of the review to a pass/fail gate rather than a quality improvement mechanism.",

@@ -1,6 +1,7 @@
 {
   "signal_id": "d2e4f6a8-b0c2-4e6f-9a0b-3e5f7a9b1d3e",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "moeb-tool-origin failed: ToolSearch and Read used without MissingMoebTool signals",
   "description": "During this fix_signal run, ToolSearch was used twice to load deferred MCP tool schemas, and Read was used three times to read the oversized fix_signal result file at an absolute system path. Neither tool is in the moeb registry. No MissingMoebTool signals were written after any of these calls.",

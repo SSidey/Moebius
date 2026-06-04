@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000033-0601-4000-8000-000000000033",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "moeb init creates rubric-audit directory which is not a documented .moeb concern",
   "description": "`src/moeb/src/commands/init.rs` unconditionally creates `.moeb/rubric-audit/` during init. This directory does not appear in the canonical `.moeb/` structure of the moeb project itself, is not referenced by any skill, and has no documented purpose. It pollutes fresh project directories with an unexplained folder, and any tooling that enumerates `.moeb/` will encounter it unexpectedly.",

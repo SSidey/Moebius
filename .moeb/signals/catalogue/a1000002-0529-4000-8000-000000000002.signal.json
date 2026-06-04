@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000002-0529-4000-8000-000000000002",
   "category": "ToolImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Deprecate patch_file as the default agent write path",
   "description": "patch_file has failed across four separate signals in the catalogue (template variable handling on spec.skill.md attempts 1 and 2, hunk failure on README.md requiring three attempts, and a ToolImprovement signal for double-brace preprocessing). In every case write_file fallback succeeded. The cumulative cost of failures — extra tool calls, extra signals, repeated spec authoring, and engineering time — exceeds any token savings from partial writes. The tool is currently the recommended write path in agent prompts and skill instructions.",

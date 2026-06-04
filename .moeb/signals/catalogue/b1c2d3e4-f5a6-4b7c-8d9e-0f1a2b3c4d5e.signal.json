@@ -1,6 +1,7 @@
 {
   "signal_id": "b1c2d3e4-f5a6-4b7c-8d9e-0f1a2b3c4d5e",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Glob",
   "description": "Used Glob (Claude Code) to find patch_file*.rs source files and .signal.json files by glob pattern. No moeb equivalent exists for pattern-based file discovery. grep_files supports substring search but not glob patterns.",

@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000026-0529-4000-8000-000000000026",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Add moeb link command to attach a spec to a file post-creation",
   "description": "When a spec is created but its target file is not linked in the spec frontmatter — whether because the file did not exist at spec authoring time or was omitted — there is no command to add the link without editing the spec file manually or re-running the spec skill from scratch.",

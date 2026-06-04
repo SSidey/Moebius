@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000007-0529-4000-8000-000000000007",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Spec frontmatter should include signal_id and initiating run_id",
   "description": "Specs are authored in response to signals from specific runs but carry no frontmatter link back to the signal_id or run_id that triggered them. Without this, tracing a spec back to its originating signal requires searching run files and signal catalogues manually, which breaks in the autonomous pipeline where correlation must be machine-readable.",

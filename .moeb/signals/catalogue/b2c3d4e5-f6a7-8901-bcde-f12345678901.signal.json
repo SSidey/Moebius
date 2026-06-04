@@ -1,6 +1,7 @@
 {
   "signal_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "enter_phase not called at Phase 5 start due to permission denial",
   "description": "The spec.skill.md Phase 5 annotation requires calling enter_phase as the first action. The call was denied by the session permission system. This means phase-level tool restriction enforcement was not applied during Phase 5, which could allow write tools beyond read_file and write_file during that phase.",

@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000015-0529-4000-8000-000000000015",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Introduce package version rubric — outdated dependencies must be tracked as signals",
   "description": "Cargo.toml declares several major-version-pinned dependencies (diffy = \"0.3\", tower = \"0.4\" in dev-dependencies, tower-http = \"0.5\") with no justification for staying behind the current published version. There is no mechanism to detect when dependencies fall behind latest or carry known security vulnerabilities. This is a silent quality and security risk.",

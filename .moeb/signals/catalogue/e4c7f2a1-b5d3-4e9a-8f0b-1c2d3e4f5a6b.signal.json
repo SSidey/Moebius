@@ -1,6 +1,7 @@
 {
   "signal_id": "e4c7f2a1-b5d3-4e9a-8f0b-1c2d3e4f5a6b",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: patch_file on adapters/mod.rs",
   "description": "patch_file returned 'old_string not found' when attempting to add the WithThinking variant to src/moeb/src/adapters/mod.rs. The file had been read via read_file immediately before the patch_file call. Likely cause: CRLF vs LF line ending mismatch between what read_file returns and what patch_file expects. The error was immediately recovered by calling write_file with the complete file content.",

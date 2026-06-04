@@ -1,0 +1,17 @@
+{
+  "signal_id": "c5f7a3b1-d2e4-4f6a-8c9b-0e1f2a3b4c5d",
+  "category": "NewCapability",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Missing moeb tool: PowerShell bulk JSON field insertion",
+  "description": "PowerShell was required 4 times during the signal-source-field run for bulk operations: migrating 181 catalogue signal files, updating signal index rows, inserting the README Signal Routing section, and checking context-budget line counts. No moeb tool exists for bulk directory-level file transformation.",
+  "proposed_resolution": "Introduce a moeb tool for bulk JSON field insertion across a directory of signal files, eliminating external tool dependency for catalogue migrations and similar harness maintenance operations.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-04T20:35:00Z",
+  "last_seen": "2026-06-04T20:35:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-04T20:35:00Z", "run_id": "4ec859db-b067-4b69-ac84-1780013fa785" }
+  ]
+}

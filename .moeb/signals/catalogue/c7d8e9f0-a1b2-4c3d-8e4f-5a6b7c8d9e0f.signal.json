@@ -1,6 +1,7 @@
 {
   "signal_id": "c7d8e9f0-a1b2-4c3d-8e4f-5a6b7c8d9e0f",
   "category": "ProcessImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "run.skill.md missing post-candidate signal retrospective phase and artifact schema enforcement",
   "description": "After a run passes QA and is tagged as a candidate, no phase exists to review open signals and mark those whose proposed resolution is no longer required due to a different approach being adopted. This gap was discovered retrospectively when moeb.deprecate-patch-file-as-default-write-path superseded nine patch_file signals; those signals had to be manually updated with status=superseded and links[] outside of any run workflow. Additionally, the signal artifact type has no canonical schema reference retained in the binary (analogous to spec-schema.yaml for specifications), and no run rubric enforces producing such a schema when a new artifact type is introduced. The signal.schema.json file was bootstrapped manually at src/moeb/internal/signal.schema.json as part of this signal's creation but has not been formally wired into the binary bundling mechanism.",

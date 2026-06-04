@@ -1,6 +1,7 @@
 {
   "signal_id": "a2f1e0d9-c8b7-4a65-b4c3-d2e1f0a9b8c7",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: patch_file (signal.schema.json)",
   "description": "patch_file returned 'old_string not found in src/moeb/internal/signal.schema.json' when attempting to update the status enum. Root cause: CRLF line endings on Windows cause exact-string mismatch with LF-only old_string. The operation was recovered via write_file with the complete new content; the file is correct.",

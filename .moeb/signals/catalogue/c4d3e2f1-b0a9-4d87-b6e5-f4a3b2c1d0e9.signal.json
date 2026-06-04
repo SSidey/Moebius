@@ -1,6 +1,7 @@
 {
   "signal_id": "c4d3e2f1-b0a9-4d87-b6e5-f4a3b2c1d0e9",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: write_file scope enforcement (accept_candidate_tests.rs)",
   "description": "write_file was rejected with 'exists on disk but has not been read during this run' for src/moeb/src/tools/accept_candidate_tests.rs. The file was newly created in the same run but write_file could not overwrite it without a preceding read_file. The operation was recovered by reading the file first then rewriting; the file content is correct.",

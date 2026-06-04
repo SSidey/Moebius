@@ -1,6 +1,7 @@
 {
   "signal_id": "c3d4e5f6-a7b8-4c9d-8e0f-1a2b3c4d5e6f",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "start_spec output size causes external tool dependency",
   "description": "The start_spec rendered prompt is large enough (1,592 lines, 144K characters) to consistently exceed inline response limits. This forces every spec session to use an external Read tool to access the rendered context, violating the moeb-tool-origin criterion on every spec run.",

@@ -1,6 +1,7 @@
 {
   "signal_id": "f9e2b4d6-c8a0-4f1e-b3d5-7a9c1e3f5b7d",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Bash",
   "description": "Used Bash to perform cargo build --release and cargo test shell commands during run verification. No moeb equivalent exists for executing arbitrary shell commands.",

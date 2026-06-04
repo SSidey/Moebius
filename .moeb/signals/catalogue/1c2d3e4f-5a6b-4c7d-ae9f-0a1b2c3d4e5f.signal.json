@@ -1,6 +1,7 @@
 {
   "signal_id": "1c2d3e4f-5a6b-4c7d-ae9f-0a1b2c3d4e5f",
   "category": "ToolImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "patch_file CRLF normalization incomplete in exact-string mode",
   "description": "Two patch_file calls failed with 'old_string not found' on Windows CRLF files in this run. moeb.patch-file-crlf-normalize added normalize_line_endings but moeb.patch-file-exact-string-rewrite replaced the diff engine with exact substring matching, which may not apply the same normalization. Result: patch_file is unreliable on Windows for files with CRLF endings, requiring write_file fallback on every affected file.",

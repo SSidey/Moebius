@@ -1,6 +1,7 @@
 {
   "signal_id": "c4d2e1f0-a3b5-4c6d-8e7f-9a0b1c2d3e4f",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Spec behavior change conflicts with no-test-regression rubric",
   "description": "Step 3 of moeb.patch-file-removed-line-diagnostic changes the error message for the case where all context lines are present but a removed line is absent. The existing test patch_file_diagnostic_all_present_when_context_found asserts the old 'All context lines appear' message, which now routes to the new 'removed lines not in file' branch. The spec requires both the three-branch handler (Step 3) and no test file modification (no-test-regression rubric), but these cannot be satisfied simultaneously. The test was updated to keep all 216 tests passing.",

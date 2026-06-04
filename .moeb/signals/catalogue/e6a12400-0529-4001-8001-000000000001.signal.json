@@ -1,6 +1,7 @@
 {
   "signal_id": "e6a12400-0529-4001-8001-000000000001",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "spec.skill.md Phase 5 should use write_file instead of patch_file for README row registration",
   "description": "Phase 5 of spec.skill.md instructs the agent to use patch_file for README row insertion. Repeated patch_file failures on long README table rows force write_file fallback every time, at the cost of 3 failed tool calls per run. Directing agents to use read_file + write_file directly for Phase 5 would eliminate this failure mode and reduce run_time and tool_errors.",

@@ -1,6 +1,7 @@
 {
   "signal_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "spec.skill.md Phase 11 create_branch forks from current HEAD, not main",
   "description": "Phase 11 calls create_branch after the spec commit. If the session started on a non-main branch (e.g. a fix_signal feature branch), the new spec implementation branch is forked from that branch rather than from main. This creates a branch with mixed ancestry spanning both the fix_signal work and the new spec, complicating future merges and making the spec branch's base ambiguous.",

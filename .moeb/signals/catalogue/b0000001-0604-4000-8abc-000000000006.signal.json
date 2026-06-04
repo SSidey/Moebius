@@ -1,6 +1,7 @@
 {
   "signal_id": "b0000001-0604-4000-8abc-000000000006",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Uncommitted path at spec skill exit: .moeb/signals/catalogue/7f000001-0604-4000-8abc-000000000012.signal.json",
   "description": "spec.skill.md exited with .moeb/signals/catalogue/7f000001-0604-4000-8abc-000000000012.signal.json uncommitted. This path is not a recognised spec output and was not staged by any git_commit call in this run. It was written in Phase 7 (End-of-Skill Review) as a MissingMoebTool signal for Read.",

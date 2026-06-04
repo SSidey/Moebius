@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000032-0601-4000-8000-000000000032",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "moeb init does not create signals/catalogue subdirectory or stub index.md",
   "description": "Running `moeb init` creates `.moeb/signals/` but does not create the required `.moeb/signals/catalogue/` subdirectory or the stub `signals/index.md` file. Any subsequent `moeb fix-signal` or signal-writing operation assumes both exist and will fail or produce unexpected state. A freshly initialised project cannot be used with the canonical fix-signal skill without manual directory creation.",

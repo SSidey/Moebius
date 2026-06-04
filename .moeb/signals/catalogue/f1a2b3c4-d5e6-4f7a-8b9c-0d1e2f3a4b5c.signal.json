@@ -1,6 +1,7 @@
 {
   "signal_id": "f1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "fix_signal.skill.md Phase 3 uses patch_file as default contrary to deprecate-patch-file spec",
   "description": "Phase 3 of fix_signal.skill.md instructs the agent to call patch_file first for signal pickup markup, falling back to write_file only on error. The deprecate-patch-file spec (moeb.deprecate-patch-file-as-default-write-path) promoted write_file as the unconditional default for all modifications in skill files. In this run, patch_file failed (old_string not found — likely CRLF mismatch on Windows) and the write_file fallback was required, consuming an extra tool call.",

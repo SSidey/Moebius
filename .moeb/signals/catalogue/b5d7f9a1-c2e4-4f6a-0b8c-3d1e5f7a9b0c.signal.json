@@ -1,6 +1,7 @@
 {
   "signal_id": "b5d7f9a1-c2e4-4f6a-0b8c-3d1e5f7a9b0c",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Bash (cargo test)",
   "description": "Used Bash to run `cargo test` to verify the test suite passes. No moeb equivalent exists. This causes moeb-tool-origin to fail on every run that verifies tests.",

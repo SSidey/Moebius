@@ -54,6 +54,8 @@ set, skip to Phase 12 with the message: `"No unresolved signals found."`. If no 
 
 Call `enter_phase` with `phase_id: "phase-2"` as the first action in this phase.
 
+If the template variable `{{fix_signal_source}}` is non-empty, restrict the candidate pool to signals where `signal_source == "{{fix_signal_source}}"` before applying severity ranking. When `{{fix_signal_source}}` is empty, all unresolved signals regardless of source are eligible.
+
 Assign each unresolved signal a numeric severity rank: `"Critical"` → 2, `"Major"` → 1,
 any other value → 0. Sort by severity rank descending, then by `timestamp` ascending
 (oldest first among equal severity). Select the first signal after sorting. Record its
@@ -258,7 +260,7 @@ Write each signal via the **Canonical Signal Dedup-and-Write Procedure** defined
 # write_file creates parent directories automatically — no explicit mkdir required.
 #
 # Canonical signal record schema (all fields in this order):
-# { "signal_id", "category", "severity", "title", "description", "proposed_resolution",
+# { "signal_id", "category", "signal_source", "severity", "title", "description", "proposed_resolution",
 #   "gating_condition": string[] | null  -- UUIDs of signals that must be resolved
 #     before fix_signal may pick up this signal. null = no gate.
 #     Example: ["a1000040-0601-4000-8000-000000000040"]
@@ -271,6 +273,7 @@ For each signal S in the ReviewSignalReport:
   3. If not_found:
        Assign S.signal_id = new UUID v4.
        Set S.status         = "open".
+       Set S.signal_source = S.signal_source if present in the buffered signal definition, else "moeb".
        Set S.occurrence_count = 1.
        Set S.first_seen     = current ISO 8601 timestamp.
        Set S.last_seen      = current ISO 8601 timestamp.
@@ -278,6 +281,7 @@ For each signal S in the ReviewSignalReport:
        Write canonical record to `.moeb/signals/catalogue/<signal_id>.signal.json`.
   4. If found:
        Parse existing record E.
+       If E.signal_source is absent (legacy record without field): set E.signal_source = "moeb".
        If severity_rank(S.severity) > severity_rank(E.severity): E.severity = S.severity.
        If E.status == "resolved": E.status = "reopened".
        E.occurrence_count += 1.
@@ -298,8 +302,8 @@ After completing the Dedup-and-Write Procedure for all signals:
   ```markdown
   # Signal Index
 
-  | Signal ID | Title | Category | Severity | Status | Occurrences | Last Seen | File |
-  |-----------|-------|----------|----------|--------|-------------|-----------|------|
+  | Signal ID | Title | Category | Source | Severity | Status | Occurrences | Last Seen | File |
+  |-----------|-------|----------|--------|----------|--------|-------------|-----------|------|
   ```
 
 - For each canonical signal written in the current run, search the existing table for a
@@ -310,7 +314,7 @@ After completing the Dedup-and-Write Procedure for all signals:
   - If not found: append a new row to the in-memory content, then write the complete
     updated file using `write_file`:
 
-    `| <signal_id> | <title> | <category> | <severity> | <status> | <occurrence_count> | <last_seen> | [catalogue/<signal_id>.signal.json](catalogue/<signal_id>.signal.json) |`
+    `| <signal_id> | <title> | <category> | <signal_source> | <severity> | <status> | <occurrence_count> | <last_seen> | [catalogue/<signal_id>.signal.json](catalogue/<signal_id>.signal.json) |`
 
 2. Do not fail or abort the skill if critical signals are present. Continue to the
    Metrics Recording phase.

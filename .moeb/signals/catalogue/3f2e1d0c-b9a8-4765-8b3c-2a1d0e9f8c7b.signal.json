@@ -1,6 +1,7 @@
 {
   "signal_id": "3f2e1d0c-b9a8-4765-8b3c-2a1d0e9f8c7b",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: patch_file on config.rs",
   "description": "patch_file returned 'old_string not found' on src/moeb/src/config.rs. Cause: CRLF line endings on Windows. Recovered via write_file fallback with complete file content. No intended change was lost.",

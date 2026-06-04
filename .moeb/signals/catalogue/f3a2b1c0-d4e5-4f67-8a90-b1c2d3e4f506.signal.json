@@ -1,6 +1,7 @@
 {
   "signal_id": "f3a2b1c0-d4e5-4f67-8a90-b1c2d3e4f506",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: patch_file (pure-insertion diff failure on .moeb/README.md)",
   "description": "All pure-insertion patch_file attempts against .moeb/README.md failed with 'All context lines appear in the file — check removed lines' despite context lines matching exactly. A remove-and-restore workaround succeeded but inadvertently erased the blank line between ### vcs and the vcs domain table.",

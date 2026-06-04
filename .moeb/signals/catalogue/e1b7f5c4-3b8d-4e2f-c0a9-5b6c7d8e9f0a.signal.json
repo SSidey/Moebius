@@ -1,6 +1,7 @@
 {
   "signal_id": "e1b7f5c4-3b8d-4e2f-c0a9-5b6c7d8e9f0a",
   "category": "ToolImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "patch_file fails on old_string containing Unicode special characters (en-dash U+2013)",
   "description": "patch_file returned 'old_string not found' when attempting to replace a block containing the Unicode en-dash character (U+2013, used in 'steps 3-4'). The grep_files tool correctly located the text at the expected line, confirming the content exists. The failure appears to be a character encoding mismatch between the old_string argument and the file content during exact-string matching. Required falling back to write_file for the complete run.skill.md rewrite.",

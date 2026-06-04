@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000003-0529-4000-8000-000000000003",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Run skill must only emit candidate tag when QA review passes",
   "description": "The run skill currently invokes create_candidate_tag regardless of the QA review outcome. A failed review that still produces a candidate tag means the release pipeline cannot trust candidate builds, and the autonomous conductor would proceed to merge and release an unverified change.",

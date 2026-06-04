@@ -1,6 +1,7 @@
 {
   "signal_id": "f8a9b0c1-d2e3-4f45-a678-b9c0d1e2f3a4",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "run.skill.md Phase 3 patch_file guidance conflicts with no-preferred-patch-file rubric",
   "description": "run.skill.md Phase 3 still instructs agents to use patch_file for changes fewer than ~20 lines. The new no-preferred-patch-file rubric criterion evaluates whether files written during a run instruct agents to prefer patch_file. A future run agent that reads run.skill.md and uses the no-preferred-patch-file criterion will encounter a self-referential tension: the file it operates under (run.skill.md) itself contains a patch_file preference instruction. This spec intentionally left Phase 3 unchanged, but the rubric criterion as written may flag run.skill.md as a violation in future runs.",

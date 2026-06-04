@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000010-0529-4000-8000-000000000010",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "signal_fix skill must emit a structured event on completion",
   "description": "signal_fix completes silently with no durable, machine-readable output for an external orchestrator to detect. The autonomous conductor requires a written event to trigger the next workflow step (spec authoring on the fix branch). Without this, the conductor must poll the git branch list or signal catalogue, which is fragile and creates a coupling between the conductor and moeb internals.",

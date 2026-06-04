@@ -1,6 +1,7 @@
 {
   "signal_id": "fa000003-0604-4000-8000-fabc827d0003",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "context-budget 300-line threshold structurally incompatible with skill markdown files",
   "description": "Both fix_signal.skill.md (~458 lines) and run.skill.md (593 lines) exceed the 300-line context-budget. These are workflow definition documents that cannot be split below 300 lines without kernel changes to support multi-file skill loading. The context-budget criterion was designed for Rust source files; applying it to skill markdown files causes systematic context-budget failures on every run that modifies a skill file.",

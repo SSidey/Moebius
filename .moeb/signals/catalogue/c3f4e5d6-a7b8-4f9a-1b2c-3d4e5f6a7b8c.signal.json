@@ -1,6 +1,7 @@
 {
   "signal_id": "c3f4e5d6-a7b8-4f9a-1b2c-3d4e5f6a7b8c",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Uncommitted path at spec skill exit: .moeb/metrics/78e9a812-b006-4ad8-914e-013abe0c02f7.metrics.json",
   "description": "spec.skill.md exited with .moeb/metrics/78e9a812-b006-4ad8-914e-013abe0c02f7.metrics.json uncommitted. This path is not a recognised spec output and was not staged by any git_commit call in this run.",

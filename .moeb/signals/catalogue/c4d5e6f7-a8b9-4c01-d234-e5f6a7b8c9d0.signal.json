@@ -1,6 +1,7 @@
 {
   "signal_id": "c4d5e6f7-a8b9-4c01-d234-e5f6a7b8c9d0",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: read-absolute-path for tool result files",
   "description": "The native Claude Code Read tool was used to read the start_spec output file at an absolute path (C:\\Users\\Simeon\\...\\mcp-moeb-start_spec-*.txt) outside the working directory. mcp__moeb__read_file only accepts working-directory-relative paths, so there was no moeb equivalent. No MissingMoebTool signal was buffered at the time of the external tool call, violating moeb-tool-origin policy.",

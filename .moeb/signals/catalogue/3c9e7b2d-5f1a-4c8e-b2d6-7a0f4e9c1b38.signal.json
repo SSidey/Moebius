@@ -1,6 +1,7 @@
 {
   "signal_id": "3c9e7b2d-5f1a-4c8e-b2d6-7a0f4e9c1b38",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: github_releases (not exposed in MCP session)",
   "description": "Used WebFetch to perform GitHub Releases API queries and action.yml inspection because github_releases was not available in the MCP tool schema for this session. The tool is implemented in Rust source (src/moeb/src/tools/github_releases.rs) but was not exposed by the running MCP server. WebFetch was used to call https://api.github.com/repos/{repo}/releases?per_page=30 and https://raw.githubusercontent.com/{repo}/{tag}/action.yml for actions/checkout, actions/cache, and softprops/action-gh-release.",

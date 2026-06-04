@@ -1,6 +1,7 @@
 {
   "signal_id": "c3d4e5f6-a7b8-90ab-cdef-123456789012",
   "category": "ToolImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "start_spec output exceeds MCP inline limit due to full README pre-load",
   "description": "The spec.prompt template pre-loads the full .moeb/README.md (now 54KB+ with 60+ specs), producing a 161KB+ rendered output that exceeds the Claude Code MCP inline size limit. Forces harness file fallback on every spec run as the index grows.",

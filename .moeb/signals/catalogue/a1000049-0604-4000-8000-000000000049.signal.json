@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000049-0604-4000-8000-000000000049",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Phase 9 harness artifacts uncommitted at candidate tag time in all canonical skills",
   "description": "In all three canonical skills (run.skill.md, spec.skill.md, fix_signal.skill.md), Phase 7 commits all working-tree changes. Phase 9 (Version and Tag) subsequently writes additional harness artifacts: the run file is re-written with candidate_tag set, the signal catalogue entry status is updated to 'candidate', and the signal index is updated. These files are loose (uncommitted) when the candidate tag is created, meaning the tag does not point at a commit containing the complete run artifact set. This affects every run that reaches Phase 9 across all three skills.",

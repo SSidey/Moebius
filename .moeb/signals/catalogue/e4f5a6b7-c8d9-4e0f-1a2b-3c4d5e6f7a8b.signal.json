@@ -1,6 +1,7 @@
 {
   "signal_id": "e4f5a6b7-c8d9-4e0f-1a2b-3c4d5e6f7a8b",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "fix_signal.prompt missing Reviewer, Moderator, and QA Architect persona sections",
   "description": "fix_signal.rs does not load reviewer, moderator, or qa-architect roles, and fix_signal.prompt has no corresponding persona sections. The Per-Step Review Sub-Loop in fix_signal.skill.md references the Reviewer Persona and Moderator Persona inline, but they are absent from the rendered fix_signal.prompt, making the review sub-loop non-functional. This run added the Reasoning Reviewer Persona but exposed the pre-existing gap for the other three personas.",

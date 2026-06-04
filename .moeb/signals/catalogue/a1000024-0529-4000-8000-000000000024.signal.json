@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000024-0529-4000-8000-000000000024",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Rename the moeb run command to remove ambiguity with run artefacts",
   "description": "moeb run is ambiguous: it refers both to the CLI command that executes a spec and to the run artefacts produced by that execution (run files, run IDs, run state, run metrics). This causes confusion in documentation, signals, error messages, and conversations — for example it is unclear whether 'run failed' refers to the command or the artefact being in a failed state.",

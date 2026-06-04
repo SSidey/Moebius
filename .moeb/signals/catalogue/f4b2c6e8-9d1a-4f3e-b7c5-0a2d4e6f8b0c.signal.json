@@ -1,6 +1,7 @@
 {
   "signal_id": "f4b2c6e8-9d1a-4f3e-b7c5-0a2d4e6f8b0c",
   "category": "ProcessImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "MissingMoebTool signals omitted for Read and ToolSearch in fix_signal run",
   "description": "External Claude Code tools Read and ToolSearch were called during this fix_signal invocation — Read to consume the oversized MCP result file (fix_signal prompt output exceeded inline limits), ToolSearch to load deferred moeb tool schemas. Per moeb-tool-origin policy each external tool call must be followed immediately by a buffered MissingMoebTool signal. No such signals were written in this run.",

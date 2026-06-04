@@ -1,6 +1,7 @@
 {
   "signal_id": "d5e4f3c2-a1b0-4c98-b7d6-e5f4a3b2c1d0",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Candidate tag suppressed: QA gate failed",
   "description": "QA Architect review produced Critical signals; qa_passed is false. Failing signals: \"Tool error not recovered: patch_file (signal.schema.json)\", \"Tool error not recovered: patch_file (.moeb/spec-schema.yaml)\", \"Tool error not recovered: write_file scope enforcement (accept_candidate_tests.rs)\".",

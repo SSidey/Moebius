@@ -1,6 +1,7 @@
 {
   "signal_id": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
   "category": "ProcessImprovement",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Workflow-phase improvements added to one skill file are not mirrored to all three canonical skill files",
   "description": "When the Reasoning Reviewer spec (moeb.reasoning-reviewer) was authored, Phase 5b (Reasoning Review) was added only to run.skill.md. The equivalent phase was not added to spec.skill.md or fix_signal.skill.md, meaning reasoning quality monitoring would be absent for spec and fix_signal invocations. The root cause is a missing convention: there is no spec-authoring guideline or rubric criterion that requires the author to explicitly consider whether a new workflow phase applies to all three canonical skill files (run, spec, fix_signal) and, if so, to include Steps for all three. Any future workflow improvement that should apply universally — reviewer phases, metrics steps, budget checks — is at risk of being added to only one skill file.",

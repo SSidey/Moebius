@@ -1,6 +1,7 @@
 {
   "signal_id": "7a6b5c4d-3e2f-4190-9765-4321fedcba09",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: patch_file on query_agent.rs",
   "description": "patch_file returned 'old_string not found' on src/moeb/src/tools/query_agent.rs. Cause: CRLF line endings on Windows. Recovered via write_file fallback.",

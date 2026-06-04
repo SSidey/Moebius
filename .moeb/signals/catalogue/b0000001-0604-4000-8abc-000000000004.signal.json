@@ -1,6 +1,7 @@
 {
   "signal_id": "b0000001-0604-4000-8abc-000000000004",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Uncommitted path at spec skill exit: .moeb/runs/20260604T182235Z_spec_Add-a-signal-source-field-to-the-signal-.json",
   "description": "spec.skill.md exited with the run file uncommitted. This path is not a recognised spec output and was not staged by any git_commit call in this run. It was written in Phase 8 (Metrics Recording).",

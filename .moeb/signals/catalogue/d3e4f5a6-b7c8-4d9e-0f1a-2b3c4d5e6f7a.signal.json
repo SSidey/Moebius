@@ -1,6 +1,7 @@
 {
   "signal_id": "d3e4f5a6-b7c8-4d9e-0f1a-2b3c4d5e6f7a",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: patch_file on src/prompts/spec.prompt",
   "description": "patch_file returned 'old_string not found' on src/prompts/spec.prompt when attempting to add the Reasoning Reviewer Persona section. The file uses Windows CRLF line endings; the patch old_string contained LF only. The operation was recovered by falling back to write_file with complete content, so the intended change was applied successfully.",

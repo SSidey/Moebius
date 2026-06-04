@@ -1,6 +1,7 @@
 {
   "signal_id": "e9f0a1b2-c3d4-4e5f-8607-0809a0b1c2d3",
   "category": "InfrastructureGap",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "fix_signal output exceeds inline limit requiring external Read tool",
   "description": "mcp__moeb__fix_signal returns ~117K characters, exceeding the inline tool result limit in Claude Code MCP mode. The assistant must use the external Read tool to access the saved output file, triggering a moeb-tool-origin failure on every invocation. ToolSearch calls for deferred schema loading also generate unavoidable external tool use.",

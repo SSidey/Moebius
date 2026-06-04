@@ -1,6 +1,7 @@
 {
   "signal_id": "c2d3e4f5-a6b7-4c8d-9e0f-1a2b3c4d5e6f",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: patch_file on src/moeb/src/tools/fix_signal.rs",
   "description": "patch_file returned 'old_string not found' twice on fix_signal.rs when attempting to add reasoning_reviewer_role load and substitution. The file uses Windows CRLF line endings; the patch old_string contained LF only. Both attempts failed. The operation was recovered by falling back to write_file with complete content, so the intended change was applied successfully.",

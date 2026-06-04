@@ -1,6 +1,7 @@
 {
   "signal_id": "f0bf5e4b-0001-4001-8001-000000000001",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Read (start_spec result file)",
   "description": "Used Read (Claude Code built-in) to read the large start_spec result file written to an absolute host path (C:\\Users\\Simeon\\.claude\\...\\mcp-moeb-start_spec-*.txt). The moeb read_file tool only reads relative paths from the project working directory and cannot access this path.",

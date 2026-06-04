@@ -1,6 +1,7 @@
 {
   "signal_id": "2c4d6e8f-0a1b-4c3d-9e5f-7a8b9c0d1e2f",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "query_agent transient error recovery missing from run.skill.md",
   "description": "When query_agent returns a transient error (429 quota exceeded, timeout), the skill provides no guidance for retry or fallback. In run e1e59193, query_agent failed at Step 2 with OpenAI 429, causing the implementing agent to treat all versions as null and make no changes. The spec's primary intent (upgrading action pins) was not accomplished. A recovery instruction would reduce end_review_error_count and prevent future zero-output runs.",

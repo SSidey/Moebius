@@ -1,6 +1,7 @@
 {
   "signal_id": "f2a3b4c5-d6e7-4f89-a0b1-c2d3e4f5a6b7",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: patch_file on .moeb/README.md",
   "description": "patch_file failed 3 times on .moeb/README.md with 'removed lines not in file' and 'removed lines not matching' errors despite read_file_range and grep_files confirming byte-identical content. Recovery required full file reconstruction via write_file. This is now the 2nd occurrence of this failure pattern across spec runs.",

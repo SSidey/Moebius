@@ -1,6 +1,7 @@
 {
   "signal_id": "b3c4d5e6-f7a8-4b90-c123-d4e5f6a7b8c9",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "patch_file systematic line insertion failure corrupted README.md",
   "description": "Four patch_file calls on .moeb/README.md each reported 'applied' with no error, but every hunk that added a net new line (e.g. @@ -N,1 +N,2 @@) produced the same line count (234 -> 234) instead of inserting a new line. Each call merged the new content with the following line, progressively corrupting the vcs section structure. Required 4 additional read_file_range calls and a full write_file rewrite (52157 bytes) to restore correct formatting. The normalize_hunk_counts or find_closest_context functions may be silently converting N+1 insertions into N:N replacements on LF-normalized files.",

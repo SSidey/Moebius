@@ -1,6 +1,7 @@
 {
   "signal_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "category": "ToolImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "start_spec prompt template is inaccessible via moeb tools",
   "description": "The spec prompt template is saved to an absolute path in the user's Claude project folder (outside the working directory). moeb tools only accept working-directory-relative paths, so reading the template requires a Claude Code native Read tool. This causes moeb-tool-origin to fail on every moeb spec invocation.",

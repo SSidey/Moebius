@@ -1,6 +1,7 @@
 {
   "signal_id": "b2c3d4e5-f6a7-890a-bcde-f12345678901",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Missing moeb tool: Read (oversized README JSON)",
   "description": "Used Claude Code Read tool to read the harness-persisted JSON output from read_file on .moeb/README.md (54KB+) after the inline result was truncated. No moeb tool for reading these harness JSON artifacts.",

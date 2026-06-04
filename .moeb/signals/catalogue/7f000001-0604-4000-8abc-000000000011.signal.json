@@ -1,6 +1,7 @@
 {
   "signal_id": "7f000001-0604-4000-8abc-000000000011",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: ToolSearch",
   "description": "Used ToolSearch (×5 calls) to load deferred moeb MCP tool schemas during the spec session. No moeb equivalent exists. The start_spec output embeds a <functions> schema preload block per moeb.start-commands-tool-schema-preload.md, but the block was inaccessible because the start_spec response exceeded Claude Code MCP output limits and was persisted to a temp file. Agents must fall back to Claude Code's ToolSearch meta-tool to load schemas on demand.",

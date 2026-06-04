@@ -1,6 +1,7 @@
 {
   "signal_id": "f5e6d7c8-b9a0-4f1e-8d2c-3e4f5a6b7c8d",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "moeb-tool-origin failed: ToolSearch and Read used without MissingMoebTool signals",
   "description": "During this spec session, ToolSearch was called multiple times to load moeb tool schemas (write_file, create_task_list, complete_review, enter_phase, read_file, patch_file, get_run_status, verify_rubrics), and Read was called multiple times to read the spec prompt output file that exceeded the MCP inline size limit. These are external tools not in the moeb tool registry. No MissingMoebTool signals were buffered for these calls, and moeb-tool-origin was submitted as Pass rather than Fail.",

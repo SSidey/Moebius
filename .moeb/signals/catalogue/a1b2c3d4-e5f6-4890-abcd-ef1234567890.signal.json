@@ -1,6 +1,7 @@
 {
   "signal_id": "a1b2c3d4-e5f6-4890-abcd-ef1234567890",
   "category": "ToolImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "patch_file fails to apply pure-insertion diffs (no removed lines) on large files",
   "description": "4 patch_file attempts using only context+addition lines failed against .moeb/README.md (49.9KB). A remove-and-restore workaround was required, which introduced an unintended blank-line deletion. This pattern will recur whenever an agent needs to insert into a large file without deleting existing content.",

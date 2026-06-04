@@ -1,6 +1,7 @@
 {
   "signal_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "push_thinking_blocks tool unavailable in MCP session until server restart after first build",
   "description": "In the first run after implementing push_thinking_blocks, the tool exists in the new binary but the currently-running MCP server process uses the old binary and does not expose the tool. Phase 5a called push_thinking_blocks and received 'No such tool available', so thinking blocks were not captured and Phase 5b was skipped. The tool will be available in subsequent MCP sessions after the server is restarted with the new binary.",

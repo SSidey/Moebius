@@ -1,6 +1,7 @@
 {
   "signal_id": "7d4b9c17-f2a5-4e8d-c3f7-4a6b2e9d5a85",
   "category": "ToolImprovement",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "patch_file fails with template variables in removed lines",
   "description": "patch_file failed twice when the removed line contained {{run_id}}. Context lines matched but removed lines did not — likely a preprocessing or encoding issue with double-brace sequences. write_file fallback was required. This will recur on any run patching skill files.",

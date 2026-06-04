@@ -1,6 +1,7 @@
 {
   "signal_id": "9e8d7c6b-5a4f-3e2d-1c0b-9a8f7e6d5c4b",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: ToolSearch (deferred schema loading)",
   "description": "ToolSearch called multiple times to load deferred MCP tool schemas before implementation could begin. No moeb equivalent exists for loading deferred tool schemas in the Claude Code environment. Causes moeb-tool-origin to fail on every run.",

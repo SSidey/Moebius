@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000020-0529-4000-8000-000000000020",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Inline reviewer output should use tick/cross bullet list format",
   "description": "Review output is currently free-form prose, making it hard to scan for pass/fail status at a glance. When reviewing a run with 10+ rubric criteria, identifying which criteria failed requires reading the entire review body.",

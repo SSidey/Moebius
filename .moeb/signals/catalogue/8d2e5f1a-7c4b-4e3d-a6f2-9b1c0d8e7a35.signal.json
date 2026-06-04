@@ -1,6 +1,7 @@
 {
   "signal_id": "8d2e5f1a-7c4b-4e3d-a6f2-9b1c0d8e7a35",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "run.skill.md should use write_file after patch_file failure",
   "description": "During run 3853e12f, two patch_file attempts on .github/workflows/release.yml failed before write_file was used as a fallback. The skill currently recommends patch_file for <20-line changes but provides no guidance on escalating after a failure. Each failed patch_file call increments tool_errors, reducing rubric_score. Adding an explicit escalation rule would prevent these redundant failures on subsequent runs.",

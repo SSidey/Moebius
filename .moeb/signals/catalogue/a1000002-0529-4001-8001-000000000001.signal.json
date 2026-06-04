@@ -1,6 +1,7 @@
 {
   "signal_id": "a1000002-0529-4001-8001-000000000001",
   "category": "Error",
+  "signal_source": "moeb",
   "severity": "Critical",
   "title": "Tool error not recovered: patch_file",
   "description": "patch_file was called twice with pure-insertion diffs (no removed lines) on .github/workflows/release.yml. Both attempts failed with 'error applying hunk #1 — All context lines appear in the file'. The operation was recovered via write_file. The kernel recorded both failures as tool errors, causing the tool-errors rubric criterion to fail.",

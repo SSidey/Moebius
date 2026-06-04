@@ -1,6 +1,7 @@
 {
   "signal_id": "9e8d7c6b-5a49-4827-b605-f4e3d2c1b0a9",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Read (external file reader for exact byte inspection)",
   "description": "Used the external Read tool to inspect exact byte content of .moeb/README.md to diagnose repeated patch_file failures. No moeb tool provides byte-level inspection beyond read_file (too large for context) and read_file_range (may normalize content).",

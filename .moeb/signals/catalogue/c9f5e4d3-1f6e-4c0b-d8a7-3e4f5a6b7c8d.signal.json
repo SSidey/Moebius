@@ -1,6 +1,7 @@
 {
   "signal_id": "c9f5e4d3-1f6e-4c0b-d8a7-3e4f5a6b7c8d",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Bash (delete file, rename file for catalogue migration)",
   "description": "Used Bash (PowerShell) to migrate 94 catalogue signal files from identity-key filenames to UUID-based filenames in .moeb/signals/catalogue/. Operations included copying each file to its UUID name and deleting the old identity-key-named file. No moeb equivalent for file deletion or bulk rename exists; the spec explicitly acknowledged this and instructed buffering a MissingMoebTool signal.",

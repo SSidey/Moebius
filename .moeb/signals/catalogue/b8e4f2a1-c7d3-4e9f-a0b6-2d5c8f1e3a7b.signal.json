@@ -1,6 +1,7 @@
 {
   "signal_id": "b8e4f2a1-c7d3-4e9f-a0b6-2d5c8f1e3a7b",
   "category": "NewCapability",
+  "signal_source": "moeb",
   "severity": "Major",
   "title": "Missing moeb tool: Bash",
   "description": "Used Bash tool for shell operations with no moeb equivalent: executing cargo test/build for verification, and deleting project-level skill override files. No moeb tool exists for shell command execution or file deletion.",

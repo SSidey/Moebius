@@ -1,6 +1,7 @@
 {
   "signal_id": "e6f7a8b9-c0d1-4e23-f456-a7b8c9d0e1f2",
   "category": "SkillImprovement",
+  "signal_source": "moeb",
   "severity": "Minor",
   "title": "Spec rubric missing no-signal-reoccurrence criterion for signal-lifecycle trait",
   "description": "Step 6 of moeb.deprecate-patch-file-as-default-write-path closes signal files in .moeb/signals/catalogue/, triggering the signal-lifecycle catalogue trait. The no-signal-reoccurrence criterion (Applies At: run) should appear in the ## Rubric / ### Structured table but was omitted from the initially written spec. The patch_file attempt to add it during Phase 4 review sub-loop was blocked by read-set enforcement. The entry remains absent from the spec's rubric.",
