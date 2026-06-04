@@ -1,0 +1,19 @@
+{
+  "run_id": "78e9a812-b006-4ad8-914e-013abe0c02f7",
+  "timestamp": "2026-06-04T12:50:04Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.skill-completion-event-files.md",
+  "metrics_path": ".moeb/metrics/78e9a812-b006-4ad8-914e-013abe0c02f7.metrics.json",
+  "emittedSignals": [
+    { "id": "7a2f8c3b-d4e1-4f9a-b5c2-6d7e8f9a0b1c", "description": "spec.skill.md Phase 5 patch_file multi-line anchor fails on Windows CRLF README table rows" },
+    { "id": "8b3a9d4c-e5f2-4a0b-c6d3-7e8f9a0b1c2d", "description": "moeb-tool-origin failed: ToolSearch and Read used without MissingMoebTool signals" }
+  ],
+  "tools_used": ["complete_review", "get_run_status", "grep_files", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "start_spec", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
