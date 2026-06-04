@@ -7,7 +7,10 @@
   "description": "Used the Claude Code native Bash tool to run cargo build --release and cargo test from src/moeb/ for Step 7 compilation and test verification. No moeb shell execution tool exists in the moeb registry.",
   "proposed_resolution": "Run moeb spec to introduce a moeb equivalent of the Bash tool covering shell command execution for build and test verification (e.g., a run_command or cargo_build tool).",
   "gating_condition": null,
-  "status": "open",
+  "status": "superseded",
+  "links": [
+    { "artifactType": "signal", "id": "a1000054-0604-4000-8000-000000000054", "type": "superseded_by" }
+  ],
   "occurrence_count": 1,
   "first_seen": "2026-05-31T12:50:00Z",
   "last_seen": "2026-05-31T12:50:00Z",

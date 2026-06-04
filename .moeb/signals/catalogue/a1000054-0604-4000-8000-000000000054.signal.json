@@ -1,0 +1,41 @@
+{
+  "signal_id": "a1000054-0604-4000-8000-000000000054",
+  "category": "NewCapability",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Missing moeb tool: run_command (generic shell execution)",
+  "description": "Every run that verifies compilation or tests is forced to use the external Bash tool because no moeb-native shell execution tool exists. This has produced 14 distinct occurrences across 9 separate signals, all of which collapse to the same root gap. Narrow language-specific tools (cargo_build, cargo_test) were considered but rejected: moeb is project-agnostic, so baking in Rust-specific tooling would require parallel npm_test, pytest, go_test, etc. tooling indefinitely. A generic run_command tool is the correct abstraction. The security concern around arbitrary shell execution is not a meaningful objection — the orchestrating agent already has Bash access through the MCP session; run_command does not expand the blast radius, it merely routes the call through moeb's tool registry.",
+  "proposed_resolution": "Implement a run_command(command, cwd?, timeout_ms?) moeb tool in Rust that executes a shell command via std::process::Command and returns { stdout, stderr, exit_code }. The tool must be registered in both the CLI tool registry and the MCP stdio server tool list to satisfy kernel-thin-and-parity. Platform shell dispatch (PowerShell on Windows, sh on Unix) should be a decision record in the spec.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 14,
+  "first_seen": "2026-05-28T15:22:40Z",
+  "last_seen": "2026-06-04T00:48:49Z",
+  "supersedes": [
+    "b8e4f2a1-c7d3-4e9f-a0b6-2d5c8f1e3a7b",
+    "7d8e9f0a-1b2c-3d4e-5f6a-7b8c9d0e1f2a",
+    "3b7f9e42-1a2c-4d5e-8f3b-7c9e1a2d4f56",
+    "a4c6e8f0-b1d3-4e5f-9a7b-2c0d4e6f8a0b",
+    "b5d7f9a1-c2e4-4f6a-0b8c-3d1e5f7a9b0c",
+    "c9f5e4d3-1f6e-4c0b-d8a7-3e4f5a6b7c8d",
+    "d0a6f5e4-2a7f-4d1c-e9b8-4f5a6b7c8d9e",
+    "b8d6f4c2-e3a1-4f9b-c7d5-3e4f5a6b7c8d",
+    "f9e2b4d6-c8a0-4f1e-b3d5-7a9c1e3f5b7d"
+  ],
+  "occurrences": [
+    { "timestamp": "2026-05-28T15:22:40Z", "run_id": "53922478-9f39-43f0-9e5f-aa0204e9c553" },
+    { "timestamp": "2026-05-28T16:15:00Z", "run_id": "6025fff1-96b2-456b-880d-c89bb2bfd3f7" },
+    { "timestamp": "2026-05-28T16:52:00Z", "run_id": "83fdcee0-edf1-4cf9-89a3-43992408a45a" },
+    { "timestamp": "2026-05-28T18:57:00Z", "run_id": "2915970d-f315-43cc-adfe-237bc48cd92c" },
+    { "timestamp": "2026-05-29T13:30:00Z", "run_id": "9d683661-f996-480b-b9c2-1e1eceb4ceb8" },
+    { "timestamp": "2026-05-30T15:45:00Z", "run_id": "84a4a5ed-f656-4ae3-9f00-79a912d2019b" },
+    { "timestamp": "2026-05-30T16:15:00Z", "run_id": "7c7b0441-87c2-4176-a065-3afcd18f2131" },
+    { "timestamp": "2026-05-30T19:24:00Z", "run_id": "7abaa3ef-0230-4425-8ff6-05b95e572b9d" },
+    { "timestamp": "2026-05-30T21:25:00Z", "run_id": "b84c5bc1-0903-441e-af80-56342cc9bd71" },
+    { "timestamp": "2026-05-31T00:00:00Z", "run_id": "b36c714a-2e80-4a06-a95c-540e231b37c3" },
+    { "timestamp": "2026-05-31T12:00:00Z", "run_id": "599c7619-2a90-4a49-9798-ef0fc07a9c8e" },
+    { "timestamp": "2026-05-31T12:50:00Z", "run_id": "bb689526-3382-4151-8b6a-f79913a3362d" },
+    { "timestamp": "2026-06-03T18:30:00Z", "run_id": "95ee798e-a7aa-4df6-8f80-2ac2827b7295" },
+    { "timestamp": "2026-06-04T00:48:49Z", "run_id": "70698c32-2cf0-45f4-bfa4-4d7cf7cdf5f3" }
+  ]
+}

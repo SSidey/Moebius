@@ -7,7 +7,10 @@
   "description": "signal_fix completes silently with no durable, machine-readable output for an external orchestrator to detect. The autonomous conductor requires a written event to trigger the next workflow step (spec authoring on the fix branch). Without this, the conductor must poll the git branch list or signal catalogue, which is fragile and creates a coupling between the conductor and moeb internals.",
   "proposed_resolution": "On successful completion, signal_fix must write a JSON event file to .moeb/events/ containing: event_type (signal_fixed), workflow_id (if present), signal_id, fix_branch, and timestamp. Create .moeb/events/ if absent. The filename should be {timestamp}_{signal_id}.event.json. The conductor watches this directory for new files. Emit a corresponding event on signal_fix failure (event_type: signal_fix_failed) with a reason field.",
   "gating_condition": null,
-  "status": "needs-revision: scope",
+  "status": "superseded",
+  "links": [
+    { "artifactType": "signal", "id": "a1000047-0604-4000-8000-000000000047", "type": "superseded_by" }
+  ],
   "occurrence_count": 1,
   "first_seen": "2026-05-29T00:00:00Z",
   "last_seen": "2026-05-29T00:00:00Z",

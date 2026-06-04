@@ -7,7 +7,10 @@
   "description": "Used Bash tool for shell operations with no moeb equivalent: executing cargo test/build for verification, and deleting project-level skill override files. No moeb tool exists for shell command execution or file deletion.",
   "proposed_resolution": "Introduce a moeb tool (e.g., `run_command`) that executes shell commands from the working directory, and a `delete_file` tool for removing project files, enabling these operations within the moeb tool-call boundary.",
   "gating_condition": null,
-  "status": "open",
+  "status": "superseded",
+  "links": [
+    { "artifactType": "signal", "id": "a1000054-0604-4000-8000-000000000054", "type": "superseded_by" }
+  ],
   "occurrence_count": 6,
   "first_seen": "2026-05-28T15:22:40Z",
   "last_seen": "2026-05-30T19:24:00Z",

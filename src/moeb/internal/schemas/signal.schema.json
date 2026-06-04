@@ -19,7 +19,11 @@
     "description": { "type": "string" },
     "proposed_resolution": { "type": ["string", "null"] },
     "gating_condition": {},
-    "status": { "type": "string", "enum": ["open", "resolved", "reopened"] },
+    "status": {
+      "type": "string",
+      "enum": ["open", "in_progress", "resolved", "reopened", "superseded", "spec_written", "candidate", "rejected"],
+      "description": "open: active, not yet addressed. in_progress: signal_fix has been started for this signal. resolved: fixed and closed. reopened: was resolved but regressed. superseded: replaced by a different signal (see links). spec_written: a spec exists targeting this signal, not yet run. candidate: a run produced a candidate tag, awaiting acceptance. rejected: intentionally not going to be addressed."
+    },
     "occurrence_count": { "type": "integer", "minimum": 1 },
     "first_seen": { "type": "string", "format": "date-time" },
     "last_seen": { "type": "string", "format": "date-time" },
