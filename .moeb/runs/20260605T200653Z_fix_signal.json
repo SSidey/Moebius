@@ -1,0 +1,20 @@
+{
+  "run_id": "cad1dc1b-4307-40c6-895a-c3a5a027cfdf",
+  "timestamp": "2026-06-05T20:06:53Z",
+  "command": "fix_signal",
+  "event_path": ".moeb/events/a7b8c9d0-e1f2-4a3b-8c4d-5e6f7a8b9c0d.event.json",
+  "metrics_path": ".moeb/metrics/cad1dc1b-4307-40c6-895a-c3a5a027cfdf.metrics.json",
+  "emittedSignals": [
+    { "id": "e6f7a8b9-c0d1-4e2f-3a4b-5c6d7e8f9a0b", "description": "fix_signal: no fallback guidance when read_file result exceeds token limit" }
+  ],
+  "rubric_score": "5/6",
+  "end_review_error_count": 0,
+  "tools_used": ["create_branch", "fix_signal", "get_run_status", "patch_file", "push_thinking_blocks", "read_file", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
