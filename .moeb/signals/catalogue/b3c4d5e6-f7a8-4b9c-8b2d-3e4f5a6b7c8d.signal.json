@@ -1,0 +1,17 @@
+{
+  "signal_id": "b3c4d5e6-f7a8-4b9c-8b2d-3e4f5a6b7c8d",
+  "category": "ReasoningImprovement",
+  "signal_source": "moeb",
+  "severity": "Info",
+  "title": "fix_signal Phase 3: combining patch_file and write_file steps skips prescribed sequence without acknowledging the deviation",
+  "description": "Block 3 justifies combining steps 4 and 5 into a single write_file call but does not explicitly label this as a deviation from the skill-prescribed sequence (patch_file first, then write_file). The reasoning correctly identifies outcome equivalence but presents the combination as simply equivalent rather than as a conscious procedural deviation. In more complex cases, unacknowledged deviations from prescribed sequences may mask errors.",
+  "proposed_resolution": "When combining or reordering prescribed skill steps, explicitly state 'this deviates from the prescribed sequence' and justify why the deviation is safe before proceeding. This keeps the reasoning auditable and prevents silent drift from skill instructions.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-05T22:40:20Z",
+  "last_seen": "2026-06-05T22:40:20Z",
+  "occurrences": [
+    { "timestamp": "2026-06-05T22:40:20Z", "run_id": "dd68403a-68ae-4c04-974e-919f88cb5bed" }
+  ]
+}
