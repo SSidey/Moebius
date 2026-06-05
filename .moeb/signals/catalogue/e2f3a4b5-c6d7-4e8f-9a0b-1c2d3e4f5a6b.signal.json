@@ -7,7 +7,7 @@
   "description": "run_command on Windows executes commands through cmd.exe, not PowerShell. run.skill.md contains no explicit guidance on which shell is used, so agents default to PowerShell cmdlets (e.g. Get-ChildItem, Sort-Object, Select-Object) in run_command calls. These fail with 'not recognized as an internal or external command' because cmd.exe cannot execute PowerShell cmdlets. The correct approach is to use cmd.exe-compatible syntax (e.g. dir, type, findstr) on Windows and sh-compatible syntax on Unix. Observed in the moeb.run-skill-tool-improvement-signal run where Get-ChildItem and Sort-Object calls failed and had to be retried with dir /O-D /B.",
   "proposed_resolution": "Add explicit guidance in run.skill.md (e.g. in Phase 3 tool-use notes or the Tool Origin Policy section) stating: run_command uses cmd.exe on Windows and sh on Unix. Agents must use shell-appropriate syntax — cmd commands on Windows (dir, type, findstr, etc.), sh-compatible commands on Unix — and must not use PowerShell cmdlets in run_command calls regardless of the host environment.",
   "gating_condition": null,
-  "status": "in_progress",
+  "status": "spec_written",
   "links": [
     { "artifactType": "signal", "id": "b8c9d0e1-f2a3-4b4c-9d5e-6f7a8b9c0d1e", "type": "related" }
   ],
