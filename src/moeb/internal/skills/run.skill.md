@@ -39,6 +39,15 @@ Additionally, if a moeb tool call returns output that indicates silent failure, 
 
 Escalate `severity` to `"Major"` when the tool's silent failure caused the intended operation not to complete correctly (e.g. a write that returned success but left the file unchanged, or a patch that silently applied to the wrong location).
 
+### run_command Shell Syntax
+
+`run_command` dispatches to `cmd.exe` on Windows and `sh` on Unix. Always use shell-appropriate syntax in `run_command` calls:
+
+- **Windows (`cmd.exe`):** use built-in cmd commands: `dir`, `type`, `findstr`, `echo`, `del`, `copy`, `move`, `md`, `rd`, `set`, `where`. Do not use PowerShell cmdlets.
+- **Unix (`sh`):** use POSIX sh commands: `ls`, `cat`, `grep`, `find`, `echo`, `rm`, `cp`, `mv`, `mkdir`, `which`.
+
+**Never use PowerShell cmdlets** (`Get-ChildItem`, `Test-Path`, `Select-String`, `Get-Content`, `Set-Content`, `Remove-Item`, `ForEach-Object`, `Where-Object`) in `run_command` calls regardless of the host platform. `cmd.exe` does not interpret PowerShell syntax and will return a non-zero exit code or produce no output.
+
 ## Phase 1 — Plan
 
 Call `create_task_list` as your very first tool call. Derive one task per numbered Step

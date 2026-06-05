@@ -1,0 +1,17 @@
+{
+  "signal_id": "f8b7c6d5-e4a3-4f2e-1d0c-9b8a7f6e5d4c",
+  "category": "Error",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "run_command tests fail on Windows due to CWD corruption by spec integration tests",
+  "description": "Two run_command tests (run_command_nonzero_exit_is_not_rust_error, run_command_stderr_captured) panic with Windows OS error 267 because std::env::current_dir() returns an invalid directory after spec integration tests mutate and delete the CWD via tempdir. Causes all-tests-pass and no-test-regression to fail on every Windows run regardless of what changed.",
+  "proposed_resolution": "Fix run_command tests to supply an explicit working directory (e.g. tempdir) instead of relying on std::env::current_dir(); apply the CWD_LOCK pattern already used by spec integration tests.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-06T00:30:00Z",
+  "last_seen": "2026-06-06T00:30:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-06T00:30:00Z", "run_id": "b10cfbc1-be60-4b25-a7ae-2054b0063113" }
+  ]
+}
