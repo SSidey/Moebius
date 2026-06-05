@@ -9,7 +9,8 @@
   "emittedSignals": [
     { "id": "c9f4e3a2-1b5d-4e87-a0c2-3d4e5f6a7b8c", "description": "Rubric criterion Pass with acknowledged failures: no-test-regression" },
     { "id": "d7a3b2c1-e4f5-4a96-b0c1-2d3e4f5a6b7c", "description": "Missing moeb tool: ToolSearch" },
-    { "id": "e8b4c3d2-f5a6-4b07-c1d2-3e4f5a6b7c8d", "description": "Missing moeb tool: Read (system path)" }
+    { "id": "e8b4c3d2-f5a6-4b07-c1d2-3e4f5a6b7c8d", "description": "Missing moeb tool: Read (system path)" },
+    { "id": "f1e2d3c4-b5a6-4f78-9012-3456789abcde", "description": "Candidate tag suppressed: QA gate failed" }
   ],
   "rubric_score": 0.875,
   "end_review_error_count": 1,
