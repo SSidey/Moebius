@@ -7,7 +7,7 @@
   "description": "The moeb.patch-file-exact-string-rewrite spec intentionally removed normalize_line_endings and specified 'exact byte match, no normalisation'. On Windows, source files use CRLF (\\r\\n) line endings while JSON tool arguments carry LF (\\n) only. Without normalization, every old_string containing a newline fails to match the file content on a CRLF Windows repo. This produced 17 individual signals across 11 distinct runs from 2026-05-30 to 2026-06-04, all with the same root cause: patch_file.rs line 60 runs `original.matches(old_string)` with no prior normalization. The prior normalize_line_endings fix (moeb.patch-file-crlf-normalize) was for the old diffy pipeline and was correctly removed by the rewrite spec, but no equivalent was added for the new exact-string code path. The superseded signals are: e4c7f2a1, 3f2e1d0c, 7a6b5c4d, 1c2d3e4f, c2d3e4f5, d3e4f5a6, 5f3a7b2c, 6a4b8c3d, a2f1e0d9, b3e2d1c0, b4e7f2a1, fa000001, fa000002, 7a2f8c3b, a2b3c4d5-e6f7-4081, e8a1b2c3, f9b2c3d4.",
   "proposed_resolution": "Add CRLF normalization to patch_file.rs in the execute method, immediately after reading the file: strip \\r from both `original` and `old_string` before the substring search, then write the normalized (LF) content back. This is a three-line change. Also add a regression test in patch_file_tests.rs: write a CRLF file, call patch_file with LF old_string, assert success and correct output.",
   "gating_condition": null,
-  "status": "in_progress",
+  "status": "spec_written",
   "occurrence_count": 17,
   "first_seen": "2026-05-30T19:24:00Z",
   "last_seen": "2026-06-04T18:00:41Z",
