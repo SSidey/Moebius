@@ -7,7 +7,7 @@
   "description": "The skill provides the MissingMoebTool pattern for absent tools but has no equivalent for existing moeb tools that produce unexpected output (silent failure, wrong output format, required workaround). When run_command echoed a PowerShell command string instead of executing it, the agent found a workaround (temp PS1 file) but emitted no signal. The temp file was cleaned up before the QA Architect review, leaving no artifact evidence. The QA Architect cannot recover ephemeral in-flight evidence, so the issue was invisible to the end-of-skill review.",
   "proposed_resolution": "Add an instruction to run.skill.md (Tool Origin Policy section) analogous to MissingMoebTool: if a moeb tool call produces output that indicates silent failure, unexpected format, or required a workaround, emit a ToolImprovement signal immediately with the observed behaviour, the workaround used, and the proposed fix.",
   "gating_condition": null,
-  "status": "spec_written",
+  "status": "candidate",
   "occurrence_count": 1,
   "first_seen": "2026-06-05T20:00:00Z",
   "last_seen": "2026-06-05T20:00:00Z",

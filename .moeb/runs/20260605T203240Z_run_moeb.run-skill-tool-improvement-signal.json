@@ -3,7 +3,7 @@
   "timestamp": "2026-06-05T20:32:40Z",
   "command": "run",
   "signal_id": null,
-  "candidate_tag": null,
+  "candidate_tag": "v1.24.1-candidate.moeb-run-skill-tool-improvement-signal",
   "spec_path": ".moeb/specifications/moeb/moeb.run-skill-tool-improvement-signal.md",
   "metrics_path": ".moeb/metrics/72ee485a-68d1-42f2-88ea-5f31145e6de0.metrics.json",
   "emittedSignals": [],
