@@ -1,0 +1,17 @@
+{
+  "signal_id": "e8b4c3d2-f5a6-4b07-c1d2-3e4f5a6b7c8d",
+  "category": "NewCapability",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Missing moeb tool: Read (system path)",
+  "description": "The Claude Code Read tool was used to read start_run output saved to a system temp path outside the project working directory. moeb read_file only accepts project-relative paths and cannot read system-level paths.",
+  "proposed_resolution": "Run moeb spec to ensure start_run output fits within inline response limits or introduce a system-path read tool, eliminating the Claude Code Read dependency for accessing tool-results files.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-05T18:59:27Z",
+  "last_seen": "2026-06-05T18:59:27Z",
+  "occurrences": [
+    { "timestamp": "2026-06-05T18:59:27Z", "run_id": "e525860c-c4b8-4e46-97a0-a23b5c413401" }
+  ]
+}

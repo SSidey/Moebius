@@ -115,3 +115,22 @@ fn patch_file_reports_line_counts_in_success_message() {
     assert!(result.contains("5"), "result must mention original line count: {}", result);
     assert!(result.contains("3"), "result must mention patched line count: {}", result);
 }
+
+#[test]
+fn test_patch_file_crlf_normalization() {
+    let dir = temp_dir();
+    let file = dir.path().join("target.txt");
+    std::fs::write(&file, "line1\r\nline2\r\nline3\r\n").unwrap();
+
+    let tool = PatchFileTool;
+    let args = serde_json::json!({
+        "path": "target.txt",
+        "old_string": "line2\n",
+        "new_string": "replaced\n"
+    });
+    let result = tool.execute(&args, dir.path()).unwrap();
+
+    assert!(result.contains("applied"), "expected success: {}", result);
+    let content = std::fs::read_to_string(&file).unwrap();
+    assert_eq!(content, "line1\nreplaced\nline3\n");
+}

@@ -1,0 +1,30 @@
+{
+  "run_id": "e525860c-c4b8-4e46-97a0-a23b5c413401",
+  "timestamp": "2026-06-05T18:59:27Z",
+  "command": "run",
+  "signal_id": "a1000055-0605-4000-8000-000000000055",
+  "candidate_tag": null,
+  "spec_path": ".moeb/specifications/moeb/moeb.patch-file-exact-string-crlf-normalization.md",
+  "metrics_path": ".moeb/metrics/e525860c-c4b8-4e46-97a0-a23b5c413401.metrics.json",
+  "emittedSignals": [
+    { "id": "c9f4e3a2-1b5d-4e87-a0c2-3d4e5f6a7b8c", "description": "Rubric criterion Pass with acknowledged failures: no-test-regression" },
+    { "id": "d7a3b2c1-e4f5-4a96-b0c1-2d3e4f5a6b7c", "description": "Missing moeb tool: ToolSearch" },
+    { "id": "e8b4c3d2-f5a6-4b07-c1d2-3e4f5a6b7c8d", "description": "Missing moeb tool: Read (system path)" }
+  ],
+  "rubric_score": 0.875,
+  "end_review_error_count": 1,
+  "qa_passed": false,
+  "tools_used": [
+    "complete_review", "create_task_list", "grep_files", "list_directory",
+    "patch_file", "push_thinking_blocks", "read_file", "read_file_range",
+    "run_command", "search_files", "start_run", "update_task",
+    "verify_rubrics", "write_file"
+  ],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

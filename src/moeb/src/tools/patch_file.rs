@@ -56,8 +56,10 @@ impl ToolHandler for PatchFileTool {
         let abs_path = working_dir.join(path);
         let original = std::fs::read_to_string(&abs_path)
             .with_context(|| format!("patch_file: could not read '{}'", path))?;
+        let original = original.replace('\r', "");
+        let old_string = old_string.replace('\r', "");
 
-        let count = original.matches(old_string).count();
+        let count = original.matches(old_string.as_str()).count();
 
         if count == 0 {
             return Err(anyhow::anyhow!(
@@ -72,7 +74,7 @@ impl ToolHandler for PatchFileTool {
             ));
         }
 
-        let patched = original.replacen(old_string, new_string, 1);
+        let patched = original.replacen(old_string.as_str(), new_string, 1);
         let lines_before = original.lines().count();
         let lines_after = patched.lines().count();
 
