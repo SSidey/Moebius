@@ -24,6 +24,21 @@ Prefer moeb tools for every operation during this run. The complete list of avai
 }
 ```
 
+Additionally, if a moeb tool call returns output that indicates silent failure, unexpected format, or required a workaround to proceed, buffer a ToolImprovement signal immediately and incorporate it via the Canonical Signal Dedup-and-Write Procedure during the End-of-Skill Review phase:
+
+```json
+{
+  "category": "ToolImprovement",
+  "severity": "Minor",
+  "title": "Tool output issue: <tool_name> — <brief description of issue>",
+  "description": "Tool <tool_name> returned output indicating <silent failure | unexpected format | required workaround>. Observed: <verbatim or summarised tool output>. Workaround applied: <what was done to compensate, or 'none' if the call was retried>.",
+  "proposed_resolution": "Update <tool_name> to <fix description> so that <expected behaviour> without requiring agent workarounds.",
+  "gating_condition": null
+}
+```
+
+Escalate `severity` to `"Major"` when the tool's silent failure caused the intended operation not to complete correctly (e.g. a write that returned success but left the file unchanged, or a patch that silently applied to the wrong location).
+
 ## Phase 1 — Plan
 
 Call `create_task_list` as your very first tool call. Derive one task per numbered Step

@@ -1,0 +1,21 @@
+{
+  "run_id": "72ee485a-68d1-42f2-88ea-5f31145e6de0",
+  "timestamp": "2026-06-05T20:32:40Z",
+  "command": "run",
+  "signal_id": null,
+  "candidate_tag": null,
+  "spec_path": ".moeb/specifications/moeb/moeb.run-skill-tool-improvement-signal.md",
+  "metrics_path": ".moeb/metrics/72ee485a-68d1-42f2-88ea-5f31145e6de0.metrics.json",
+  "emittedSignals": [],
+  "rubric_score": 1.0,
+  "end_review_error_count": 0,
+  "qa_passed": true,
+  "tools_used": ["complete_review", "create_task_list", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "run_command", "start_run", "update_task", "verify_rubrics"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
