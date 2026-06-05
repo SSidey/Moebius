@@ -1,0 +1,21 @@
+{
+  "run_id": "2b7242f0-6bd0-4827-bffb-bb3a74283d1a",
+  "timestamp": "2026-06-05T18:36:58Z",
+  "command": "fix_signal",
+  "event_path": ".moeb/events/a1000055-0605-4000-8000-000000000055.event.json",
+  "metrics_path": ".moeb/metrics/2b7242f0-6bd0-4827-bffb-bb3a74283d1a.metrics.json",
+  "emittedSignals": [
+    { "id": "e9f8a7b6-c5d4-4e3f-b2a1-d0e9f8a7b6c5", "description": "Missing moeb tool: Read — overflow result file reader" },
+    { "id": "d2e3f4a5-b6c7-4d8e-9f0a-1b2c3d4e5f6a", "description": "Missing moeb tool: ToolSearch — deferred schema loader" }
+  ],
+  "rubric_score": null,
+  "end_review_error_count": 0,
+  "tools_used": ["create_branch", "fix_signal", "get_run_status", "grep_files", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
