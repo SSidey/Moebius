@@ -1,0 +1,20 @@
+{
+  "run_id": "e8333994-1626-47e5-99d4-96ac756985a5",
+  "timestamp": "2026-06-06T12:00:00Z",
+  "command": "fix_signal",
+  "event_path": ".moeb/events/f3a4b5c6-d7e8-4f9a-0b1c-2d3e4f5a6b7c.event.json",
+  "metrics_path": ".moeb/metrics/e8333994-1626-47e5-99d4-96ac756985a5.metrics.json",
+  "emittedSignals": [
+    { "id": "a9b0c1d2-e3f4-4567-89ab-cd1234567890", "description": "fix_signal: external Read and Grep used without MissingMoebTool signals for large result file" }
+  ],
+  "rubric_score": "5 pass, 1 fail, 0 na",
+  "end_review_error_count": 0,
+  "tools_used": ["complete_review", "create_branch", "fix_signal", "get_run_status", "patch_file", "push_thinking_blocks", "read_file", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
