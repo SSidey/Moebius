@@ -7,7 +7,7 @@
   "description": "The no-preferred-patch-file rubric criterion was introduced by moeb.deprecate-patch-file-as-default-write-path when patch_file used fragile diffy/unified-diff patching. After moeb.patch-file-exact-string-rewrite, patch_file performs deterministic exact-string substring replacement, making it reliable and well-suited for targeted edits. The criterion is now stale: (1) it penalises agents for using patch_file even for appropriate single-location edits; (2) Phase 3 of run.skill.md contains a hedge discouraging patch_file that predates the exact-string rewrite. Signal d1e2f3a4 proposed removing the patch_file preference from Phase 3 in favour of unconditional write_file, but given the exact-string rewrite the correct resolution is the opposite direction: restore patch_file as the preferred tool for targeted modifications.",
   "proposed_resolution": "Remove the no-preferred-patch-file rubric criterion from run.skill.md's rubric section. Update Phase 3 guidance to recommend patch_file as the preferred tool for targeted modifications (changes to existing file content), reserving write_file for full file creation or complete rewrites. This aligns with patch_file's current exact-string semantics and eliminates the friction caused by the stale deprecation. Signal d1e2f3a4 (open, Major) is superseded by this signal and should be closed when this signal's spec is executed.",
   "gating_condition": null,
-  "status": "in_progress",
+  "status": "spec_written",
   "links": [
     { "artifactType": "signal", "id": "d1e2f3a4-b5c6-4d7e-9f0a-1b2c3d4e5f6a", "type": "supersedes" },
     { "artifactType": "signal", "id": "f8a9b0c1-d2e3-4f45-a678-b9c0d1e2f3a4", "type": "related" }

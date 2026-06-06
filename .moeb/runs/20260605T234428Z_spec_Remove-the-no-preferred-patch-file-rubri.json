@@ -1,0 +1,21 @@
+{
+  "run_id": "7bfe65d6-3ead-4483-b66a-f37b87674c21",
+  "timestamp": "2026-06-05T23:44:28Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.run-skill-md-no-preferred-patch-file-rubric-criter.md",
+  "metrics_path": ".moeb/metrics/7bfe65d6-3ead-4483-b66a-f37b87674c21.metrics.json",
+  "emittedSignals": [
+    { "id": "a1b2c3d4-e5f6-4a7b-8c9d-e0f1a2b3c4d5", "description": "Uncommitted path at spec skill exit: .moeb/signals/catalogue/f3a4b5c6-d7e8-4f9a-0b1c-2d3e4f5a6b7c.signal.json" },
+    { "id": "b2c3d4e5-f6a7-4b8c-9d0e-f1a2b3c4d5e6", "description": "Uncommitted path at spec skill exit: .moeb/signals/index.md" },
+    { "id": "c3d4e5f6-a7b8-4c9d-8e1f-a2b3c4d5e6f7", "description": "Uncommitted path at spec skill exit: .moeb/metrics/7bfe65d6-3ead-4483-b66a-f37b87674c21.metrics.json" },
+    { "id": "d4e5f6a7-b8c9-4d0e-9f2a-b3c4d5e6f7a8", "description": "Uncommitted path at spec skill exit: .moeb/runs/20260605T234428Z_spec_Remove-the-no-preferred-patch-file-rubri.json" }
+  ],
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "patch_file", "push_thinking_blocks", "read_file", "start_spec", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
