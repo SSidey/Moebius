@@ -7,7 +7,7 @@
   "description": "patch_file has failed across four separate signals in the catalogue (template variable handling on spec.skill.md attempts 1 and 2, hunk failure on README.md requiring three attempts, and a ToolImprovement signal for double-brace preprocessing). In every case write_file fallback succeeded. The cumulative cost of failures — extra tool calls, extra signals, repeated spec authoring, and engineering time — exceeds any token savings from partial writes. The tool is currently the recommended write path in agent prompts and skill instructions.",
   "proposed_resolution": "Remove patch_file from all agent prompts and skill instructions as the preferred write tool. Promote write_file as the unconditional default for all file modifications. Retain patch_file as an available tool but: (1) it must not be called by default, (2) on first failure it must signal immediately with no retry, (3) no silent write_file fallback. Close the four existing patch_file error signals as resolved by this change. Add a rubric to the run skill that no prompt instructs agents to prefer patch_file.",
   "gating_condition": null,
-  "status": "open",
+  "status": "resolved",
   "occurrence_count": 1,
   "first_seen": "2026-05-29T00:00:00Z",
   "last_seen": "2026-05-29T00:00:00Z",
@@ -15,5 +15,6 @@
     { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
   ],
   "picked_up_at": "2026-05-29T15:49:29Z",
-  "fix_branch": "feat/moeb-deprecate-patch-file-as-the-default-agent-write-pa"
+  "fix_branch": "feat/moeb-deprecate-patch-file-as-the-default-agent-write-pa",
+  "archived_on": "2026-06-06T13:30:00Z"
 }

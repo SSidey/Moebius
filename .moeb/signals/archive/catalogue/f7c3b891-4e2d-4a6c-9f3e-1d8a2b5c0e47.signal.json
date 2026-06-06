@@ -7,11 +7,12 @@
   "description": "github_releases is implemented in src/moeb/src/tools/github_releases.rs, registered in tools/mod.rs (line 97), and listed in the MCP parity list (line 177), but was absent from the Claude Code MCP session's deferred tool schema during run 3853e12f-99c2-4283-8161-76fa3cc6df2b. This forced use of WebFetch as an external tool to replicate the GitHub API + action.yml lookup logic, causing moeb-tool-origin to fail. The likely cause is that the Claude Code extension is serving a moeb binary predating commit 8608033 (feat(moeb): execute github-releases-tool specification).",
   "proposed_resolution": "Restart the Claude Code MCP extension with the latest compiled moeb binary so that github_releases appears in the MCP tool schema. Verify by checking that mcp__moeb__github_releases appears in the session's deferred tool list.",
   "gating_condition": null,
-  "status": "open",
+  "status": "resolved",
   "occurrence_count": 1,
   "first_seen": "2026-05-29T15:45:00Z",
   "last_seen": "2026-05-29T15:45:00Z",
   "occurrences": [
     { "timestamp": "2026-05-29T15:45:00Z", "run_id": "3853e12f-99c2-4283-8161-76fa3cc6df2b" }
-  ]
+  ],
+  "archived_on": "2026-06-06T13:30:00Z"
 }

@@ -7,11 +7,12 @@
   "description": "When query_agent returns a transient error (429 quota exceeded, timeout), the skill provides no guidance for retry or fallback. In run e1e59193, query_agent failed at Step 2 with OpenAI 429, causing the implementing agent to treat all versions as null and make no changes. The spec's primary intent (upgrading action pins) was not accomplished. A recovery instruction would reduce end_review_error_count and prevent future zero-output runs.",
   "proposed_resolution": "Add a Phase 2 sub-step to run.skill.md: if query_agent returns an error rather than the expected JSON, retry once; if retry also fails, fall back to using the implementing agent's own training knowledge with an explicit signal noting the fallback.",
   "gating_condition": null,
-  "status": "open",
+  "status": "rejected",
   "occurrence_count": 1,
   "first_seen": "2026-05-29T00:35:23Z",
   "last_seen": "2026-05-29T00:35:23Z",
   "occurrences": [
     { "timestamp": "2026-05-29T00:35:23Z", "run_id": "e1e59193-e8e0-44f3-b1f3-50576b129a7a" }
-  ]
+  ],
+  "archived_on": "2026-06-06T13:30:00Z"
 }

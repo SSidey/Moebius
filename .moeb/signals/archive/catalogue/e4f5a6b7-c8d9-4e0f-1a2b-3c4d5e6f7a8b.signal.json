@@ -7,11 +7,12 @@
   "description": "fix_signal.rs does not load reviewer, moderator, or qa-architect roles, and fix_signal.prompt has no corresponding persona sections. The Per-Step Review Sub-Loop in fix_signal.skill.md references the Reviewer Persona and Moderator Persona inline, but they are absent from the rendered fix_signal.prompt, making the review sub-loop non-functional. This run added the Reasoning Reviewer Persona but exposed the pre-existing gap for the other three personas.",
   "proposed_resolution": "Run moeb spec to extend fix_signal.rs to load reviewer, moderator, and qa-architect roles and inject them into fix_signal.prompt alongside the reasoning_reviewer_persona, mirroring the pattern in start_run.rs and start_spec.rs.",
   "gating_condition": null,
-  "status": "open",
+  "status": "rejected",
   "occurrence_count": 1,
   "first_seen": "2026-05-31T12:52:00Z",
   "last_seen": "2026-05-31T12:52:00Z",
   "occurrences": [
     { "timestamp": "2026-05-31T12:52:00Z", "run_id": "bb689526-3382-4151-8b6a-f79913a3362d" }
-  ]
+  ],
+  "archived_on": "2026-06-06T13:30:00Z"
 }

@@ -7,7 +7,7 @@
   "description": "Step 3 of moeb.github-actions-release-actions-inline-version-resolution required identifying the latest node24-native stable release tags for actions/checkout, actions/cache, and softprops/action-gh-release using inline training knowledge. Training knowledge (cutoff August 2025) was insufficient to confirm specific node24-native tags for releases likely published after that date. All three returned null and the workflow upgrade was not performed, leaving FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true in place. A web-search or GitHub API query tool would allow the agent to resolve current release tags at implementation time without relying on potentially stale training knowledge.",
   "proposed_resolution": "Add a web_search or github_releases moeb tool that queries the GitHub releases API for a given action repository and returns the latest tag whose action.yml declares a specified runs.using version. This would make the inline version resolution step reliable across any knowledge cutoff date.",
   "gating_condition": null,
-  "status": "open",
+  "status": "resolved",
   "occurrence_count": 1,
   "first_seen": "2026-05-29T08:51:30Z",
   "last_seen": "2026-05-29T08:51:30Z",
@@ -15,5 +15,6 @@
     { "timestamp": "2026-05-29T08:51:30Z", "run_id": "6ba066b5-e443-4db5-b72a-0c25f623fd84" }
   ],
   "picked_up_at": "2026-05-29T10:20:25Z",
-  "fix_branch": "feat/moeb-missing-moeb-tool-web-search-for-github-actions-ve"
+  "fix_branch": "feat/moeb-missing-moeb-tool-web-search-for-github-actions-ve",
+  "archived_on": "2026-06-06T13:30:00Z"
 }

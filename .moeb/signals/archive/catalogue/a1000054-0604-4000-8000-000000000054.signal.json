@@ -7,7 +7,7 @@
   "description": "Every run that verifies compilation or tests is forced to use the external Bash tool because no moeb-native shell execution tool exists. This has produced 14 distinct occurrences across 9 separate signals, all of which collapse to the same root gap. Narrow language-specific tools (cargo_build, cargo_test) were considered but rejected: moeb is project-agnostic, so baking in Rust-specific tooling would require parallel npm_test, pytest, go_test, etc. tooling indefinitely. A generic run_command tool is the correct abstraction. The security concern around arbitrary shell execution is not a meaningful objection — the orchestrating agent already has Bash access through the MCP session; run_command does not expand the blast radius, it merely routes the call through moeb's tool registry.",
   "proposed_resolution": "Implement a run_command(command, cwd?, timeout_ms?) moeb tool in Rust that executes a shell command via std::process::Command and returns { stdout, stderr, exit_code }. The tool must be registered in both the CLI tool registry and the MCP stdio server tool list to satisfy kernel-thin-and-parity. Platform shell dispatch (PowerShell on Windows, sh on Unix) should be a decision record in the spec.",
   "gating_condition": null,
-  "status": "open",
+  "status": "resolved",
   "occurrence_count": 14,
   "first_seen": "2026-05-28T15:22:40Z",
   "last_seen": "2026-06-04T00:48:49Z",
@@ -37,5 +37,6 @@
     { "timestamp": "2026-05-31T12:50:00Z", "run_id": "bb689526-3382-4151-8b6a-f79913a3362d" },
     { "timestamp": "2026-06-03T18:30:00Z", "run_id": "95ee798e-a7aa-4df6-8f80-2ac2827b7295" },
     { "timestamp": "2026-06-04T00:48:49Z", "run_id": "70698c32-2cf0-45f4-bfa4-4d7cf7cdf5f3" }
-  ]
+  ],
+  "archived_on": "2026-06-06T13:30:00Z"
 }
