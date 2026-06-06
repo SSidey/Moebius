@@ -1,0 +1,18 @@
+{
+  "signal_id": "a1000068-0606-4000-8000-000000000068",
+  "category": "ProcessImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "run_command PowerShell workaround pattern undocumented: write temp .ps1 file via write_file then execute via powershell -File",
+  "description": "run_command dispatches through cmd.exe on Windows, which prevents inline PowerShell execution via powershell -Command because cmd.exe strips or misroutes quotes and pipes. The established workaround — write a .ps1 script to a temp path using write_file, execute it with run_command using 'powershell -NoProfile -File <path>', then delete the temp file — has been rediscovered independently in multiple runs rather than being treated as a first-class canonical pattern. Without documentation this pattern is invisible to agents encountering the limitation for the first time, causing them to waste tool calls attempting -Command variants before finding the -File approach. Related signals: b8c9d0e1-f2a3-4b4c-9d5e-6f7a8b9c0d1e (root cause: -Command quoting failure through cmd.exe).",
+  "proposed_resolution": "Add a Windows PowerShell section to run.skill.md (Tool Origin Policy or Phase 3 notes) documenting the canonical pattern: when a PowerShell operation is required via run_command on Windows, write the script body to a temp .ps1 file using write_file, execute with 'run_command powershell -NoProfile -File <temp_path>', then delete the temp file with a second run_command call. Include an example invocation. Reference signal b8c9d0e1-f2a3-4b4c-9d5e-6f7a8b9c0d1e as the root cause.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 2,
+  "first_seen": "2026-06-05T20:00:00Z",
+  "last_seen": "2026-06-06T13:30:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-05T20:00:00Z", "run_id": "e525860c-c4b8-4e46-97a0-a23b5c413401" },
+    { "timestamp": "2026-06-06T13:30:00Z", "run_id": "54edcd30-783a-4172-9b42-65e7e44f9882" }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "signal_id": "a1000069-0606-4000-8000-000000000069",
+  "category": "ProcessImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "moeb artifact types lack JSON schemas; signal.schema.json pattern must be extended to all artifact types with schemas as the authoritative source for structure and enums",
+  "description": "Only the signal artifact has a machine-readable JSON schema (src/moeb/internal/schemas/signal.schema.json). All other moeb artifact types — run files (.moeb/runs/), event files (.moeb/events/), metrics files (.moeb/metrics/), and spec files (.moeb/specs/) — have their structure and valid enum values defined only in prose within spec documents and skill files. This creates two problems: (1) agents enforcing structure must search across specs rather than interrogating a schema, and (2) when a spec and a schema disagree, there is no declared authority — the signal schema was only confirmed as authoritative via user instruction ('the schema is the source of truth for signal artifacts') rather than by convention. Additionally, no schema governs artifact filename conventions (e.g. {iso_timestamp}_{signal_id}.event.json, {run_id}.metrics.json), so naming correctness is verified only by reading prose specs. Observed directly: determining valid signal status values, the valid categories for signals, and whether 'rejected' is a valid status all required reading the schema because the spec docs were not trusted.",
+  "proposed_resolution": "For each artifact type, create a JSON schema under src/moeb/internal/schemas/: run.schema.json, event.schema.json, metrics.schema.json, and spec.schema.json. Each schema must define all required and optional fields, valid enum values, and field types. Additionally, create a filename-conventions.schema.json (or equivalent) that defines the canonical filename pattern for each artifact type using a structured format (e.g. regex or JSON Schema pattern property). Establish a project-wide convention that the schema under src/moeb/internal/schemas/ is the authoritative source of truth for structure and enums — superseding any conflicting prose in spec documents or skill files. Document this convention in .moeb/README.md.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-06T13:30:00Z",
+  "last_seen": "2026-06-06T13:30:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-06T13:30:00Z", "run_id": "54edcd30-783a-4172-9b42-65e7e44f9882" }
+  ]
+}
