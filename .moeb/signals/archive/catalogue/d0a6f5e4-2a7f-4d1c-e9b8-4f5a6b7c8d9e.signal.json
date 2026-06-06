@@ -1,0 +1,28 @@
+﻿{
+    "signal_id":  "d0a6f5e4-2a7f-4d1c-e9b8-4f5a6b7c8d9e",
+    "category":  "NewCapability",
+    "signal_source":  "moeb",
+    "severity":  "Major",
+    "title":  "Missing moeb tool: Bash (cargo build and cargo test)",
+    "description":  "Used Bash to run cargo build and cargo test in src/moeb/ for Step 9 of the signal-catalogue-id-based-naming specification. No moeb equivalent for executing build or test commands exists in the moeb tool registry. Both build validation and test suite execution require external Bash invocations in every run.",
+    "proposed_resolution":  "Run moeb spec to introduce a moeb cargo_build and cargo_test tool that executes compilation and test suite verification from within the moeb tool registry, eliminating the need for external Bash in every run\u0027s Step 9.",
+    "gating_condition":  null,
+    "status":  "superseded",
+    "links":  [
+                  {
+                      "artifactType":  "signal",
+                      "id":  "a1000054-0604-4000-8000-000000000054",
+                      "type":  "superseded_by"
+                  }
+              ],
+    "occurrence_count":  1,
+    "first_seen":  "2026-05-31T12:00:00Z",
+    "last_seen":  "2026-05-31T12:00:00Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-05-31T12:00:00Z",
+                            "run_id":  "599c7619-2a90-4a49-9798-ef0fc07a9c8e"
+                        }
+                    ],
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

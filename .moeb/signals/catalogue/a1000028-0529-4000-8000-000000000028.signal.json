@@ -3,15 +3,21 @@
   "category": "NewCapability",
   "signal_source": "moeb",
   "severity": "Minor",
-  "title": "moeb use command should support specifying agent, workflow, and task",
-  "description": "moeb use currently selects an AI adapter but does not allow specifying which agent persona, workflow variant, or task type to apply for a given invocation. When multiple agent roles (architect, reviewer, coder) or workflow variants (run with QA only, run with full review) are available, there is no way to select them without editing the skill file or config.",
-  "proposed_resolution": "Extend moeb use to accept --agent, --workflow, and --task flags in addition to the adapter name. These map to named configurations in the skill file (agent_roles, workflow_variants, task_types sections). The selection is applied at invocation time and may be combined (e.g. moeb use anthropic --agent architect --task spec). Update the skill runner to resolve the combined selection and document the flag conventions in moeb help.",
-  "gating_condition": null,
+  "title": "Orchestrator must support specifying distinct AI models per skill invocation",
+  "description": "Different skills (spec, run, fix_signal) benefit from different model capabilities and cost profiles. Currently there is no mechanism to specify which model to use for each skill invocation — all use whatever the default adapter provides. Using distinct models per skill (e.g. a more capable model for spec authoring, a faster model for fix_signal) requires orchestrator-level support. This signal is reframed from a CLI concern to an orchestrator concern, gated on the orchestrator architecture being defined.",
+  "proposed_resolution": "As part of the orchestrator design (gated on a1000052 run-auditor and a1000060 retry loop), add model selection to the skill invocation contract: each skill invocation accepts an optional model parameter. The orchestrator selects the model based on skill type and a configurable model-routing policy in config.toml. Document the routing policy format and add a test that verifies the correct model is passed to query_agent for each skill type.",
+  "gating_condition": [
+    "a1000052-0604-4000-8000-000000000052",
+    "a1000060-0606-4000-8000-000000000060"
+  ],
   "status": "open",
   "occurrence_count": 1,
   "first_seen": "2026-05-29T00:00:00Z",
   "last_seen": "2026-05-29T00:00:00Z",
   "occurrences": [
     { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
-  ]
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
 }

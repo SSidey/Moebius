@@ -1,0 +1,36 @@
+﻿{
+    "signal_id":  "a1000002-0529-4003-8003-000000000003",
+    "category":  "SkillImprovement",
+    "signal_source":  "moeb",
+    "severity":  "Minor",
+    "title":  "run.skill.md should direct agents to use write_file for pure-insertion changes",
+    "description":  "Phase 3 of run.skill.md instructs agents to prefer patch_file for changes under ~20 lines, but does not distinguish between changes that remove or modify lines (where patch_file works) and pure insertions (where patch_file fails with orig_count=0). Two tool errors were incurred in this run before falling back to write_file.",
+    "proposed_resolution":  "Add a note to Phase 3 of run.skill.md: if the change is a pure insertion (no lines removed), use write_file instead of patch_file. patch_file does not reliably apply diffs with no removed lines.",
+    "gating_condition":  null,
+    "status":  "resolved",
+    "links":  [
+                  {
+                      "artifactType":  "spec",
+                      "id":  "moeb.deprecate-patch-file-as-default-write-path",
+                      "type":  "resolved_by"
+                  }
+              ],
+    "occurrence_count":  3,
+    "first_seen":  "2026-05-29T23:46:00Z",
+    "last_seen":  "2026-05-29T13:30:00Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-05-29T23:46:00Z",
+                            "run_id":  "9d5a69df-ac3a-4af4-a140-9aae58bd25d1"
+                        },
+                        {
+                            "timestamp":  "2026-05-29T09:50:00Z",
+                            "run_id":  "296e9eb4-c240-4e28-a2eb-a4d0c7aa3bd6"
+                        },
+                        {
+                            "timestamp":  "2026-05-29T13:30:00Z",
+                            "run_id":  "9d683661-f996-480b-b9c2-1e1eceb4ceb8"
+                        }
+                    ],
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

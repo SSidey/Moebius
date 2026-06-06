@@ -3,15 +3,18 @@
   "category": "NewCapability",
   "signal_source": "moeb",
   "severity": "Minor",
-  "title": "Add moeb skill validate command to check skills against the skill schema",
-  "description": "There is no tool to validate skill files against the skill schema. Skills may be incomplete, missing required sections, or inconsistent with the schema without any detection. The .moeb/skills/ directory currently contains only a README with no project-level skill files present, and the bundled skills in assets/skills/ have not been validated since the skill schema was introduced.",
-  "proposed_resolution": "Implement moeb skill validate that reads all skill files in assets/skills/ and .moeb/skills/, parses each against the skill schema, and reports missing or invalid fields using the ✓/✗ bullet format. Integrate as an optional step in the run review phase under a skill_schema_compliance rubric. A companion moeb skill list command should enumerate all available skills (bundled and project-override) with their validation status.",
-  "gating_condition": null,
+  "title": "Add validate_skill MCP tool to check skill files against the skill schema",
+  "description": "There is no tool to validate skill files against the skill schema. Skills may be incomplete, missing required sections, or inconsistent with the schema without any detection. The .moeb/skills/ directory currently contains only a README with no project-level skill files present, and the bundled skills in assets/skills/ have not been validated since the skill schema was introduced. Previously proposed as a CLI command; reframed as an MCP tool since all harness commands are migrating to MCP (per a1000039).",
+  "proposed_resolution": "Implement a validate_skill MCP tool that accepts a skill file path (or 'all'), reads the skill file(s) from assets/skills/ and .moeb/skills/, parses each against the skill schema, and returns a structured report of missing or invalid fields using the pass/fail format. Integrate as an optional step in the run review phase under a skill_schema_compliance rubric.",
+  "gating_condition": ["a1000039-0601-4000-8000-000000000039"],
   "status": "open",
   "occurrence_count": 1,
   "first_seen": "2026-05-29T00:00:00Z",
   "last_seen": "2026-05-29T00:00:00Z",
   "occurrences": [
     { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
-  ]
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
 }

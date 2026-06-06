@@ -1,0 +1,20 @@
+{
+  "signal_id": "a1000066-0606-4000-8000-000000000066",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Canonical skills create new commits for harness artifacts; should amend previous commit and re-apply candidate tags",
+  "description": "After Phase 9 execution, all three canonical skills (spec, run, fix_signal) leave harness artifact files (metrics JSON, run JSON, signal catalogue updates, index.md) uncommitted, or commit them as a separate follow-up commit. This pollutes git log with noise commits and causes the ~25 'Uncommitted path at skill exit' signals observed across multiple runs. The correct behaviour is: after completing the primary work commit, stage any remaining harness artifacts and amend the previous commit (git commit --amend --no-edit). If a candidate tag exists on the amended commit, it must be deleted and re-applied after the amend. This signal consolidates the commit-completeness concern across all canonical skills and supersedes a1000049 and all its symptom signals.",
+  "proposed_resolution": "1. Update all three canonical skills (spec.skill.md, run.skill.md, fix_signal.skill.md) to add a final 'harness artifact commit' step after all other work is complete:\n   a. Check git status for any dirty harness files (signals/*, metrics/*, runs/*).\n   b. If dirty: stage them, run git commit --amend --no-edit.\n   c. If a candidate tag exists on HEAD: delete it and re-tag after the amend.\n2. Add a commit-completeness rubric criterion: 'git status must be clean on skill exit'.\n3. Supersedes a1000049 and the ~25 symptom-level uncommitted-path signals.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 25,
+  "first_seen": "2026-06-04T10:30:00Z",
+  "last_seen": "2026-06-06T00:30:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-06T00:00:00Z", "run_id": "consolidated-from-25-uncommitted-path-signals" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}

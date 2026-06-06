@@ -1,0 +1,20 @@
+{
+  "signal_id": "a1000063-0606-4000-8000-000000000063",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "start_spec and start_run prompts preload full README unconditionally; audit and trim to minimum viable context",
+  "description": "The start_spec and start_run MCP tools inject the full .moeb/README.md into the prompt unconditionally. The README is 64KB+. This is the primary driver of context-budget fires on every skill-file run, oversized MCP inline results, and the need for external Read tool usage. The README contains signal tables, run history, full skill file bodies, and other content that is not needed for the first phase of execution. Nine signals (fa000003, fa000004, c3d4e5f6-90ab, c3d4e5f6-8e0f, e9f0a1b2-8607, d4e5f6a7-1f2a, a2b3c4d5-ab1c, e9d8c7b6, e6f7a8b9-4e2f) are consolidated here.",
+  "proposed_resolution": "1. Audit start_spec and start_run prompt construction to identify all README sections being injected.\n2. Replace full-README injection with a minimal preamble: tool definitions, current run context, and a pointer to read_file_range for on-demand section loading.\n3. Evaluate lazy phase loading: skill files load only the invariants and current-phase instructions; subsequent phases are loaded via read_file_range as execution progresses.\n4. Target: initial prompt size < 8K tokens for start_spec and start_run.\n5. Add a prompt-size regression test to CI that fails if the initial prompt exceeds the threshold.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 9,
+  "first_seen": "2026-05-28T15:46:30Z",
+  "last_seen": "2026-06-05T22:40:15Z",
+  "occurrences": [
+    { "timestamp": "2026-06-06T00:00:00Z", "run_id": "consolidated-from-9-overflow-signals" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}

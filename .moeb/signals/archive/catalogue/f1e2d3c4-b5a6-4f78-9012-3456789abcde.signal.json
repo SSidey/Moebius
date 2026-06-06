@@ -1,0 +1,23 @@
+﻿{
+    "signal_id":  "f1e2d3c4-b5a6-4f78-9012-3456789abcde",
+    "category":  "Error",
+    "signal_source":  "moeb",
+    "severity":  "Major",
+    "title":  "Candidate tag suppressed: QA gate failed",
+    "description":  "QA Architect review produced Critical signals; qa_passed is false. Failing signals: \"Rubric criterion Pass with acknowledged failures: no-test-regression\".",
+    "proposed_resolution":  "Resolve all Critical signals listed above and re-run to obtain a candidate tag.",
+    "gating_condition":  null,
+    "status":  "superseded",
+    "occurrence_count":  1,
+    "first_seen":  "2026-06-05T19:39:04Z",
+    "last_seen":  "2026-06-05T19:39:04Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-06-05T19:39:04Z",
+                            "run_id":  "e525860c-c4b8-4e46-97a0-a23b5c413401"
+                        }
+                    ],
+    "superseded_by":  "a1000058-0606-4000-8000-000000000058",
+    "resolution_summary":  "Superseded by a1000058: QA gate failure events with no diagnostic content replaced by structured qa_gate_result in run artifacts.",
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

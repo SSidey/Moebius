@@ -1,0 +1,28 @@
+﻿{
+    "signal_id":  "d1e2f3a4-b5c6-4d7e-9f0a-1b2c3d4e5f6a",
+    "category":  "SkillImprovement",
+    "signal_source":  "moeb",
+    "severity":  "Major",
+    "title":  "run.skill.md Phase 3 retains patch_file preference contrary to deprecate-patch-file spec",
+    "description":  "Phase 3 of run.skill.md still instructs agents to prefer patch_file for changes fewer than ~20 lines, contradicting the moeb.deprecate-patch-file-as-default-write-path specification that mandates write_file as the unconditional default for all file modifications. This caused no-preferred-patch-file to fail in this run, reducing rubric_score.",
+    "proposed_resolution":  "Run a targeted spec to update Phase 3 of run.skill.md, making write_file the unconditional default for all file modifications and removing the patch_file preference branch entirely.",
+    "gating_condition":  null,
+    "status":  "resolved",
+    "links":  [
+                  {
+                      "artifactType":  "signal",
+                      "id":  "f3a4b5c6-d7e8-4f9a-0b1c-2d3e4f5a6b7c",
+                      "type":  "resolved_by"
+                  }
+              ],
+    "occurrence_count":  1,
+    "first_seen":  "2026-05-31T17:45:37Z",
+    "last_seen":  "2026-05-31T17:45:37Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-05-31T17:45:37Z",
+                            "run_id":  "f01e53ed-320f-4a4d-8c9b-64dc632bde59"
+                        }
+                    ],
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

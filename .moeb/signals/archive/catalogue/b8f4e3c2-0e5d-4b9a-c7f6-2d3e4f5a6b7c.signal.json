@@ -1,0 +1,23 @@
+﻿{
+    "signal_id":  "b8f4e3c2-0e5d-4b9a-c7f6-2d3e4f5a6b7c",
+    "category":  "SkillImprovement",
+    "signal_source":  "moeb",
+    "severity":  "Major",
+    "title":  "Canonical dedup procedure reads identity_key-named files that no longer exist after UUID migration",
+    "description":  "The Canonical Signal Dedup-and-Write Procedure step 2 reads \u0027.moeb/signals/catalogue/\u003cidentity_key\u003e.signal.json\u0027 to check for existing signals. After the signal-catalogue-id-based-naming spec migrated all catalogue files to UUID-based filenames, no identity_key-named file will ever be found. As a result, every signal emission after the migration will create a new catalogue entry rather than incrementing an existing one, defeating deduplication. The spec noted that \u0027The identity key is retained as a deduplication tool written inside the record\u0027 but did not update the read step to search by a different mechanism.",
+    "proposed_resolution":  "Update step 2 of the Canonical Signal Dedup-and-Write Procedure in all three skill files: after failing to find \u0027\u003cidentity_key\u003e.signal.json\u0027, parse index.md for a row whose Title column matches the signal title (or scan catalogue files for a record whose title field matches). If found, use that record\u0027s signal_id to locate and update the UUID-named file. This restores deduplication without reverting to identity_key filenames.",
+    "gating_condition":  null,
+    "status":  "superseded",
+    "occurrence_count":  1,
+    "first_seen":  "2026-05-31T12:00:00Z",
+    "last_seen":  "2026-05-31T12:00:00Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-05-31T12:00:00Z",
+                            "run_id":  "599c7619-2a90-4a49-9798-ef0fc07a9c8e"
+                        }
+                    ],
+    "superseded_by":  "a1000064-0606-4000-8000-000000000064",
+    "resolution_summary":  "Superseded by a1000064: consolidated signal for signal lifecycle management process covering status transitions, dedup, and archive.",
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

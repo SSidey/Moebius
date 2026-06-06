@@ -1,0 +1,48 @@
+﻿{
+    "signal_id":  "9e8d7c6b-5a4f-3e2d-1c0b-9a8f7e6d5c4b",
+    "category":  "NewCapability",
+    "signal_source":  "moeb",
+    "severity":  "Major",
+    "title":  "Missing moeb tool: ToolSearch (deferred schema loading)",
+    "description":  "ToolSearch called multiple times to load deferred MCP tool schemas before implementation could begin. No moeb equivalent exists for loading deferred tool schemas in the Claude Code environment. Causes moeb-tool-origin to fail on every run.",
+    "proposed_resolution":  "Pre-include required tool schemas in start_run and start_spec output, or introduce a schema-preload mechanism that eliminates ToolSearch calls during moeb runs.",
+    "gating_condition":  null,
+    "status":  "superseded",
+    "occurrence_count":  6,
+    "first_seen":  "2026-05-28T16:15:00Z",
+    "last_seen":  "2026-06-01T21:33:38Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-05-28T16:15:00Z",
+                            "run_id":  "6025fff1-96b2-456b-880d-c89bb2bfd3f7"
+                        },
+                        {
+                            "timestamp":  "2026-05-28T18:26:21Z",
+                            "run_id":  "a735facc-5979-429f-8024-6e9f0fc0786a"
+                        },
+                        {
+                            "timestamp":  "2026-05-29T23:46:00Z",
+                            "run_id":  "9d5a69df-ac3a-4af4-a140-9aae58bd25d1"
+                        },
+                        {
+                            "timestamp":  "2026-05-29T00:35:23Z",
+                            "run_id":  "e1e59193-e8e0-44f3-b1f3-50576b129a7a"
+                        },
+                        {
+                            "timestamp":  "2026-05-31T16:45:00Z",
+                            "run_id":  "63b19c35-1809-43e6-bdaf-45dce7be78ca"
+                        },
+                        {
+                            "timestamp":  "2026-06-01T21:33:38Z",
+                            "run_id":  "ec08d9d8-9cf7-4261-8089-cbae83e5686c"
+                        }
+                    ],
+    "picked_up_at":  "2026-06-03T17:56:38Z",
+    "fix_branch":  "feat/moeb-missing-moeb-tool-toolsearch-deferred-schema-loadi",
+    "spec_path":  ".moeb/specifications/moeb/moeb.start-commands-tool-schema-preload.md",
+    "spec_written_at":  "2026-06-03T18:06:15Z",
+    "spec_run_id":  "4d294b8b-0d5d-4a21-9934-9ce43e1a0965",
+    "superseded_by":  "a1000057-0606-4000-8000-000000000057",
+    "resolution_summary":  "Superseded by a1000057: ToolSearch is a legitimate pre-skill bootstrapping tool (no moeb equivalent needed); moeb-tool-origin rubric needs updating to exempt it.",
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

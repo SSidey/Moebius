@@ -1,0 +1,20 @@
+{
+  "signal_id": "a1000058-0606-4000-8000-000000000058",
+  "category": "ProcessImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "QA gate failure records no structured rubric-level breakdown; 'Candidate tag suppressed' events are diagnostically empty",
+  "description": "Four signals (d5e4f3c2, fa000006, c5d6e7f8, f1e2d3c4) were raised as 'Candidate tag suppressed: QA gate failed' with no information about which rubric criteria failed or why. These event records are useless for trend analysis or process improvement. Additionally, there is no retry path in the workflow: when a QA gate fails after signal_fix → spec → run, the signal is left at spec_written with no orchestrated mechanism to re-enter the fix pipeline. The run output currently contains no structured qa_gate_failure section.",
+  "proposed_resolution": "1. Update run.skill.md: when the QA gate fails, write a structured 'qa_gate_result' section to the run JSON artifact containing: list of rubric IDs that failed, the assessor's reasoning per failure, and a pass/fail summary. This replaces the current unstructured 'candidate tag suppressed' log line.\n2. Add a 'qa_gate_failures' array field to the run JSON schema.\n3. Do NOT raise a new 'Candidate tag suppressed' signal — instead, the diagnostic content in the run artifact is queryable by the orchestrator and reviewer.",
+  "gating_condition": ["a1000047-0604-4000-8000-000000000047"],
+  "status": "open",
+  "occurrence_count": 4,
+  "first_seen": "2026-06-02T00:00:00Z",
+  "last_seen": "2026-06-05T19:39:04Z",
+  "occurrences": [
+    { "timestamp": "2026-06-06T00:00:00Z", "run_id": "consolidated-from-4-suppressed-events" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}

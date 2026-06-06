@@ -1,0 +1,23 @@
+﻿{
+    "signal_id":  "fa000006-0604-4000-8000-fabc827d0006",
+    "category":  "Error",
+    "signal_source":  "moeb",
+    "severity":  "Major",
+    "title":  "Candidate tag suppressed: QA gate failed",
+    "description":  "QA Architect review produced Critical signals; qa_passed is false. Failing signals: \u0027patch_file repeatedly failed on fix_signal.skill.md Complete phase\u0027, \u0027patch_file failed on .moeb/README.md due to CRLF despite normalization spec\u0027.",
+    "proposed_resolution":  "Resolve all Critical signals listed above and re-run to obtain a candidate tag.",
+    "gating_condition":  null,
+    "status":  "superseded",
+    "occurrence_count":  1,
+    "first_seen":  "2026-06-04T15:06:57Z",
+    "last_seen":  "2026-06-04T15:06:57Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-06-04T15:06:57Z",
+                            "run_id":  "fabc827d-9152-497d-9ef4-34db4bedcff0"
+                        }
+                    ],
+    "superseded_by":  "a1000058-0606-4000-8000-000000000058",
+    "resolution_summary":  "Superseded by a1000058: QA gate failure events with no diagnostic content replaced by structured qa_gate_result in run artifacts.",
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

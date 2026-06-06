@@ -1,0 +1,23 @@
+﻿{
+    "signal_id":  "e5f6a7b8-c9d0-4e1f-a2b3-c4d5e6f7a8b9",
+    "category":  "NewCapability",
+    "signal_source":  "moeb",
+    "severity":  "Major",
+    "title":  "Missing moeb tool: Read (fix_signal result file)",
+    "description":  "The fix_signal MCP tool returns a rendered prompt that exceeds the MCP inline response limit. The kernel saves the output to a host-absolute temp file path that moeb tools cannot access (read_file uses project-relative paths only). The external Claude Code Read tool was required to read the fix_signal workflow content before the skill phases could begin.",
+    "proposed_resolution":  "Run moeb spec to introduce a result_reader tool that accepts the kernel-reported temp file path and returns its content, or extend fix_signal to chunk its output into multiple smaller tool results.",
+    "gating_condition":  null,
+    "status":  "superseded",
+    "occurrence_count":  1,
+    "first_seen":  "2026-05-31T16:45:00Z",
+    "last_seen":  "2026-05-31T16:45:00Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-05-31T16:45:00Z",
+                            "run_id":  "63b19c35-1809-43e6-bdaf-45dce7be78ca"
+                        }
+                    ],
+    "superseded_by":  "a1000056-0606-4000-8000-000000000056",
+    "resolution_summary":  "Superseded by consolidated signal a1000056: read_file and read_file_range cover in-project reads; absolute-path gap tracked separately.",
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

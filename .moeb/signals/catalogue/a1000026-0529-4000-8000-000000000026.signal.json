@@ -1,11 +1,11 @@
 {
   "signal_id": "a1000026-0529-4000-8000-000000000026",
-  "category": "NewCapability",
+  "category": "SkillImprovement",
   "signal_source": "moeb",
   "severity": "Minor",
-  "title": "Add moeb link command to attach a spec to a file post-creation",
-  "description": "When a spec is created but its target file is not linked in the spec frontmatter — whether because the file did not exist at spec authoring time or was omitted — there is no command to add the link without editing the spec file manually or re-running the spec skill from scratch.",
-  "proposed_resolution": "Implement moeb link <spec-path> <file-path> that writes the file path into the spec frontmatter links section and updates the corresponding README index entry if the spec appears there. The command should validate that the spec file exists and that the target file path is valid relative to the working directory. Print a confirmation of the updated frontmatter on success.",
+  "title": "spec.skill.md lacks a pre-commit linking phase to ensure spec target files are linked before commit",
+  "description": "When a spec is created but its target file is not linked in the spec frontmatter — whether because the file did not exist at spec authoring time or was omitted — there is no automated step to detect and fix the missing link before the spec is committed. Previously proposed as a 'moeb link' CLI command; reframed as a pre-commit phase within spec.skill.md since the linking concern is internal to the spec workflow and CLI commands are being deprecated in favour of MCP tools (per a1000039).",
+  "proposed_resolution": "Add a pre-commit validation phase to spec.skill.md that: (1) reads the spec frontmatter to find the target file reference, (2) verifies the target file exists at the expected path, (3) if the link is missing or the file does not exist yet, adds a placeholder link with a TODO marker and emits a warning in the commit message. This runs as the last step before git_commit. A separate MCP validate_spec tool can be used post-creation to check link integrity.",
   "gating_condition": null,
   "status": "open",
   "occurrence_count": 1,
@@ -13,5 +13,8 @@
   "last_seen": "2026-05-29T00:00:00Z",
   "occurrences": [
     { "timestamp": "2026-05-29T00:00:00Z", "run_id": "b1a2c3d4-e5f6-4789-0529-000000000000" }
-  ]
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
 }

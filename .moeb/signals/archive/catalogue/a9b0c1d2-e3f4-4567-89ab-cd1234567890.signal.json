@@ -1,0 +1,23 @@
+﻿{
+    "signal_id":  "a9b0c1d2-e3f4-4567-89ab-cd1234567890",
+    "category":  "WorkflowCompliance",
+    "signal_source":  "moeb",
+    "severity":  "Minor",
+    "title":  "fix_signal: external Read and Grep used without MissingMoebTool signals for large result file",
+    "description":  "During run e8333994, external Claude Code tools Read and Grep were used to access the fix_signal output saved to a system temp path by the harness, and to search within the cached index.md result. MissingMoebTool signals were not buffered after each call as required by the Tool Origin Policy.",
+    "proposed_resolution":  "Introduce a moeb tool capable of reading harness-generated temp files at absolute system paths, or have the kernel inject large tool results inline rather than saving to disk. In the interim, always buffer MissingMoebTool signals immediately after any external tool call.",
+    "gating_condition":  null,
+    "status":  "superseded",
+    "occurrence_count":  1,
+    "first_seen":  "2026-06-06T12:00:00Z",
+    "last_seen":  "2026-06-06T12:00:00Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-06-06T12:00:00Z",
+                            "run_id":  "e8333994-1626-47e5-99d4-96ac756985a5"
+                        }
+                    ],
+    "superseded_by":  "a1000057-0606-4000-8000-000000000057",
+    "resolution_summary":  "Superseded by a1000057: ToolSearch is a legitimate pre-skill bootstrapping tool (no moeb equivalent needed); moeb-tool-origin rubric needs updating to exempt it.",
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

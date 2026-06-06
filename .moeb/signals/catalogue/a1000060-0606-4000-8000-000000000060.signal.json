@@ -1,0 +1,24 @@
+{
+  "signal_id": "a1000060-0606-4000-8000-000000000060",
+  "category": "ProcessImprovement",
+  "signal_source": "moeb",
+  "severity": "Critical",
+  "title": "No orchestration retry loop exists: failed runs leave signals orphaned at spec_written with no automated re-entry path",
+  "description": "The canonical pipeline is: signal_fix → spec (status: spec_written) → run → candidate (status: candidate). When run fails the QA gate, the signal is left at spec_written with no automated mechanism to retry. There is no orchestrator that: (a) detects the run failed, (b) determines whether a re-fix is warranted vs. a rubric adjustment, (c) triggers a new signal_fix → spec → run cycle on the same signal. Orphaned spec_written signals accumulate silently. The only recovery path is manual human intervention.",
+  "proposed_resolution": "Design and implement an orchestration role (building on run-auditor from a1000052) that monitors run completion events and handles the retry decision:\n1. On run QA gate failure: inspect qa_gate_failures (from a1000058); if root cause is a code defect, re-enter signal_fix with the failed run's diagnostic context as additional input; if root cause is a rubric configuration issue, surface to human for rubric review.\n2. On run success: advance signal status (per a1000059).\n3. Add a 'retry_count' field to run artifacts to bound infinite retry loops.\n4. Define a maximum retry threshold (e.g. 3) after which the signal escalates to redesign (per a1000009).",
+  "gating_condition": [
+    "a1000052-0604-4000-8000-000000000052",
+    "a1000058-0606-4000-8000-000000000058",
+    "a1000059-0606-4000-8000-000000000059"
+  ],
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-06T00:00:00Z",
+  "last_seen": "2026-06-06T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-06T00:00:00Z", "run_id": "identified-in-signal-review-session" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}

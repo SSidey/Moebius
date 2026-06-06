@@ -1,0 +1,23 @@
+﻿{
+    "signal_id":  "a5000047-0604-4000-8001-000000000002",
+    "category":  "NewCapability",
+    "signal_source":  "moeb",
+    "severity":  "Major",
+    "title":  "Missing moeb tool: Read (fix_signal result file)",
+    "description":  "Used Read to read the oversized fix_signal MCP tool result saved to an external temp file. No moeb equivalent exists for reading paginated large tool output.",
+    "proposed_resolution":  "Run moeb spec to introduce a moeb equivalent covering paginated large tool output reading, or cap fix_signal output size to fit within MCP inline limits.",
+    "gating_condition":  null,
+    "status":  "superseded",
+    "occurrence_count":  1,
+    "first_seen":  "2026-06-04T11:22:24Z",
+    "last_seen":  "2026-06-04T11:22:24Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-06-04T11:22:24Z",
+                            "run_id":  "92a0d940-a652-4011-b177-e253ad4744e3"
+                        }
+                    ],
+    "superseded_by":  "a1000056-0606-4000-8000-000000000056",
+    "resolution_summary":  "Superseded by consolidated signal a1000056: read_file and read_file_range cover in-project reads; absolute-path gap tracked separately.",
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

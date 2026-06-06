@@ -1,0 +1,25 @@
+﻿{
+    "signal_id":  "a2b3c4d5-e6f7-4a89-b012-c3d4e5f6a7b8",
+    "category":  "Error",
+    "signal_source":  "moeb",
+    "severity":  "Critical",
+    "title":  "Tool error not recovered: patch_file blocked by read-set enforcement on spec file",
+    "description":  "patch_file call on \u0027.moeb/specifications/moeb/moeb.deprecate-patch-file-as-default-write-path.md\u0027 during the Per-Step Review Sub-Loop returned \u0027write_file rejected: exists on disk but has not been read during this run.\u0027 The spec file was created with write_file in Phase 4 and not added to the read set, so patch_file was rejected by read-set enforcement. The intended improvement (adding no-signal-reoccurrence to the rubric table) was not applied.",
+    "proposed_resolution":  "Investigate why \u003cpatch_file\u003e failed and whether the intended operation completed. If a file write was not applied, a write_file fallback or retry is required before the next run succeeds. Additionally: add an explicit read_file call for the spec file path immediately after write_file in Phase 4 to add it to the read set before the review sub-loop begins.",
+    "gating_condition":  null,
+    "status":  "resolved",
+    "occurrence_count":  2,
+    "first_seen":  "2026-05-29T16:35:00Z",
+    "last_seen":  "2026-05-29T21:22:47Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-05-29T16:35:00Z",
+                            "run_id":  "67666817-857d-418e-8fce-3428b1dfb313"
+                        },
+                        {
+                            "timestamp":  "2026-05-29T21:22:47Z",
+                            "run_id":  "e22533c1-7842-425d-b65a-34cee93b9f89"
+                        }
+                    ],
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

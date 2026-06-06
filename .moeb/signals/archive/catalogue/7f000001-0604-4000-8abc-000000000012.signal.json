@@ -1,0 +1,23 @@
+﻿{
+    "signal_id":  "7f000001-0604-4000-8abc-000000000012",
+    "category":  "NewCapability",
+    "signal_source":  "moeb",
+    "severity":  "Major",
+    "title":  "Missing moeb tool: Read",
+    "description":  "Used Claude Code\u0027s native Read tool (Ã—3 calls) to read oversized tool result files written by the Claude Code MCP infrastructure to temp paths. No moeb equivalent exists. When a moeb tool response exceeds the MCP output size limit, Claude Code saves the result to a local temp file and the agent must use Read to access it. This creates a dependency on a non-moeb tool for every run where a moeb tool produces large output.",
+    "proposed_resolution":  "Run moeb spec to introduce a moeb tool capable of reading temp/arbitrary file paths (not only repo-relative paths), or investigate whether start_spec and start_run prompt sizes can be reduced sufficiently to avoid triggering MCP response overflow. A targeted read_output_file tool accepting an absolute path would eliminate the Read dependency.",
+    "gating_condition":  null,
+    "status":  "superseded",
+    "occurrence_count":  1,
+    "first_seen":  "2026-06-04T18:22:35Z",
+    "last_seen":  "2026-06-04T18:22:35Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-06-04T18:22:35Z",
+                            "run_id":  "998364c0-fde7-4480-89f4-6c9d3c6d4503"
+                        }
+                    ],
+    "superseded_by":  "a1000056-0606-4000-8000-000000000056",
+    "resolution_summary":  "Superseded by consolidated signal a1000056: read_file and read_file_range cover in-project reads; absolute-path gap tracked separately.",
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

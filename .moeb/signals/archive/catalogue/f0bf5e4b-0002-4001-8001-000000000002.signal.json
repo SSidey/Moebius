@@ -1,0 +1,23 @@
+﻿{
+    "signal_id":  "f0bf5e4b-0002-4001-8001-000000000002",
+    "category":  "NewCapability",
+    "signal_source":  "moeb",
+    "severity":  "Minor",
+    "title":  "Missing moeb tool: Glob (file discovery)",
+    "description":  "Used Glob (Claude Code built-in) to discover .github/workflows/*.yml files. The moeb list_directory and search_files tools could have served this purpose.",
+    "proposed_resolution":  "Use mcp__moeb__list_directory and mcp__moeb__search_files for file pattern discovery in future spec sessions instead of the external Glob tool.",
+    "gating_condition":  null,
+    "status":  "superseded",
+    "occurrence_count":  1,
+    "first_seen":  "2026-05-29T00:00:00Z",
+    "last_seen":  "2026-05-29T00:00:00Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-05-29T00:00:00Z",
+                            "run_id":  "f0bf5e4b-f8f0-4a64-b43a-dc59b91e9b89"
+                        }
+                    ],
+    "superseded_by":  "a1000057-0606-4000-8000-000000000057",
+    "resolution_summary":  "Superseded by a1000057: ToolSearch is a legitimate pre-skill bootstrapping tool (no moeb equivalent needed); moeb-tool-origin rubric needs updating to exempt it.",
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

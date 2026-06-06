@@ -1,0 +1,23 @@
+﻿{
+    "signal_id":  "9e8d7c6b-5a49-4827-b605-f4e3d2c1b0a9",
+    "category":  "NewCapability",
+    "signal_source":  "moeb",
+    "severity":  "Major",
+    "title":  "Missing moeb tool: Read (external file reader for exact byte inspection)",
+    "description":  "Used the external Read tool to inspect exact byte content of .moeb/README.md to diagnose repeated patch_file failures. No moeb tool provides byte-level inspection beyond read_file (too large for context) and read_file_range (may normalize content).",
+    "proposed_resolution":  "Run moeb spec to introduce a moeb tool for byte-level file inspection with line-range and exact-output support.",
+    "gating_condition":  null,
+    "status":  "superseded",
+    "occurrence_count":  1,
+    "first_seen":  "2026-05-29T10:58:00Z",
+    "last_seen":  "2026-05-29T10:58:00Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-05-29T10:58:00Z",
+                            "run_id":  "8dd58b95-2f1a-48cc-971b-aeea59cef0d3"
+                        }
+                    ],
+    "superseded_by":  "a1000056-0606-4000-8000-000000000056",
+    "resolution_summary":  "Superseded by consolidated signal a1000056: read_file and read_file_range cover in-project reads; absolute-path gap tracked separately.",
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

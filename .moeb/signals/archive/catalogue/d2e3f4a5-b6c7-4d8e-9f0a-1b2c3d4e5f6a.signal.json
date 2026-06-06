@@ -1,0 +1,23 @@
+﻿{
+    "signal_id":  "d2e3f4a5-b6c7-4d8e-9f0a-1b2c3d4e5f6a",
+    "category":  "NewCapability",
+    "signal_source":  "moeb",
+    "severity":  "Minor",
+    "title":  "Missing moeb tool: ToolSearch â€” deferred schema loader",
+    "description":  "The Claude Code ToolSearch tool was used multiple times during fix_signal to load deferred moeb MCP tool schemas before calling them. No moeb-registered tool covers schema pre-loading in MCP mode. This is a structural gap in the MCP session initialization path.",
+    "proposed_resolution":  "Run moeb spec to expose all tool schemas eagerly in the MCP initialize handshake so agents never need ToolSearch during a run, or introduce a moeb preload_schemas tool that performs this operation within the moeb registry.",
+    "gating_condition":  null,
+    "status":  "superseded",
+    "occurrence_count":  1,
+    "first_seen":  "2026-06-05T18:37:30Z",
+    "last_seen":  "2026-06-05T18:37:30Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-06-05T18:37:30Z",
+                            "run_id":  "2b7242f0-6bd0-4827-bffb-bb3a74283d1a"
+                        }
+                    ],
+    "superseded_by":  "a1000057-0606-4000-8000-000000000057",
+    "resolution_summary":  "Superseded by a1000057: ToolSearch is a legitimate pre-skill bootstrapping tool (no moeb equivalent needed); moeb-tool-origin rubric needs updating to exempt it.",
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

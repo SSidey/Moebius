@@ -1,0 +1,23 @@
+﻿{
+    "signal_id":  "fa000004-0604-4000-8000-fabc827d0004",
+    "category":  "ToolImprovement",
+    "signal_source":  "moeb",
+    "severity":  "Minor",
+    "title":  "No moeb tool for reading overflow output files outside working directory",
+    "description":  "When moeb read_file returns an output-too-large result and saves to a project temp file, there is no moeb tool to read that saved file (path is outside the repo working directory). The agent must use the external Claude Code Read tool, causing moeb-tool-origin to fail. This pattern occurs whenever a moeb tool call produces output larger than the allowed context window.",
+    "proposed_resolution":  "Add a mechanism for agents to retrieve large moeb tool outputs in pages, or add a moeb read_overflow tool that accepts a temp file key and returns a paginated slice of the saved output.",
+    "gating_condition":  null,
+    "status":  "superseded",
+    "occurrence_count":  1,
+    "first_seen":  "2026-06-04T13:34:37Z",
+    "last_seen":  "2026-06-04T13:34:37Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-06-04T13:34:37Z",
+                            "run_id":  "fabc827d-9152-497d-9ef4-34db4bedcff0"
+                        }
+                    ],
+    "superseded_by":  "a1000056-0606-4000-8000-000000000056",
+    "resolution_summary":  "Superseded by consolidated signal a1000056: read_file and read_file_range cover in-project reads; absolute-path gap tracked separately.",
+    "archived_on":  "2026-06-06T00:00:00Z"
+}

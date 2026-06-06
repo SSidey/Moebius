@@ -1,0 +1,28 @@
+﻿{
+    "signal_id":  "b5d7f9a1-c2e4-4f6a-0b8c-3d1e5f7a9b0c",
+    "category":  "NewCapability",
+    "signal_source":  "moeb",
+    "severity":  "Major",
+    "title":  "Missing moeb tool: Bash (cargo test)",
+    "description":  "Used Bash to run `cargo test` to verify the test suite passes. No moeb equivalent exists. This causes moeb-tool-origin to fail on every run that verifies tests.",
+    "proposed_resolution":  "Run moeb spec to introduce a `cargo_test` moeb tool that executes cargo test in the project directory and returns pass/fail status with test output.",
+    "gating_condition":  null,
+    "status":  "superseded",
+    "links":  [
+                  {
+                      "artifactType":  "signal",
+                      "id":  "a1000054-0604-4000-8000-000000000054",
+                      "type":  "superseded_by"
+                  }
+              ],
+    "occurrence_count":  1,
+    "first_seen":  "2026-06-03T18:30:00Z",
+    "last_seen":  "2026-06-03T18:30:00Z",
+    "occurrences":  [
+                        {
+                            "timestamp":  "2026-06-03T18:30:00Z",
+                            "run_id":  "95ee798e-a7aa-4df6-8f80-2ac2827b7295"
+                        }
+                    ],
+    "archived_on":  "2026-06-06T00:00:00Z"
+}
