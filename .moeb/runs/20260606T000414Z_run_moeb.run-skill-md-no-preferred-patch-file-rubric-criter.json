@@ -3,7 +3,7 @@
   "timestamp": "2026-06-06T00:04:14Z",
   "command": "run",
   "signal_id": "f3a4b5c6-d7e8-4f9a-0b1c-2d3e4f5a6b7c",
-  "candidate_tag": null,
+  "candidate_tag": "v1.24.3-candidate.moeb-run-skill-md-no-preferred-patch-file-rubric-criter",
   "spec_path": ".moeb/specifications/moeb/moeb.run-skill-md-no-preferred-patch-file-rubric-criter.md",
   "metrics_path": ".moeb/metrics/12233398-9464-41ac-a704-0365980eb2e4.metrics.json",
   "emittedSignals": [],
