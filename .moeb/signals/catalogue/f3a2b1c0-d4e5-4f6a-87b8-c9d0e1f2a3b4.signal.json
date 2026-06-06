@@ -1,0 +1,20 @@
+{
+  "signal_id": "f3a2b1c0-d4e5-4f6a-87b8-c9d0e1f2a3b4",
+  "category": "NewCapability",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Missing moeb tool: Read (absolute-path tool result file access)",
+  "description": "The start_spec output exceeded the MCP result size limit and was auto-saved to an absolute system path outside the working directory. The external Read tool was required to access it because moeb's read_file only resolves relative paths from the working directory. This forces moeb-tool-origin to fail on every run where a tool result is persisted to a temp file.",
+  "proposed_resolution": "Extend read_file to accept absolute paths, or add a dedicated read_tool_result tool that resolves persisted-output paths from oversized tool results. Signal a1000056-0606-4000-8000-000000000056 tracks the underlying read_file absolute-path gap.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-06T13:45:00Z",
+  "last_seen": "2026-06-06T13:45:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-06T13:45:00Z", "run_id": "ed6e87c4-5bd6-44bf-8c27-e6bffc621211" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}
