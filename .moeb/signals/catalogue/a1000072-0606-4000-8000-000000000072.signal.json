@@ -1,0 +1,17 @@
+{
+  "signal_id": "a1000072-0606-4000-8000-000000000072",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "Phase 3 near-miss: archive_signal omitted status mutation and schema enum entry; caught by Phase 5 QA",
+  "description": "In run c6af8022-8df4-4edf-8bb0-97b1a8dda8b8, the initial Phase 3 implementation of archive_signal.rs set archived_on and resolution_summary but did not set status='archived' as required by spec Step 3 point 4. Additionally, signal.schema.json was not updated to include 'archived' in the status enum despite the spec's Mermaid diagram showing 'archived' as a valid status node. Both omissions were caught during Phase 5 QA Architect inline review and patched before commit, so no broken artifact was committed. Root cause: the spec's schema extension step (Step 1b) did not enumerate the new enum value alongside the new fields, and the implementation checklist did not cross-verify all field mutations against the spec step.",
+  "proposed_resolution": "Add a Phase 3 implementation checklist item: 'For every new tool execute(), verify each field mutation listed in the spec's implementation logic is present in the Rust code.' Additionally, when a spec step introduces a new status value (e.g., 'archived'), the schema extension step should explicitly list the enum addition alongside the new field additions.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-06T00:00:00Z",
+  "last_seen": "2026-06-06T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-06T00:00:00Z", "run_id": "c6af8022-8df4-4edf-8bb0-97b1a8dda8b8" }
+  ]
+}

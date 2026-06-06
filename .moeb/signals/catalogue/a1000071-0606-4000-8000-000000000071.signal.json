@@ -1,0 +1,17 @@
+{
+  "signal_id": "a1000071-0606-4000-8000-000000000071",
+  "category": "NewCapability",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Missing moeb tool: Read — no moeb equivalent for bypassing read_file cache-hit without inline content",
+  "description": "Used the native Claude Code Read tool as a workaround in run c6af8022-8df4-4edf-8bb0-97b1a8dda8b8 when mcp__moeb__read_file returned cache-hit responses without inline file content. No moeb tool exists that unconditionally returns full file content bypassing the session cache. This directly causes moeb-tool-origin rubric failures whenever read_file cache-hit behavior is triggered after context compaction.",
+  "proposed_resolution": "Fixing the root cause (signal a1000070-0606-4000-8000-000000000070: read_file cache-hit should include inline content) would eliminate the need for this tool. If a bypass tool is still needed, consider adding a read_file_uncached variant or a force_read boolean parameter to read_file.",
+  "gating_condition": ["a1000070-0606-4000-8000-000000000070"],
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-06T00:00:00Z",
+  "last_seen": "2026-06-06T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-06T00:00:00Z", "run_id": "c6af8022-8df4-4edf-8bb0-97b1a8dda8b8" }
+  ]
+}

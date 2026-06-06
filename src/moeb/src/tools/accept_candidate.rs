@@ -8,6 +8,7 @@ use super::ToolHandler;
 
 const RUN_ID_TOKEN: &str = "{{run_id}}";
 const RUN_FILE_PATH_TOKEN: &str = "{{run_file_path}}";
+const RESOLUTION_SUMMARY_TOKEN: &str = "{{resolution_summary}}";
 const SIGNAL_ID_TOKEN: &str = "{{signal_id}}";
 
 pub struct AcceptCandidateTool;
@@ -30,6 +31,10 @@ impl ToolHandler for AcceptCandidateTool {
                     "signal_id": {
                         "type": "string",
                         "description": "UUID of the signal catalogue entry to mark as resolved."
+                    },
+                    "resolution_summary": {
+                        "type": "string",
+                        "description": "Optional human-readable explanation of how the signal was resolved. Stored on the signal record alongside resolved_at."
                     }
                 }
             }),
@@ -41,6 +46,7 @@ impl ToolHandler for AcceptCandidateTool {
             .as_str()
             .ok_or_else(|| anyhow::anyhow!("accept_candidate: 'signal_id' must be a string"))?
             .to_string();
+        let resolution_summary = args["resolution_summary"].as_str().unwrap_or("").to_string();
 
         let moeb_dir = working_dir.join(".moeb");
 
@@ -70,6 +76,7 @@ impl ToolHandler for AcceptCandidateTool {
             .replace("{{reasoning_reviewer_persona}}", &reasoning_reviewer_role)
             .replace(RUN_ID_TOKEN, &run_id)
             .replace(RUN_FILE_PATH_TOKEN, &run_file_path)
+            .replace(RESOLUTION_SUMMARY_TOKEN, &resolution_summary)
             .replace(SIGNAL_ID_TOKEN, &signal_id);
 
         Ok(prompt)

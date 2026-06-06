@@ -1,4 +1,5 @@
 pub mod accept_candidate;
+pub mod archive_signal;
 pub mod bump_version;
 pub mod complete_review;
 pub mod create_candidate_tag;
@@ -102,6 +103,7 @@ impl ToolRegistry {
         r.register(Box::new(get_version::GetVersionTool));
         r.register(Box::new(tag_run::TagRunTool));
         r.register(Box::new(tag_signal::TagSignalTool));
+        r.register(Box::new(archive_signal::ArchiveSignalTool));
         r.register(Box::new(query_agent::QueryAgentTool { adapter: None, read_paths }));
         r.register(Box::new(github_releases::GithubReleasesTool));
         r
@@ -233,7 +235,7 @@ impl ToolRegistry {
             "enter_phase", "push_thinking_blocks",
             "create_branch", "git_commit", "git_status",
             "bump_version", "create_candidate_tag",
-            "get_version", "tag_run", "tag_signal", "query_agent", "github_releases",
+            "get_version", "tag_run", "tag_signal", "archive_signal", "query_agent", "github_releases",
             "start_run", "start_spec", "fix_signal", "accept_candidate", "get_run_status",
         ];
         order.iter()

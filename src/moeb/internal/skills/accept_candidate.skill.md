@@ -51,9 +51,10 @@ If the call returns an error (file not found or unreadable):
 
 ## Phase 2 — Resolve
 
-Parse the signal JSON from Phase 1. Apply the following two changes in memory:
+Parse the signal JSON from Phase 1. Apply the following changes in memory:
 - Set `"status"` to `"resolved"`.
 - Set `"resolved_at"` to the current ISO 8601 timestamp.
+- If `{{resolution_summary}}` is non-empty, set `"resolution_summary"` to `{{resolution_summary}}`.
 
 Do not alter any other field (do not overwrite `last_seen`, `occurrences`, or `picked_up_at`).
 

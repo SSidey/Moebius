@@ -264,12 +264,25 @@ Write each signal via the **Canonical Signal Dedup-and-Write Procedure** defined
 #   "gating_condition": string[] | null  -- UUIDs of signals that must be resolved
 #     before fix_signal may pick up this signal. null = no gate.
 #     Example: ["a1000040-0601-4000-8000-000000000040"]
-#   "status", "occurrence_count", "first_seen", "last_seen", "occurrences" }
+#   "status", "occurrence_count", "first_seen", "last_seen", "occurrences",
+#   "resolution_summary": string | null,  -- Human-readable explanation of how the signal was resolved.
+#                                            Set by accept_candidate or the post-run archive hook. Null until resolved.
+#   "superseded_by": string | null,       -- signal_id of the signal that supersedes this one.
+#                                            Null unless status is "superseded".
+#   "archived_on": string | null          -- ISO 8601 timestamp set by archive_signal when the file is
+#                                            moved to archive/catalogue/. Null until archived.
+# }
 
 For each signal S in the ReviewSignalReport:
   1. Compute identity_key as described above.
-  2. Attempt to read `.moeb/signals/catalogue/<identity_key>.signal.json` using read_file.
-     If the file does not exist (read returns an error), treat as not_found.
+  2. Read `.moeb/signals/index.md`. Scan for a row whose `Title` column matches S.title
+     (case-insensitive) and `Category` column matches S.category (case-insensitive).
+     If a matching row is found, extract its `Signal ID` cell as `existing_id`, then
+     read `.moeb/signals/catalogue/<existing_id>.signal.json`; if the read succeeds,
+     treat the signal as found with record E. If no matching row is found in index.md,
+     or if the catalogue file read fails, treat as not_found.
+     (The identity_key slug is retained for audit logging but must not be used as a
+     filename.)
   3. If not_found:
        Assign S.signal_id = new UUID v4.
        Set S.status         = "open".
@@ -315,6 +328,16 @@ After completing the Dedup-and-Write Procedure for all signals:
     updated file using `write_file`:
 
     `| <signal_id> | <title> | <category> | <signal_source> | <severity> | <status> | <occurrence_count> | <last_seen> | [catalogue/<signal_id>.signal.json](catalogue/<signal_id>.signal.json) |`
+
+### archive_signal usage
+
+Call `archive_signal` only after a signal's status has reached `"resolved"` or `"superseded"`.
+The tool performs an integrity check before moving the file; if the active catalogue and index
+are out of sync, the call returns an error rather than proceeding.
+Pass the optional `resolution_summary` argument to record a human-readable explanation
+alongside the archive timestamp. Archived signals are moved to
+`.moeb/signals/archive/catalogue/` and their index rows are moved to
+`.moeb/signals/archive/index.md`.
 
 2. Do not fail or abort the skill if critical signals are present. Continue to the
    Metrics Recording phase.
@@ -458,6 +481,20 @@ Call `tag_signal` with:
 This creates an annotated git tag `signal/<signal_id>` with annotation body
 `fix_signal selected <signal_id> event:<event_id>` on the isolation branch,
 making the signal selection decision and its corresponding event traceable in git history.
+
+## Archive Resolved Signal
+
+Call `archive_signal` with:
+- `signal_id`: the UUID of the signal resolved in this run
+- `resolution_summary`: a one-sentence description of what the implementing run changed
+
+If `archive_signal` returns an error, emit a SkillImprovement signal:
+- `category`: `"SkillImprovement"`, `severity`: `"Minor"`
+- `title`: `"archive_signal failed in fix_signal post-resolution hook: <signal_id>"`
+- `description`: the verbatim error
+- `proposed_resolution`: `"Investigate and manually archive the signal record."`
+
+Continue to the next phase regardless.
 
 ## Complete
 

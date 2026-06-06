@@ -3,15 +3,16 @@
   "category": "SkillImprovement",
   "severity": "Minor",
   "title": "standard_registry_has_expected_tool_count requires manual update per tool addition",
-  "description": "Adding RunCommandTool to ToolRegistry::standard() required updating the hardcoded count assertion in tool_executor_tests.rs from 24 to 25, causing no-test-regression to fail in run 9ef065cf-469d-4284-ab94-bbee84e3c208. Every future tool addition to standard() will trigger this same failure unless the test is redesigned.",
+  "description": "Adding RunCommandTool to ToolRegistry::standard() required updating the hardcoded count assertion in tool_executor_tests.rs from 24 to 25, causing no-test-regression to fail in run 9ef065cf-469d-4284-ab94-bbee84e3c208. Every future tool addition to standard() will trigger this same failure unless the test is redesigned. Recurred in run c6af8022-8df4-4edf-8bb0-97b1a8dda8b8 when ArchiveSignalTool was added, requiring update from 25 to 26.",
   "proposed_resolution": "Replace the hardcoded count in standard_registry_has_expected_tool_count with per-name assertions (e.g. assert!(defs.iter().any(|d| d.name == \"run_command\"))). This makes the test resilient to additions and only fails when tools are unexpectedly removed.",
   "gating_condition": null,
   "signal_source": "moeb",
   "status": "open",
-  "occurrence_count": 1,
+  "occurrence_count": 2,
   "first_seen": "2026-06-05T00:00:00Z",
-  "last_seen": "2026-06-05T00:00:00Z",
+  "last_seen": "2026-06-06T00:00:00Z",
   "occurrences": [
-    { "timestamp": "2026-06-05T00:00:00Z", "run_id": "9ef065cf-469d-4284-ab94-bbee84e3c208" }
+    { "timestamp": "2026-06-05T00:00:00Z", "run_id": "9ef065cf-469d-4284-ab94-bbee84e3c208" },
+    { "timestamp": "2026-06-06T00:00:00Z", "run_id": "c6af8022-8df4-4edf-8bb0-97b1a8dda8b8" }
   ]
 }

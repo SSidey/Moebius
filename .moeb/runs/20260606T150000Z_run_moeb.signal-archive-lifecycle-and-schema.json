@@ -1,0 +1,26 @@
+{
+  "run_id": "c6af8022-8df4-4edf-8bb0-97b1a8dda8b8",
+  "timestamp": "2026-06-06T00:00:00Z",
+  "command": "run",
+  "domain": "moeb",
+  "slug": "signal-archive-lifecycle-and-schema",
+  "spec_path": ".moeb/specifications/moeb/moeb.signal-archive-lifecycle-and-schema.md",
+  "signal_id": "a1000064-0606-4000-8000-000000000064",
+  "candidate_tag": null,
+  "metrics_path": ".moeb/metrics/c6af8022-8df4-4edf-8bb0-97b1a8dda8b8.metrics.json",
+  "emittedSignals": [
+    { "id": "a1000070-0606-4000-8000-000000000070", "description": "Tool output issue: read_file — cache-hit response omits inline content forcing external Read tool fallback" },
+    { "id": "a1000071-0606-4000-8000-000000000071", "description": "Missing moeb tool: Read — no moeb equivalent for bypassing read_file cache-hit without inline content" },
+    { "id": "a1000072-0606-4000-8000-000000000072", "description": "Phase 3 near-miss: archive_signal omitted status mutation and schema enum entry; caught by Phase 5 QA" },
+    { "id": "a1000073-0606-4000-8000-000000000073", "description": "Tool output issue: update_task — parameter named 'id' not 'task_id'; error message does not suggest correct name" },
+    { "id": "d6b8f4e2-0c3a-4f9b-b7d5-2e3f4a5b6c7d", "description": "standard_registry_has_expected_tool_count requires manual update per tool addition" }
+  ],
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "run_command", "search_files", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

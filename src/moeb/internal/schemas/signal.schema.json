@@ -21,7 +21,7 @@
     "gating_condition": {},
     "status": {
       "type": "string",
-      "enum": ["open", "in_progress", "resolved", "reopened", "superseded", "spec_written", "candidate", "rejected"],
+      "enum": ["open", "in_progress", "resolved", "reopened", "superseded", "spec_written", "candidate", "rejected", "archived"],
       "description": "open: active, not yet addressed. in_progress: signal_fix has been started for this signal. resolved: fixed and closed. reopened: was resolved but regressed. superseded: replaced by a different signal (see links). spec_written: a spec exists targeting this signal, not yet run. candidate: a run produced a candidate tag, awaiting acceptance. rejected: intentionally not going to be addressed."
     },
     "occurrence_count": { "type": "integer", "minimum": 1 },
@@ -37,6 +37,18 @@
           "run_id": { "type": "string", "format": "uuid" }
         }
       }
+    },
+    "resolution_summary": {
+      "type": ["string", "null"],
+      "description": "Human-readable explanation of how the signal was resolved. Set by accept_candidate or archive_signal. Null until resolved."
+    },
+    "superseded_by": {
+      "type": ["string", "null"],
+      "description": "signal_id of the signal that supersedes this one. Null unless status is superseded."
+    },
+    "archived_on": {
+      "type": ["string", "null"],
+      "description": "ISO 8601 timestamp set by archive_signal when the file is moved to archive/catalogue/. Null until archived."
     }
   }
 }
