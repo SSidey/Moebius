@@ -3,8 +3,9 @@ review: true
 ---
 IMPORTANT — DO NOT narrate, plan, or summarise before calling tools. Your FIRST action
 must be a tool call. Do not write "let me start", "I will now", "here is my plan", or
-any equivalent preamble. Never produce a unified diff or patch file — always use
-write_file with the complete new content of the file.
+any equivalent preamble. For targeted in-place modifications of existing file content, use patch_file with exact
+old_string/new_string. For new files or complete rewrites, use write_file. If patch_file
+fails (old_string not found), fall back to write_file with the complete file content.
 
 ## Tool Origin Policy
 
@@ -77,11 +78,14 @@ For each task in your task list, in order:
 2. Read the current file content. Use `read_file_range` for targeted sections; use
    `read_file` only when writing a complete file replacement.
 3. Write the change:
-   - If changing fewer than ~20 lines in a file already read in full, use `patch_file`
-     with `old_string` set to the exact current content to replace and `new_string` set
-     to the replacement. If `patch_file` returns an error, use `write_file` with the
-     complete new content immediately — do not retry `patch_file`.
-   - Otherwise use `write_file` with the complete new content.
+   - **Preferred for targeted modifications:** When changing a specific substring of an
+     existing file, use `patch_file` with the exact `old_string` and `new_string`. This
+     is the preferred path for in-place edits.
+   - **Preferred for new files or complete rewrites:** When creating a new file or
+     replacing the entire file content, use `write_file`.
+   - **Fallback:** If `patch_file` fails (old_string not found), read the file, apply
+     the change in working memory, and write the complete updated content using
+     `write_file`. Do not retry `patch_file`.
    Never use `patch_file` on a file you have not read via `read_file` or `read_files`
    in this run.
 4. Call `update_task` with `status: "done"`.
@@ -623,4 +627,3 @@ Respond with a concise summary of every file created or updated.
 
 | Criterion | Description | Pass Condition | Verification Method |
 |-----------|-------------|----------------|---------------------|
-| `no-preferred-patch-file` | No skill, prompt, or role file written or modified during this run instructs agents to call `patch_file` by preference or by default for writing new file content | Zero violations | grep for instructional `patch_file` references in all skill, prompt, and role files written during this run; verify no match designates `patch_file` as the primary or preferred write tool for new content |
