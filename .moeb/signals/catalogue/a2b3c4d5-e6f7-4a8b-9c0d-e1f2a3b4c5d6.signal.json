@@ -8,11 +8,12 @@
   "proposed_resolution": "Ensure the start_spec tool's schema preload block includes all moeb tool schemas so that ToolSearch is never needed during a spec session. Signal a1000057-0606-4000-8000-000000000057 partially covers the rubric-guidance gap around ToolSearch classification.",
   "gating_condition": null,
   "status": "open",
-  "occurrence_count": 1,
+  "occurrence_count": 2,
   "first_seen": "2026-06-06T13:45:00Z",
-  "last_seen": "2026-06-06T13:45:00Z",
+  "last_seen": "2026-06-06T19:00:14Z",
   "occurrences": [
-    { "timestamp": "2026-06-06T13:45:00Z", "run_id": "ed6e87c4-5bd6-44bf-8c27-e6bffc621211" }
+    { "timestamp": "2026-06-06T13:45:00Z", "run_id": "ed6e87c4-5bd6-44bf-8c27-e6bffc621211" },
+    { "timestamp": "2026-06-06T19:00:14Z", "run_id": "18aea822-d9eb-4ebc-87ec-06ceb5eda5f7" }
   ],
   "resolution_summary": null,
   "superseded_by": null,

@@ -1,0 +1,23 @@
+{
+  "run_id": "18aea822-d9eb-4ebc-87ec-06ceb5eda5f7",
+  "timestamp": "2026-06-06T19:00:14Z",
+  "command": "run",
+  "signal_id": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+  "candidate_tag": null,
+  "spec_path": ".moeb/specifications/moeb/moeb.all-skill-files-parity-rubric.md",
+  "metrics_path": ".moeb/metrics/18aea822-d9eb-4ebc-87ec-06ceb5eda5f7.metrics.json",
+  "emittedSignals": [
+    { "id": "f3a2b1c0-d4e5-4f6a-87b8-c9d0e1f2a3b4", "description": "Missing moeb tool: Read (absolute-path tool result file access)" },
+    { "id": "a2b3c4d5-e6f7-4a8b-9c0d-e1f2a3b4c5d6", "description": "Missing moeb tool: ToolSearch (deferred schema loading)" },
+    { "id": "f8b7c6d5-e4a3-4f2e-1d0c-9b8a7f6e5d4c", "description": "run_command tests fail on Windows due to CWD corruption by spec integration tests" }
+  ],
+  "qa_passed": true,
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "run_command", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
