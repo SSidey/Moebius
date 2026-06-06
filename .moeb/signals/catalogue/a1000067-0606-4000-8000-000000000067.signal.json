@@ -1,0 +1,20 @@
+{
+  "signal_id": "a1000067-0606-4000-8000-000000000067",
+  "category": "ProcessImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "Signal cross-references in description and proposed_resolution must use full UUIDs, not short hashes or partial IDs",
+  "description": "Signal a1000064-0606-4000-8000-000000000064 references other signals using a short hash ('6bfc810c') and apparent partial IDs ('a1000031', 'a7f3e2b1', 'b8f4e3c2') in its description and proposed_resolution fields. These do not resolve to catalogue files and cannot be followed by tooling or agents. The canonical identity of every signal is its full UUID4 (e.g. 'a1000064-0606-4000-8000-000000000064'). Cross-referencing by anything shorter breaks dedup lookup and any future tooling that traverses signal links.",
+  "proposed_resolution": "1. Add an authoring rule to the QA Architect persona and skill documentation: when referencing another signal, always use its full signal_id UUID (8-4-4-4-12 hex); never use short hashes or partial IDs.\n2. Add a validation step to the Canonical Signal Dedup-and-Write Procedure that scans description and proposed_resolution for UUID-shaped tokens and warns when a non-UUID signal reference pattern is detected.\n3. Backfill a1000064-0606-4000-8000-000000000064 to replace short-hash references with either the correct full UUID or a prose-only description if the referenced signal no longer exists in the catalogue.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-06T12:01:00Z",
+  "last_seen": "2026-06-06T12:01:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-06T12:01:00Z", "run_id": "54edcd30-783a-4172-9b42-65e7e44f9882" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}
