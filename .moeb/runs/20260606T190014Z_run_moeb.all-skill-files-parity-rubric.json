@@ -3,7 +3,7 @@
   "timestamp": "2026-06-06T19:00:14Z",
   "command": "run",
   "signal_id": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
-  "candidate_tag": null,
+  "candidate_tag": "v1.25.1-candidate.moeb-all-skill-files-parity-rubric",
   "spec_path": ".moeb/specifications/moeb/moeb.all-skill-files-parity-rubric.md",
   "metrics_path": ".moeb/metrics/18aea822-d9eb-4ebc-87ec-06ceb5eda5f7.metrics.json",
   "emittedSignals": [

@@ -7,7 +7,7 @@
   "description": "When the Reasoning Reviewer spec (moeb.reasoning-reviewer) was authored, Phase 5b (Reasoning Review) was added only to run.skill.md. The equivalent phase was not added to spec.skill.md or fix_signal.skill.md, meaning reasoning quality monitoring would be absent for spec and fix_signal invocations. The root cause is a missing convention: there is no spec-authoring guideline or rubric criterion that requires the author to explicitly consider whether a new workflow phase applies to all three canonical skill files (run, spec, fix_signal) and, if so, to include Steps for all three. Any future workflow improvement that should apply universally — reviewer phases, metrics steps, budget checks — is at risk of being added to only one skill file.",
   "proposed_resolution": "Add a rubric criterion `all-skill-files-parity` to the global rubric (src/moeb/internal/rubrics/global.rubrics.md) that mandates: whenever a spec adds, removes, or modifies a workflow phase in any one of the three canonical skill files (run.skill.md, spec.skill.md, fix_signal.skill.md), the spec must contain an explicit Step for each of the other two files — either applying the equivalent change or documenting with rationale why that file is intentionally excluded. The criterion fails if a phase change appears in only one skill file with no documented exclusion rationale for the other two.",
   "gating_condition": null,
-  "status": "spec_written",
+  "status": "candidate",
   "occurrence_count": 1,
   "first_seen": "2026-05-30T18:30:00Z",
   "last_seen": "2026-05-30T18:30:00Z",
@@ -18,5 +18,8 @@
     }
   ],
   "picked_up_at": "2026-06-06T18:40:00Z",
-  "fix_branch": "feat/moeb-workflow-phase-improvements-added-to-one-skill-fil"
+  "fix_branch": "feat/moeb-workflow-phase-improvements-added-to-one-skill-fil",
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
 }

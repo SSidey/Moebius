@@ -1,0 +1,20 @@
+{
+  "signal_id": "a1000075-0606-4000-8000-000000000075",
+  "category": "NewCapability",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "no rubric criterion gates on zero Rust compiler warnings",
+  "description": "cargo test and cargo build emit Rust compiler warnings (e.g. dead_code: field `optional` is never read at src/domain/spec_schema.rs:14:16) but no rubric criterion requires zero warnings as a pass condition. The no-dead-code criterion in assets/run.rubrics.md concerns spec-mandated item removals, not compiler lints. The all-tests-pass and binary-builds criteria only gate on exit code (zero failures/errors), not on clean output. Warnings therefore accumulate silently across runs with no signal path.",
+  "proposed_resolution": "Add a zero-compiler-warnings rubric criterion (global baseline or project run baseline) that requires cargo build --release 2>&1 | grep -E '^warning:' to produce zero output, or treat warnings as errors via RUSTFLAGS=-D warnings. Existing warnings (e.g. FrontmatterSchema.optional) must be resolved or suppressed with #[allow(dead_code)] before the criterion can be adopted.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-06T19:15:00Z",
+  "last_seen": "2026-06-06T19:15:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-06T19:15:00Z", "run_id": "18aea822-d9eb-4ebc-87ec-06ceb5eda5f7" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}

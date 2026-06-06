@@ -1,0 +1,20 @@
+{
+  "signal_id": "a1000074-0606-4000-8000-000000000074",
+  "category": "Error",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "no-dead-code absent from injected run rubric baseline: assets/ and internal/ run.rubrics.md have diverged",
+  "description": "src/moeb/assets/rubrics/run.rubrics.md contains the no-dead-code criterion (added by moeb.query-agent-tool). src/moeb/internal/rubrics/run.rubrics.md contains only context-budget. The running binary reads internal/, so no-dead-code is silently absent from every run's injected Layer-2 baseline despite being the correct authoritative source per moeb.rubric-context-layers. The FrontmatterSchema.optional dead_code warning (src/domain/spec_schema.rs:14) surfaced in cargo test output during run 18aea822-d9eb-4ebc-87ec-06ceb5eda5f7 with no criterion to surface it as a failure.",
+  "proposed_resolution": "Determine which file the binary reads at runtime for Layer-2 run rubrics (assets/ or internal/). Reconcile both files so they share the same content, or document the authoritative source and remove the stale copy. Once reconciled, no-dead-code will be injected into every run and the FrontmatterSchema.optional warning must be resolved or suppressed.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-06T19:15:00Z",
+  "last_seen": "2026-06-06T19:15:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-06T19:15:00Z", "run_id": "18aea822-d9eb-4ebc-87ec-06ceb5eda5f7" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}
