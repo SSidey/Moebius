@@ -1,0 +1,17 @@
+{
+  "run_id": "6e884a36-939f-4295-871d-43a600085722",
+  "timestamp": "2026-06-06T18:42:46Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.all-skill-files-parity-rubric.md",
+  "metrics_path": ".moeb/metrics/6e884a36-939f-4295-871d-43a600085722.metrics.json",
+  "signal_id": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+  "emittedSignals": [],
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "patch_file", "push_thinking_blocks", "read_file", "start_spec", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
