@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000040-0601-4000-8000-000000000040",
+  "category": "ProcessImprovement",
+  "severity": "Major",
+  "title": "moeb agent-execution layer should be superseded by Ouro-managed provider selection; moeb becomes a pure MCP tool server",
+  "description": "moeb currently embeds AI adapters (Anthropic, OpenAI, Gemini, Ollama) and invokes them directly to execute agent sessions via `query_agent`, `start_run`, and `agent.rs`. The intended target architecture is: moeb = MCP tool server and artefact store; Ouro = AI session orchestrator that selects the provider. This separation means a project with a pre-subscribed provider (e.g. Azure OpenAI) configures that at the Ouro layer, not inside moeb. moeb's adapters then become redundant for agent-session work; provider agility is a property of the orchestrator, not the tool server. Keeping the adapter layer inside moeb also couples moeb releases to provider API changes unnecessarily.",
+  "proposed_resolution": "1. Document the target architecture explicitly: moeb exposes MCP tools and manages artefacts; Ouro (or Claude Code in local dev) owns the AI provider session. 2. Identify all code paths that invoke AI adapters for agent execution (`query_agent.rs`, `agent.rs`, `adapters/`) and mark them for removal once Ouro assumes that responsibility. 3. Introduce a `config.toml` field `orchestration_mode: embedded | ouro` so the embedded adapter path is preserved for local/standalone use during the transition. 4. Define the minimal Ouro-to-moeb interface: which MCP tools Ouro calls, what events it emits, and how provider configuration is conveyed. 5. Once `ouro` mode is stable, deprecate the `embedded` mode with a migration guide.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-01T00:00:00Z",
+  "last_seen": "2026-06-01T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-01T00:00:00Z", "run_id": "00000000-0601-4000-8000-000000000000" }
+  ]
+}

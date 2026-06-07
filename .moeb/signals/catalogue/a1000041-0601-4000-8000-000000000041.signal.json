@@ -1,0 +1,16 @@
+{
+  "signal_id": "a1000041-0601-4000-8000-000000000041",
+  "category": "NewCapability",
+  "severity": "Major",
+  "title": "Define moeb north star goal format: machine-readable goal document at `.moeb/goal.md`",
+  "description": "No machine-readable statement of the project's intended end state exists anywhere in the harness. Human operators today must reason about gaps manually and author signals by hand. A north star goal document — human-authored, stored at `.moeb/goal.md` — is the prerequisite for the introspection loop (gap analysis), the goal-proximity metric in integration tests, and any conductor-driven autonomous signal generation. Without it, 'are we close to done?' has no formal answer and moeb cannot self-diagnose.",
+  "proposed_resolution": "1. Define a YAML-frontmatter goal format for `.moeb/goal.md`. Required frontmatter fields: `version` (integer, incremented on each edit), `title` (short human-readable goal statement). Body: a list of criteria, each with `id` (short slug), `description` (prose statement of what 'done' looks like for this criterion), `satisfied_when` (prose or structured condition), and optional `signals` (array of full signal UUIDs whose resolution satisfies this criterion). 2. The goal document is mutable and versioned via git history; it is explicitly exempt from the spec immutability policy. 3. `moeb init` must create a stub `.moeb/goal.md` with placeholder content and a comment prompting the human to define their north star. 4. Add a `moeb goal status` subcommand (and MCP tool equivalent) that reads `.moeb/goal.md` and the signal catalogue to display which criteria are satisfied, which are open, and which have no coverage.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-01T00:00:00Z",
+  "last_seen": "2026-06-01T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-01T00:00:00Z", "run_id": "00000000-0601-4000-8000-000000000000" }
+  ]
+}
