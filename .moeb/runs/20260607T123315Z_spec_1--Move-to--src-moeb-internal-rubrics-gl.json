@@ -1,0 +1,19 @@
+{
+  "run_id": "13bb9697-4874-43e5-bd20-cafade30047d",
+  "timestamp": "2026-06-07T12:33:15Z",
+  "command": "spec",
+  "signal_id": "a1000080-0607-4000-8000-000000000080",
+  "spec_path": ".moeb/specifications/moeb/moeb.rubric-layer-placement-cleanup.md",
+  "metrics_path": ".moeb/metrics/13bb9697-4874-43e5-bd20-cafade30047d.metrics.json",
+  "emittedSignals": [
+    { "id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f", "description": "Context compression resets patch_file read-state; files read before summary window require re-read" }
+  ],
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "patch_file", "read_file", "read_file_range", "start_spec", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
