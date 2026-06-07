@@ -1,0 +1,19 @@
+{
+  "run_id": "1d3fe231-3cc6-48da-8641-ea9ab35d2dd8",
+  "timestamp": "2026-06-07T10:45:27Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.moeb-tool-origin-rubric-conflates-toolsearch-legit.md",
+  "metrics_path": ".moeb/metrics/1d3fe231-3cc6-48da-8641-ea9ab35d2dd8.metrics.json",
+  "signal_id": "a1000057-0606-4000-8000-000000000057",
+  "emittedSignals": [],
+  "rubric_score": null,
+  "end_review_error_count": 0,
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "patch_file", "push_thinking_blocks", "read_file", "start_spec", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

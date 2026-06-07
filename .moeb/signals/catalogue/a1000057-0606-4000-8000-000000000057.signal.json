@@ -7,7 +7,7 @@
   "description": "Two overlapping problems have produced 28 signals across Groups 2 and 4:\n\n1. ToolSearch is a Claude Code native deferred-schema loader that MUST run before entering any skill (agents need it to load start_run/start_spec schemas). It has no moeb equivalent, should never have one, and raising MissingMoebTool for ToolSearch use is always wrong. The 6 'Missing moeb tool: ToolSearch' signals were misclassified as NewCapability.\n\n2. The moeb-tool-origin rubric fires on ToolSearch and Read indiscriminately, producing false positives for legitimate pre-skill session setup while also missing genuine in-skill violations (using Claude Code Read when read_file exists). The rubric cannot distinguish pre-skill setup from in-skill use.\n\nRoot cause: the rubric definition does not specify the phase-boundary at which moeb-tool-origin enforcement begins, nor does it exempt ToolSearch as a permanently-external bootstrapping tool.",
   "proposed_resolution": "1. Update run.skill.md and fix_signal.skill.md moeb-tool-origin rubric to: (a) exempt ToolSearch unconditionally — it is a session bootstrapping tool with no moeb equivalent; (b) enforce the moeb-tool-origin boundary from Phase 1 onwards for all other Claude Code native tools that have moeb equivalents (Read → read_file, Bash → run_command, Glob → list_directory/search_files).\n2. Remove MissingMoebTool signal emission requirement for ToolSearch from all skill files.\n3. Ensure run.skill.md Phase 1 explicitly calls ToolSearch to load start_run schema — this is the canonical pre-skill setup step.",
   "gating_condition": null,
-  "status": "in_progress",
+  "status": "spec_written",
   "occurrence_count": 28,
   "first_seen": "2026-05-28T17:45:00Z",
   "last_seen": "2026-06-06T12:00:00Z",
