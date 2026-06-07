@@ -49,9 +49,21 @@ Escalate `severity` to `"Major"` when the tool's silent failure caused the inten
 
 **Never use PowerShell cmdlets** (`Get-ChildItem`, `Test-Path`, `Select-String`, `Get-Content`, `Set-Content`, `Remove-Item`, `ForEach-Object`, `Where-Object`) in `run_command` calls regardless of the host platform. `cmd.exe` does not interpret PowerShell syntax and will return a non-zero exit code or produce no output.
 
+**ToolSearch is unconditionally exempt from this policy.** ToolSearch is a session-level
+schema resolver built into the Claude Code MCP client — it loads deferred tool schemas from
+`<system-reminder>` entries and cannot be replaced by any moeb tool. Do not buffer a
+MissingMoebTool signal for ToolSearch calls. The moeb-tool-origin boundary applies from
+Phase 1 onwards for all other external tools that have moeb equivalents (e.g. Read →
+read_file, Bash → run_command, Glob → list_directory/search_files, Grep → grep_files).
+
 ## Phase 1 — Plan
 
-Call `create_task_list` as your very first tool call. Derive one task per numbered Step
+1. **Bootstrap (if schemas not yet loaded).** If the moeb tool schemas are not yet active
+   in this session, call ToolSearch with query `"select:start_run"` to load the `start_run`
+   tool schema before proceeding. This is the canonical pre-skill setup step; skip if
+   start_run was already called to initiate this skill session.
+
+2. Call `create_task_list` as your very first tool call. Derive one task per numbered Step
 in the specification's `## Steps` section. Each task entry must state which file(s) it
 touches and what change is required.
 

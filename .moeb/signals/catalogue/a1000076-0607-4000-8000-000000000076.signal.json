@@ -1,0 +1,20 @@
+{
+  "signal_id": "a1000076-0607-4000-8000-000000000076",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "context-budget failure: canonical skill files exceed 300-line threshold",
+  "description": "run.skill.md (682 lines), fix_signal.skill.md (525 lines), and spec.skill.md (565 lines) all exceed the 300-line context-budget threshold. Every run that modifies these skill files will fail context-budget, degrading rubric_score on every such run. The criterion cannot be satisfied without refactoring the skill files, which is outside the scope of any individual implementation run.",
+  "proposed_resolution": "Introduce a spec that refactors the canonical skill files by extracting repeated procedure blocks (e.g., Canonical Signal Dedup-and-Write Procedure, Per-Step Review Sub-Loop) into a shared include mechanism or separate sub-skill files, reducing individual file sizes below 300 lines. Alternatively, add a markdown-file exemption or separate threshold to the context-budget criterion for skill markdown documents.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-07T12:00:00Z",
+  "last_seen": "2026-06-07T12:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-07T12:00:00Z", "run_id": "97687f17-0d6e-4432-9ad1-14237aefbab4" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}

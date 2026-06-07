@@ -22,6 +22,13 @@ Prefer moeb tools for every operation during this run. The complete list of avai
 }
 ```
 
+**ToolSearch is unconditionally exempt from this policy.** ToolSearch is a session-level
+schema resolver built into the Claude Code MCP client — it loads deferred tool schemas from
+`<system-reminder>` entries and cannot be replaced by any moeb tool. Do not buffer a
+MissingMoebTool signal for ToolSearch calls. The moeb-tool-origin boundary applies from
+Phase 1 onwards for all other external tools that have moeb equivalents (e.g. Read →
+read_file, Bash → run_command, Glob → list_directory/search_files, Grep → grep_files).
+
 ## Phase 1 — Contradiction check
 
 Before authoring, verify that the proposed specification does not contradict any active

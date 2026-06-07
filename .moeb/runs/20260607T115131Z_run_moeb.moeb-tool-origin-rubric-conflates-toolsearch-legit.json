@@ -1,0 +1,33 @@
+{
+  "run_id": "97687f17-0d6e-4432-9ad1-14237aefbab4",
+  "spec_slug": "moeb-tool-origin-rubric-conflates-toolsearch-legit",
+  "domain": "moeb",
+  "skill": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.moeb-tool-origin-rubric-conflates-toolsearch-legit.md",
+  "signal_id": "a1000057-0606-4000-8000-000000000057",
+  "started_at": "2026-06-07T11:51:31Z",
+  "completed_at": "2026-06-07T12:30:00Z",
+  "status": "complete",
+  "qa_passed": true,
+  "rubric_score": 0.8125,
+  "files_modified": [
+    "src/moeb/internal/skills/run.skill.md",
+    "src/moeb/internal/skills/fix_signal.skill.md",
+    "src/moeb/internal/skills/spec.skill.md"
+  ],
+  "files_created": [
+    ".moeb/signals/catalogue/a1000076-0607-4000-8000-000000000076.signal.json",
+    ".moeb/signals/catalogue/a1000077-0607-4000-8000-000000000077.signal.json",
+    ".moeb/signals/catalogue/a1000078-0607-4000-8000-000000000078.signal.json",
+    ".moeb/metrics/97687f17-0d6e-4432-9ad1-14237aefbab4.metrics.json",
+    ".moeb/runs/20260607T115131Z_run_moeb.moeb-tool-origin-rubric-conflates-toolsearch-legit.json"
+  ],
+  "emitted_signals": [
+    "a1000076-0607-4000-8000-000000000076",
+    "a1000077-0607-4000-8000-000000000077",
+    "a1000078-0607-4000-8000-000000000078"
+  ],
+  "signals_resolved": [
+    "a1000057-0606-4000-8000-000000000057"
+  ]
+}
