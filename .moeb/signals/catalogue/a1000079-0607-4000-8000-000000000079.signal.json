@@ -1,0 +1,20 @@
+{
+  "signal_id": "a1000079-0607-4000-8000-000000000079",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "archive_signal in fix_signal executes before signal is resolved; archive must move to accept_candidate",
+  "description": "fix_signal calls archive_signal at the end of its own run, but at that point the signal status is only in_progress — no spec has been written, no run has executed, and no PR has been accepted. archive_signal requires the signal to be resolved or superseded before proceeding; called against an in_progress signal it always fails the integrity check and emits a fallback SkillImprovement error signal. The symptom of this was captured as b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e. The archive step belongs in accept_candidate, immediately after Phase 2 sets status to resolved.",
+  "proposed_resolution": "Remove the ## Archive Resolved Signal section from fix_signal.skill.md. Add a new Phase 2b to accept_candidate.skill.md immediately after Phase 2 — Resolve, which calls archive_signal with the resolved signal_id and resolution_summary. Port the error-fallback pattern (emit a SkillImprovement signal if archive_signal returns an error, continue regardless) to the new location.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-07T00:00:00Z",
+  "last_seen": "2026-06-07T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-07T00:00:00Z", "run_id": "manual-0607-0000-0000-000000000079" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}
