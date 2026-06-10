@@ -3,7 +3,7 @@
   "timestamp": "2026-06-10T10:48:18Z",
   "command": "run",
   "signal_id": null,
-  "candidate_tag": null,
+  "candidate_tag": "v1.25.4-candidate.moeb-start-spec-read-signal-three-field",
   "spec_path": ".moeb/specifications/moeb/moeb.start-spec-read-signal-three-field.md",
   "metrics_path": ".moeb/metrics/7d50435a-61e3-4281-9541-517a60c20bf8.metrics.json",
   "emittedSignals": [
