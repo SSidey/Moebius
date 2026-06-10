@@ -1,0 +1,30 @@
+{
+  "signal_id": "a1000089-0610-4000-8000-000000000089",
+  "category": "ToolImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "bump_version and create_candidate_tag hardcoded to src/moeb/Cargo.toml; fail on all non-moeb project runs",
+  "description": "bump_version returns 'could not read src/moeb/Cargo.toml: The system cannot find the path specified' when invoked during a run in any project other than moeb itself. Both tools are hardcoded to the moeb binary's own Cargo.toml path. create_candidate_tag has the same dependency and is also skipped whenever bump_version fails. This makes Phase 9 of run.skill.md (version bump + candidate tag) non-functional for every project that relies on moeb to manage its own versioning — the two tools that close the run phase always fail unless the run is operating on moeb's own source tree.\n\nFirst observed during Ariadne runs (de54ae27-b400-4030-9554-4ba917dcbd3a and ed4db31a-ae77-4d84-8896-cc20d148d3e9). The same failure will occur for any client project. The issue is latent for all existing moeb consumers.\n\nForwarded from Ariadne signal 9c0e1f2a-3b4d-4c5e-9f0a-1b2c3d4e5f6a.",
+  "proposed_resolution": "Add an optional cargo_toml_path parameter to bump_version (default: 'src/moeb/Cargo.toml' for backwards compatibility with moeb's own runs). When provided, use the specified path instead of the hardcoded one. Apply the same optional parameter to create_candidate_tag. In run.skill.md, when operating on a non-moeb project, resolve cargo_toml_path from .moeb/config (add a versioned_artifact_path config key) or infer it by probing: project root Cargo.toml → src/Cargo.toml → src/<project_name>/Cargo.toml. If the project is not a Rust project, allow bump_version to operate on a generic version file (package.json version field, pyproject.toml [tool.poetry].version, or a VERSION file) with the file path passed as the parameter — the tool should detect the file type from the extension and apply the appropriate version bump strategy.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 2,
+  "first_seen": "2026-06-10T11:21:00Z",
+  "last_seen": "2026-06-10T11:31:58Z",
+  "occurrences": [
+    {
+      "timestamp": "2026-06-10T11:21:00Z",
+      "run_id": "de54ae27-b400-4030-9554-4ba917dcbd3a",
+      "project": "ariadne",
+      "forwarded_from": "9c0e1f2a-3b4d-4c5e-9f0a-1b2c3d4e5f6a"
+    },
+    {
+      "timestamp": "2026-06-10T11:31:58Z",
+      "run_id": "ed4db31a-ae77-4d84-8896-cc20d148d3e9",
+      "project": "ariadne"
+    }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}

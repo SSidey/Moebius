@@ -1,0 +1,14 @@
+{
+  "id": "a1000086-0610-4000-8000-000000000086",
+  "title": "Agent rewrites full file after write-gate rejection instead of using patch_file for targeted edit",
+  "description": "When patch_file is rejected by the write-gate (file not yet read), the agent calls read_file and then falls back to write_file with the full file content rather than patch_file with a targeted change. This is wasteful: write_file sends the entire file as context, produces a large diff, and risks clobbering unrelated content if the file changed between read and write. The correct recovery path is: write-gate rejection → read_file → patch_file.",
+  "category": "SkillImprovement",
+  "source": "moeb",
+  "severity": "Minor",
+  "status": "open",
+  "proposed_resolution": "Add explicit guidance to run.skill.md (and all canonical skills): after a write-gate rejection forces a read_file, use patch_file for targeted edits rather than write_file. Only use write_file if the entire file content is being replaced by design (e.g. creating a new file or a complete structural rewrite).",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-10T20:52:07Z",
+  "last_seen": "2026-06-10T20:52:07Z",
+  "run_ids": ["d394eb78-acbc-4b56-8023-ca1183dca79e"]
+}

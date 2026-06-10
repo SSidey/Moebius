@@ -1,0 +1,25 @@
+{
+  "signal_id": "a1000091-0610-4000-8000-000000000091",
+  "category": "ToolImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "tag_run annotated tag (-a -m) fails on Windows cmd.exe; falls back to lightweight tag losing annotation body",
+  "description": "Calling 'git tag -a <tag> -m <message>' via run_command exits with code 128 ('fatal: too many arguments') on Windows. The -m message value is split on whitespace by cmd.exe shell dispatch and interpreted as additional positional arguments to git tag. The workaround of using a lightweight (non-annotated) tag via 'git tag <tag>' succeeds but loses the annotation body that records the run domain, slug, and timestamp as a git object. Annotated tags are the correct type for run markers because they store metadata independently of the commit they point to.\n\nFirst observed in Ariadne run ed4db31a-ae77-4d84-8896-cc20d148d3e9.\n\nForwarded from Ariadne signal a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d.",
+  "proposed_resolution": "Update tag_run to use a shell-safe annotated tag invocation on Windows. Preferred approach: write the annotation message to a temp file (e.g. .moeb/tmp/tag-msg-<uuid>.txt) and invoke 'git tag -a <tag> -F <tempfile>' — this avoids all shell quoting issues since the message is read from a file rather than a command-line argument. Delete the temp file after tagging. The fix must be verified on Windows and must confirm the full annotation body (domain, slug, timestamp) is preserved in the git object via 'git tag -v <tag>' or 'git cat-file tag <tag>'. Apply the same fix to create_candidate_tag if it uses the same annotation mechanism.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-10T17:38:00Z",
+  "last_seen": "2026-06-10T17:38:00Z",
+  "occurrences": [
+    {
+      "timestamp": "2026-06-10T17:38:00Z",
+      "run_id": "ed4db31a-ae77-4d84-8896-cc20d148d3e9",
+      "project": "ariadne",
+      "forwarded_from": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+    }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}

@@ -1,0 +1,30 @@
+{
+  "signal_id": "a1000090-0610-4000-8000-000000000090",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "git_commit (Phase 7) precedes Phase 9 signal writes and Phase 10 event writes; post-run artifacts uncommitted and run tag points to incomplete commit",
+  "description": "In run.skill.md and spec.skill.md, the git_commit call (Phase 7) and tag_run call (Phase 8) execute before Phase 9 signal catalogue updates and Phase 10 event file writes. This has three concrete consequences:\n\n1. Signal catalogue changes made in Phase 9 (incrementing occurrence counts on existing signals, writing suppression signals on QA fail, writing new signals observed during the run) are not captured in the Phase 7 commit. They remain as uncommitted files at skill exit.\n\n2. The run completion event file written in Phase 10 is also not committed.\n\n3. The run tag (Phase 8) points to the Phase 7 commit, which is missing all Phase 9/10 artifacts. The canonical tag for a run therefore describes an incomplete repository state — the tag cannot be used as a reliable snapshot of the run's full output.\n\nSpecific uncommitted paths observed at Ariadne run exit (ed4db31a-ae77-4d84-8896-cc20d148d3e9): .moeb/signals/catalogue/9c0e1f2a-….signal.json, .moeb/signals/index.md, .moeb/events/20260610T173158Z_ed4db31a-….event.json.\n\nThis signal supersedes fa000001-0607-4000-8000-000000000001, fa000002-0607-4000-8000-000000000002, fa000003-0607-4000-8000-000000000003, fa000004-0607-4000-8000-000000000004, which were specific per-file instances of the same structural defect observed in spec.skill.md runs on 2026-06-07. Related: e7f8a9b0 covers the QA-gate-failure path where the same ordering problem causes additional post-tag harness files to go untagged; the root cause and fix are identical.\n\nForwarded from Ariadne signal f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c.",
+  "proposed_resolution": "Move git_commit (Phase 7) and tag_run (Phase 8) to after Phase 9 and Phase 10 complete in both run.skill.md and spec.skill.md. The revised phase order is: … → Phase 9 (QA gate + signal updates) → Phase 10 (event write) → Phase 7 (git_commit) → Phase 8 (tag_run). The commit message convention does not change. This ensures all artifacts produced during the run — including signal updates, the completion event, and any QA-fail suppression signals — are captured in a single atomic commit that the run tag points to. Address alongside e7f8a9b0 for the QA-fail amend path, which benefits from the same reordering.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 5,
+  "first_seen": "2026-06-07T10:45:27Z",
+  "last_seen": "2026-06-10T17:35:00Z",
+  "occurrences": [
+    {
+      "timestamp": "2026-06-07T10:45:27Z",
+      "run_id": "1d3fe231-3cc6-48da-8641-ea9ab35d2dd8",
+      "note": "four instances consolidated from fa000001-fa000004"
+    },
+    {
+      "timestamp": "2026-06-10T17:35:00Z",
+      "run_id": "ed4db31a-ae77-4d84-8896-cc20d148d3e9",
+      "project": "ariadne",
+      "forwarded_from": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c"
+    }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}
