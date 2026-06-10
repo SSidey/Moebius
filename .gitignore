@@ -15,3 +15,6 @@ roadmap.md
 
 # Moeb event artifacts — transient orchestration state, not harness artefacts
 .moeb/events/
+
+# Continue extension local state
+.continue/

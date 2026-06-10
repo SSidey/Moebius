@@ -1,0 +1,21 @@
+{
+  "run_id": "0d2792f3-0a91-4e70-adc5-27ecb0d0e93c",
+  "timestamp": "2026-06-10T09:22:22Z",
+  "command": "run",
+  "signal_id": null,
+  "candidate_tag": null,
+  "spec_path": ".moeb/specifications/moeb/moeb.rubric-layer-placement-cleanup.md",
+  "metrics_path": ".moeb/metrics/0d2792f3-0a91-4e70-adc5-27ecb0d0e93c.metrics.json",
+  "emittedSignals": [],
+  "rubric_score": 1.0,
+  "end_review_error_count": 0,
+  "qa_passed": true,
+  "tools_used": ["complete_review", "create_task_list", "grep_files", "push_thinking_blocks", "read_file", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "signal_id": "a1000082-0610-4000-8000-000000000082",
+  "category": "ProcessImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Commit messages conflate spec authoring with spec execution; no git tag marks spec lifecycle transitions",
+  "description": "The commit message convention `feat(moeb): execute <slug> specification` is used by both the spec skill (which authors a spec file) and the run skill (which implements a spec's steps). A human reading git log cannot distinguish 'this commit created the spec' from 'this commit applied the spec's changes' without inspecting the diff. The confusion is compounded by signal status `spec_written`: a signal at `spec_written` with a commit described as `execute … specification` creates genuine uncertainty about whether implementation has occurred.\n\nTwo mechanisms are absent:\n1. Distinct commit message prefixes — `docs(moeb): write <slug> specification` for spec authoring vs `feat(moeb): execute <slug> specification` reserved exclusively for spec implementation.\n2. Git tags `spec/<signal_id>/written` (placed by spec skill after its Phase 9 commit) and `spec/<signal_id>/executed` (placed by run skill after its Phase 9 commit). These allow `git tag --list 'spec/*'` to enumerate all spec lifecycle transitions in chronological order without reading commit messages or diffs. The spec frontmatter already carries a `signal_id` UUID that is the natural key for these tags.\n\nRelated: signal a1000024-0529-4000-8000-000000000024 targets the broader `moeb run` command naming ambiguity; signal a1000025-0529-4000-8000-000000000025 targets spec lifecycle state tracking in frontmatter. This signal addresses the git-history and tagging layer that both of those leave uncovered.",
+  "proposed_resolution": "1. Update spec.skill.md Phase 9 commit step to use `docs(moeb): write <slug> specification` as the commit message prefix instead of `feat(moeb): execute …`.\n2. Add a post-commit step to spec.skill.md that creates git tag `spec/<signal_id>/written` on the HEAD commit immediately after the Phase 9 commit. Use the existing tag_signal or a new tag_spec tool; if neither supports this exact tag format, emit a MissingMoebTool signal and fall back to run_command calling `git tag`.\n3. Retain `feat(moeb): execute <slug> specification` in run.skill.md Phase 9 as the exclusive prefix for implementation commits.\n4. Add a post-commit step to run.skill.md that creates git tag `spec/<signal_id>/executed` on the HEAD commit after the candidate is accepted.\n5. Update fix_signal.skill.md Phase 9 convention check to confirm it does not use `execute` — `fix(moeb): resolve <signal_id>` is already distinct and requires no change.\n6. Update any documentation or README index that references the current `feat(moeb): execute` convention for spec authoring to use the new `docs(moeb): write` prefix.\n\nGated on: a1000024-0529-4000-8000-000000000024 (run command rename) and a1000025-0529-4000-8000-000000000025 (spec lifecycle states) should be resolved first so tag naming aligns with settled terminology.",
+  "gating_condition": [
+    "a1000024-0529-4000-8000-000000000024",
+    "a1000025-0529-4000-8000-000000000025"
+  ],
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-10T00:00:00Z",
+  "last_seen": "2026-06-10T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-10T00:00:00Z", "run_id": "manual-0610-0000-0000-000000000082" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}
