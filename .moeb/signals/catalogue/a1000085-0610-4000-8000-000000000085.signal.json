@@ -1,0 +1,22 @@
+{
+  "signal_id": "a1000085-0610-4000-8000-000000000085",
+  "category": "NewCapability",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "Signal catalogue cold-start sync: batch upsert local signals to GitHub Issues and back",
+  "description": "Signal a1000037 (in the Ouro project) defines the ongoing event-driven flow: one signal created → one issue created; one state transition → one comment posted. That flow is intentionally lean and per-event. It has no mechanism for the cold-start case: when GitHub sync is first enabled, existing local signals have no github_issue_url and existing GitHub Issues have no moeb ingest comment. Without a batch sync command the catalogue and GitHub diverge at setup time and cannot be reconciled without manual intervention. The same gap applies after connectivity loss or a fresh clone of the repository.",
+  "proposed_resolution": "Implement `moeb signal sync [--source moeb|project] [--dry-run]` as a standalone CLI command (no conductor required). The command must: (1) for each local signal without a github_issue_url, create a GitHub Issue via the API, populate the issue body and labels using the conventions defined in a1000037, and write the returned issue URL back into the signal JSON as github_issue_url; (2) for each GitHub Issue in the configured repository that carries no moeb ingest comment, create a local signal JSON in the catalogue and post the standard ingest comment; (3) for each local signal with a github_issue_url that resolves to an open issue but the signal is archived or resolved, close the issue with a resolution comment. All three passes must be idempotent — re-running sync must never create duplicate issues or signals. The command must print a summary of created, updated, and skipped entries. --dry-run must print the planned changes without writing anything.",
+  "gating_condition": [
+    "a1000037-0601-4000-8000-000000000037"
+  ],
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-10T00:00:00Z",
+  "last_seen": "2026-06-10T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-10T00:00:00Z", "run_id": "manual-0610-0000-0000-000000000085" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}
