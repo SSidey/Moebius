@@ -3,7 +3,7 @@
   "timestamp": "2026-06-10T09:22:22Z",
   "command": "run",
   "signal_id": null,
-  "candidate_tag": null,
+  "candidate_tag": "v1.25.3-candidate.moeb-rubric-layer-placement-cleanup",
   "spec_path": ".moeb/specifications/moeb/moeb.rubric-layer-placement-cleanup.md",
   "metrics_path": ".moeb/metrics/0d2792f3-0a91-4e70-adc5-27ecb0d0e93c.metrics.json",
   "emittedSignals": [],
