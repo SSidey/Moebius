@@ -7,7 +7,7 @@
   "description": "mcp__moeb__read_file and read_file_range operate relative to the project working directory. Agents frequently need to read files at absolute paths outside the working directory: overflow result files written to temp paths, system paths, and MCP session output files. Using Claude Code's native Read tool for these is a compliance bypass. This signal consolidates 22 prior signals that individually reported 'Missing moeb tool: Read' for various contexts — all of those are now superseded since read_file covers in-project reads. The genuine remaining gap is absolute-path access only.",
   "proposed_resolution": "Add an optional 'absolute' mode to read_file (or a separate read_file_absolute tool) that accepts a full filesystem path and bypasses the cwd-relative restriction. Scope enforcement should still apply: the path must be within a configurable allow-list (e.g. the moeb temp/overflow output directory and the project root). Add regression test covering absolute-path read of a file outside the project cwd.",
   "gating_condition": null,
-  "status": "open",
+  "status": "spec_written",
   "occurrence_count": 22,
   "first_seen": "2026-05-28T17:45:00Z",
   "last_seen": "2026-06-05T18:59:27Z",
