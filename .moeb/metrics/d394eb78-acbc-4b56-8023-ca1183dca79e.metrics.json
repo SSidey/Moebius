@@ -1,0 +1,37 @@
+{
+  "run_id": "d394eb78-acbc-4b56-8023-ca1183dca79e",
+  "domain": "moeb",
+  "slug": "read-file-absolute-path-support",
+  "moeb_version": "1.25.4",
+  "recorded_at": "2026-06-10T20:30:00Z",
+  "tasks": {
+    "total": 7,
+    "done": 7,
+    "pending": 0,
+    "skipped": 0
+  },
+  "rubrics": {
+    "total": 20,
+    "pass": 14,
+    "fail": 3,
+    "na": 3,
+    "score": 0.824,
+    "failed": ["moeb-tool-origin", "no-test-regression", "tool-errors"]
+  },
+  "qa_passed": true,
+  "signals_emitted": ["3c4d5e6f-a7b8-4c9d-0e1f-2a3b4c5d6e7f"],
+  "tools_used": [
+    "complete_review", "create_task_list", "get_run_status", "grep_files",
+    "list_directory", "patch_file", "push_thinking_blocks", "read_file",
+    "read_file_range", "run_command", "search_files", "start_run",
+    "update_task", "verify_rubrics", "write_file"
+  ],
+  "token_usage": {
+    "input": 0,
+    "output": 0,
+    "cache_read": 0,
+    "cache_creation": 0,
+    "total": 0
+  },
+  "cost_usd": 0
+}

@@ -1,0 +1,41 @@
+{
+  "run_id": "d394eb78-acbc-4b56-8023-ca1183dca79e",
+  "signal_id": "a1000056-0606-4000-8000-000000000056",
+  "spec_path": ".moeb/specifications/moeb/moeb.read-file-absolute-path-support.md",
+  "domain": "moeb",
+  "slug": "read-file-absolute-path-support",
+  "branch": "feat/moeb-read-file-absolute-path-support",
+  "started_at": "2026-06-10T19:40:24Z",
+  "moeb_version": "1.25.4",
+  "status": "in_progress",
+  "tasks": [
+    { "id": 1, "status": "done", "description": "Step 1: Add `absolute` boolean parameter to read_file tool JSON schema in src/moeb/tools/read_file.rs" },
+    { "id": 2, "status": "done", "description": "Step 2: Implement absolute path resolution logic in read_file::execute in src/moeb/tools/read_file.rs" },
+    { "id": 3, "status": "done", "description": "Step 3: Add `absolute` parameter to read_file_range tool JSON schema and execute method in src/moeb/tools/read_file_range.rs" },
+    { "id": 4, "status": "done", "description": "Step 4: Verify/add project_root field to RealToolExecutor in src/moeb/tools/ (likely tool_executor.rs or similar)" },
+    { "id": 5, "status": "done", "description": "Step 5: Update MCP server tool registry to add `absolute` parameter to read_file and read_file_range schemas in src/moeb/serve/ or mcp/" },
+    { "id": 6, "status": "done", "description": "Step 6: Add two integration tests (absolute path in temp dir succeeds; outside allowed roots is rejected) in read_file_tests.rs or read_file.rs" },
+    { "id": 7, "status": "done", "description": "Step 7: Update run.prompt to add usage note for absolute parameter if a tool-usage section exists" }
+  ],
+  "rubrics": {
+    "pass": ["skill-mandatory-phases", "no-signal-reoccurrence", "binary-builds", "all-tests-pass", "context-budget", "kernel-thin-and-parity", "no-drift", "spec-schema-compliance", "ai-first-org", "branch-clean-at-exit", "thin-kernel", "mcp-cli-behavioural-parity", "write-review-compliance", "rubric-qualification"],
+    "fail": ["moeb-tool-origin", "no-test-regression", "tool-errors"],
+    "na": ["no-dead-code", "new-artifact-naming-schema", "all-skill-files-parity"]
+  },
+  "qa_passed": true,
+  "emittedSignals": [
+    {
+      "id": "3c4d5e6f-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+      "title": "Agent used external tools after context compaction without buffering MissingMoebTool signals",
+      "category": "SkillImprovement",
+      "severity": "Minor"
+    }
+  ],
+  "files_modified": [
+    "src/moeb/src/tools/mod.rs",
+    "src/moeb/src/tools/read_file.rs",
+    "src/moeb/src/tools/read_file_range.rs",
+    "src/moeb/src/tools/real_tool_executor.rs",
+    "src/moeb/src/tools/run_command.rs"
+  ]
+}

@@ -1,5 +1,5 @@
 use std::collections::{HashMap, HashSet};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use anyhow::Result;
 use sha2::Digest;
@@ -16,29 +16,33 @@ pub struct RealToolExecutor {
     pub registry: ToolRegistry,
     cache: ContentCache,
     read_paths: Arc<Mutex<HashSet<String>>>,
+    pub project_root: PathBuf,
 }
 
 impl RealToolExecutor {
-    fn from_registry(state: SharedRunState, registry: ToolRegistry, read_paths: Arc<Mutex<HashSet<String>>>) -> Self {
-        Self { registry, cache: Mutex::new(HashMap::new()), read_paths, state }
+    fn from_registry(state: SharedRunState, registry: ToolRegistry, read_paths: Arc<Mutex<HashSet<String>>>, project_root: PathBuf) -> Self {
+        Self { registry, cache: Mutex::new(HashMap::new()), read_paths, state, project_root }
     }
 
     pub fn new(state: SharedRunState) -> Self {
         let rp = Arc::new(Mutex::new(HashSet::new()));
         let reg = ToolRegistry::standard(Arc::clone(&state), Arc::clone(&rp));
-        Self::from_registry(state, reg, rp)
+        let project_root = std::env::current_dir().unwrap_or_default();
+        Self::from_registry(state, reg, rp, project_root)
     }
 
     pub fn new_sub_agent(state: SharedRunState) -> Self {
         let rp = Arc::new(Mutex::new(HashSet::new()));
         let reg = ToolRegistry::sub_agent(Arc::clone(&state));
-        Self::from_registry(state, reg, rp)
+        let project_root = std::env::current_dir().unwrap_or_default();
+        Self::from_registry(state, reg, rp, project_root)
     }
 
     pub fn new_mcp(state: SharedRunState) -> Self {
         let rp = Arc::new(Mutex::new(HashSet::new()));
         let reg = ToolRegistry::mcp(Arc::clone(&state), Arc::clone(&rp));
-        Self::from_registry(state, reg, rp)
+        let project_root = std::env::current_dir().unwrap_or_default();
+        Self::from_registry(state, reg, rp, project_root)
     }
 
     pub fn new_mcp_with_adapter(
@@ -47,13 +51,15 @@ impl RealToolExecutor {
     ) -> Self {
         let rp = Arc::new(Mutex::new(HashSet::new()));
         let reg = ToolRegistry::mcp_with_adapter(Arc::clone(&state), adapter, Arc::clone(&rp));
-        Self::from_registry(state, reg, rp)
+        let project_root = std::env::current_dir().unwrap_or_default();
+        Self::from_registry(state, reg, rp, project_root)
     }
 
     pub fn new_coordinator(state: SharedRunState, adapter: std::sync::Arc<dyn crate::ports::AiPort>) -> Self {
         let rp = Arc::new(Mutex::new(HashSet::new()));
         let reg = ToolRegistry::with_query_agent(Arc::clone(&state), adapter, Arc::clone(&rp));
-        Self::from_registry(state, reg, rp)
+        let project_root = std::env::current_dir().unwrap_or_default();
+        Self::from_registry(state, reg, rp, project_root)
     }
 }
 

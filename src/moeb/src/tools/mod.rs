@@ -35,7 +35,8 @@ pub use real_tool_executor::RealToolExecutor;
 pub use crate::ports::ToolExecutorPort;
 
 use std::collections::{HashMap, HashSet};
-use std::path::Path;
+use std::fs;
+use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use anyhow::Result;
 
@@ -44,6 +45,36 @@ use crate::run_state::SharedRunState;
 
 pub const MAX_READ_BYTES: usize = 102_400;
 pub const MAX_RANGE_LINES: usize = 300;
+
+// Resolve a path supplied with `absolute: true`. Phase 1 uses raw roots (no canonicalize)
+// to catch clearly-outside paths without needing the file to exist and to avoid the \\?\
+// extended-path prefix Windows adds. Phase 2 canonicalizes and rechecks with \\?\ stripped.
+pub(crate) fn resolve_absolute_path(path_str: &str, working_dir: &Path) -> Result<PathBuf> {
+    let pb = PathBuf::from(path_str);
+    if !pb.is_absolute() {
+        anyhow::bail!("Absolute mode requires an absolute path; got relative path: {}", path_str);
+    }
+    let raw_temp = std::env::temp_dir();
+    if !pb.starts_with(working_dir) && !pb.starts_with(&raw_temp) {
+        anyhow::bail!("Absolute path {} is outside allowed roots (project root: {}, temp dir: {})", pb.display(), working_dir.display(), raw_temp.display());
+    }
+    let canonical = canon_norm(fs::canonicalize(&pb).map_err(|e| anyhow::anyhow!("{}", e))?);
+    let cn_project = canon_norm(fs::canonicalize(working_dir).unwrap_or_else(|_| working_dir.to_path_buf()));
+    let cn_temp = canon_norm(fs::canonicalize(&raw_temp).unwrap_or(raw_temp));
+    if !canonical.starts_with(&cn_project) && !canonical.starts_with(&cn_temp) {
+        anyhow::bail!("Absolute path {} is outside allowed roots (project root: {}, temp dir: {})", canonical.display(), cn_project.display(), cn_temp.display());
+    }
+    Ok(canonical)
+}
+
+// Strip the Windows \\?\ extended-path prefix so starts_with works uniformly.
+fn canon_norm(p: PathBuf) -> PathBuf {
+    #[cfg(windows)]
+    if let Some(s) = p.to_str().and_then(|s| s.strip_prefix(r"\\?\")) {
+        return PathBuf::from(s);
+    }
+    p
+}
 
 pub fn truncate_to_byte_limit(content: String, limit: usize) -> String {
     if content.len() <= limit {

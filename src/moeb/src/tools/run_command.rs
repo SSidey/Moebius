@@ -123,7 +123,9 @@ mod tests {
     use std::path::PathBuf;
 
     fn wd() -> PathBuf {
-        std::env::current_dir().unwrap()
+        // Use CARGO_MANIFEST_DIR (compile-time constant) instead of current_dir() so concurrent
+        // tests that change the process CWD (e.g. in_temp_dir()) cannot corrupt this helper.
+        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
     }
 
     #[test]

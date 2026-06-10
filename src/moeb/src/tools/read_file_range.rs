@@ -3,7 +3,7 @@ use std::path::Path;
 use anyhow::{Context, Result};
 use serde_json::json;
 use crate::adapters::ToolDef;
-use super::{ToolHandler, MAX_RANGE_LINES};
+use super::{ToolHandler, MAX_RANGE_LINES, resolve_absolute_path};
 
 pub struct ReadFileRangeTool;
 
@@ -16,7 +16,8 @@ impl ToolHandler for ReadFileRangeTool {
             description: "Read a specific range of lines from a file. Use this after grep_files identifies \
                           the relevant line number — request only the lines that contain the symbol or block \
                           you need. Lines are 1-based. Returns at most 300 lines regardless of the range \
-                          requested. Paths are relative to the working directory.",
+                          requested. Paths are relative to the working directory. Pass absolute: true to \
+                          read by full filesystem path (must be under project root or OS temp directory).",
             parameters: json!({
                 "type": "object",
                 "properties": {
@@ -31,6 +32,13 @@ impl ToolHandler for ReadFileRangeTool {
                     "end_line": {
                         "type": "integer",
                         "description": "1-based line number to stop reading at (inclusive)"
+                    },
+                    "absolute": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "When true, treat path as a literal filesystem path rather than \
+                                        relative to the working directory. The path must be absolute and \
+                                        must fall under the project root or the OS temp directory."
                     }
                 },
                 "required": ["path", "start_line", "end_line"]
@@ -60,7 +68,12 @@ impl ToolHandler for ReadFileRangeTool {
             );
         }
 
-        let full = working_dir.join(rel);
+        let absolute = args["absolute"].as_bool().unwrap_or(false);
+        let full = if absolute {
+            resolve_absolute_path(rel, working_dir)?
+        } else {
+            working_dir.join(rel)
+        };
         let raw = fs::read_to_string(&full)
             .with_context(|| format!("read_file_range: cannot read {}", full.display()))?;
 
