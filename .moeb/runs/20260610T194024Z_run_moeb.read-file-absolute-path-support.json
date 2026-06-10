@@ -7,7 +7,7 @@
   "branch": "feat/moeb-read-file-absolute-path-support",
   "started_at": "2026-06-10T19:40:24Z",
   "moeb_version": "1.25.4",
-  "status": "in_progress",
+  "status": "complete",
   "tasks": [
     { "id": 1, "status": "done", "description": "Step 1: Add `absolute` boolean parameter to read_file tool JSON schema in src/moeb/tools/read_file.rs" },
     { "id": 2, "status": "done", "description": "Step 2: Implement absolute path resolution logic in read_file::execute in src/moeb/tools/read_file.rs" },
