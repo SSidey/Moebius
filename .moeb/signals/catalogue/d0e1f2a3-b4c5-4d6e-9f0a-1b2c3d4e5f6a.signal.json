@@ -1,0 +1,20 @@
+{
+  "signal_id": "d0e1f2a3-b4c5-4d6e-9f0a-1b2c3d4e5f6a",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "archive_signal failed in fix_signal post-resolution hook: a1000081-0607-4000-8000-000000000081",
+  "description": "archive_signal: cannot archive 'a1000081-0607-4000-8000-000000000081' — status is 'in_progress' (must be 'resolved' or 'superseded')",
+  "proposed_resolution": "Investigate and manually archive the signal record.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-10T10:22:49Z",
+  "last_seen": "2026-06-10T10:22:49Z",
+  "occurrences": [
+    { "timestamp": "2026-06-10T10:22:49Z", "run_id": "7cfdb311-1139-4053-b49e-d177c18a523f" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}

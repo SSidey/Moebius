@@ -1,0 +1,18 @@
+{
+  "run_id": "2bba7a67-93b0-4d46-badc-1a5206b37f41",
+  "timestamp": "2026-06-10T10:29:12Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.start-spec-read-signal-three-field.md",
+  "metrics_path": ".moeb/metrics/2bba7a67-93b0-4d46-badc-1a5206b37f41.metrics.json",
+  "emittedSignals": [],
+  "rubric_score": null,
+  "end_review_error_count": 0,
+  "tools_used": ["complete_review", "get_run_status", "patch_file", "push_thinking_blocks", "read_file", "start_spec", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

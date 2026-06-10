@@ -4,7 +4,9 @@
   "command": "fix_signal",
   "event_path": ".moeb/events/a1000081-0607-4000-8000-000000000081.event.json",
   "metrics_path": ".moeb/metrics/7cfdb311-1139-4053-b49e-d177c18a523f.metrics.json",
-  "emittedSignals": [],
+  "emittedSignals": [
+    { "id": "d0e1f2a3-b4c5-4d6e-9f0a-1b2c3d4e5f6a", "description": "archive_signal failed in fix_signal post-resolution hook: a1000081-0607-4000-8000-000000000081" }
+  ],
   "rubric_score": "4/4",
   "end_review_error_count": 0,
   "tools_used": ["complete_review", "create_branch", "fix_signal", "get_run_status", "patch_file", "push_thinking_blocks", "read_file", "verify_rubrics", "write_file"],
