@@ -1,0 +1,20 @@
+{
+  "signal_id": "a1000084-0610-4000-8000-000000000084",
+  "category": "NewCapability",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "README spec index should include a Signal ID column for signal-to-spec traceability",
+  "description": "The spec frontmatter stores signal_id when a spec was authored in response to a signal (moeb.start-spec-from-signal.md). The README.md specification index table has no corresponding column, so tracing which signal triggered a given spec requires parsing each spec file's frontmatter individually.\n\nAdding a nullable Signal ID column to the index table would allow tooling (and the fix_signal skill) to resolve the implementing spec for a given signal directly from the index, without scanning spec files. This is complementary to signal a1000083 which proposes auto-resolution in start_run.",
+  "proposed_resolution": "Add a Signal ID column (nullable, value or dash) to the README spec index table. Update spec.skill.md Phase 5 (Link README) to populate this column with the frontmatter signal_id value when present, and a dash when absent. Update the spec index row format documentation in spec.skill.md to include the new column. Backfill existing spec rows with signal_id values where the frontmatter field is set.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-10T10:42:00Z",
+  "last_seen": "2026-06-10T10:42:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-10T10:42:00Z", "run_id": "manual-0610-0000-0000-000000000084" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}
