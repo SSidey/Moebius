@@ -8,11 +8,13 @@
   "proposed_resolution": "Add an optional 'absolute' mode to read_file (or a separate read_file_absolute tool) that accepts a full filesystem path and bypasses the cwd-relative restriction. Scope enforcement should still apply: the path must be within a configurable allow-list (e.g. the moeb temp/overflow output directory and the project root). Add regression test covering absolute-path read of a file outside the project cwd.",
   "gating_condition": null,
   "status": "candidate",
-  "occurrence_count": 22,
+  "occurrence_count": 24,
   "first_seen": "2026-05-28T17:45:00Z",
-  "last_seen": "2026-06-05T18:59:27Z",
+  "last_seen": "2026-06-10T11:25:17Z",
   "occurrences": [
-    { "timestamp": "2026-06-06T00:00:00Z", "run_id": "consolidated-from-22-prior-signals" }
+    { "timestamp": "2026-06-06T00:00:00Z", "run_id": "consolidated-from-22-prior-signals" },
+    { "timestamp": "2026-06-10T11:15:00Z", "run_id": "de54ae27-b400-4030-9554-4ba917dcbd3a", "project": "ariadne", "forwarded_from": "3a7f9e1b-2c4d-4e5f-8a9b-0c1d2e3f4a5b" },
+    { "timestamp": "2026-06-10T11:25:17Z", "run_id": "ed4db31a-ae77-4d84-8896-cc20d148d3e9", "project": "ariadne", "forwarded_from": "6b8c0d2e-4f6a-4c7d-8e9f-0a1b2c3d4e5f" }
   ],
   "resolution_summary": null,
   "superseded_by": null,

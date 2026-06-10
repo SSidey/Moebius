@@ -10,6 +10,9 @@ src/moeb/target/
 # Claude Code local session state — machine-specific, must not be committed
 .claude/settings.local.json
 
+# Claude Code ignore rules — local preference, not for version control
+.claudeignore
+
 # roadmap.md is a living document that may contain sensitive information about project plans and timelines. It should not be committed to version control.
 roadmap.md
 
