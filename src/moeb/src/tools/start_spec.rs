@@ -162,12 +162,18 @@ fn read_signal_from_file(path: &std::path::Path) -> Result<String, String> {
         .map_err(|e| format!("Cannot read {:?}: {}", path, e))?;
     let record: serde_json::Value = serde_json::from_str(&content)
         .map_err(|e| format!("Cannot parse {:?}: {}", path, e))?;
+    let title = record.get("title").and_then(|v| v.as_str()).unwrap_or("");
+    let desc = record.get("description").and_then(|v| v.as_str()).unwrap_or("");
     let resolution = record.get("proposed_resolution").and_then(|v| v.as_str()).unwrap_or("");
+    if !desc.is_empty() && !resolution.is_empty() {
+        return Ok(format!(
+            "Title: {}\n\nProblem: {}\n\nProposed resolution: {}",
+            title, desc, resolution
+        ));
+    }
     if !resolution.is_empty() {
         return Ok(resolution.to_string());
     }
-    let title = record.get("title").and_then(|v| v.as_str()).unwrap_or("");
-    let desc = record.get("description").and_then(|v| v.as_str()).unwrap_or("");
     Ok(format!("{}. {}", title, desc))
 }
 

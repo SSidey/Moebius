@@ -1,0 +1,24 @@
+{
+  "run_id": "7d50435a-61e3-4281-9541-517a60c20bf8",
+  "timestamp": "2026-06-10T10:48:18Z",
+  "command": "run",
+  "signal_id": null,
+  "candidate_tag": null,
+  "spec_path": ".moeb/specifications/moeb/moeb.start-spec-read-signal-three-field.md",
+  "metrics_path": ".moeb/metrics/7d50435a-61e3-4281-9541-517a60c20bf8.metrics.json",
+  "emittedSignals": [
+    { "id": "f8b7c6d5-e4a3-4f2e-1d0c-9b8a7f6e5d4c", "description": "run_command tests fail on Windows due to CWD corruption by spec integration tests" },
+    { "id": "c9f4e3a2-1b5d-4e87-a0c2-3d4e5f6a7b8c", "description": "no-test-regression rubric incorrectly fails spec-required test edits and legitimate count-assertion updates" }
+  ],
+  "rubric_score": null,
+  "end_review_error_count": 0,
+  "qa_passed": true,
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "run_command", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

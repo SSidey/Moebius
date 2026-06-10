@@ -112,8 +112,7 @@ fn test_resolve_requirement_finds_signal_via_index() {
     let signal_json = serde_json::json!({
         "signal_id": uuid,
         "proposed_resolution": "Run moeb spec to add XYZ feature",
-        "title": "Missing XYZ feature",
-        "description": "The XYZ feature is not implemented"
+        "title": "Missing XYZ feature"
     }).to_string();
     std::fs::write(catalogue_dir.join(format!("{}.signal.json", uuid)), &signal_json).unwrap();
 
@@ -143,8 +142,7 @@ fn test_resolve_requirement_finds_signal_via_direct_filename() {
     let signal_json = serde_json::json!({
         "signal_id": uuid,
         "proposed_resolution": "Add delete-file capability to moeb",
-        "title": "Missing delete tool",
-        "description": "No moeb tool for file deletion"
+        "title": "Missing delete tool"
     }).to_string();
     std::fs::write(catalogue_dir.join(format!("{}.signal.json", uuid)), &signal_json).unwrap();
 
@@ -170,4 +168,28 @@ fn test_resolve_requirement_title_description_fallback() {
     let result = super::resolve_requirement(dir.path(), "", uuid)
         .expect("should fall back to title + description");
     assert_eq!(result, "Missing tool. No moeb equivalent");
+}
+
+#[test]
+fn test_resolve_requirement_three_field_format() {
+    let dir = TempDir::new().unwrap();
+    let uuid = "d4e5f6a7-b8c9-0123-def0-123456789013";
+    let catalogue_dir = dir.path().join(".moeb/signals/catalogue");
+    std::fs::create_dir_all(&catalogue_dir).unwrap();
+    let signal_json = serde_json::json!({
+        "signal_id": uuid,
+        "title": "Missing three-field composition",
+        "description": "read_signal_from_file does not compose all three fields",
+        "proposed_resolution": "Add a branch that returns Title, Problem, and Proposed resolution sections"
+    }).to_string();
+    std::fs::write(catalogue_dir.join(format!("{}.signal.json", uuid)), &signal_json).unwrap();
+
+    let result = super::resolve_requirement(dir.path(), "", uuid)
+        .expect("should resolve signal with all three fields");
+
+    let title_pos = result.find("Title: ").expect("result must contain 'Title: '");
+    let problem_pos = result.find("Problem: ").expect("result must contain 'Problem: '");
+    let resolution_pos = result.find("Proposed resolution: ").expect("result must contain 'Proposed resolution: '");
+    assert!(title_pos < problem_pos, "'Title: ' must appear before 'Problem: '");
+    assert!(problem_pos < resolution_pos, "'Problem: ' must appear before 'Proposed resolution: '");
 }

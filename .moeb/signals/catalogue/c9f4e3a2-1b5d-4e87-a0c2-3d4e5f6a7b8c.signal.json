@@ -8,13 +8,14 @@
   "proposed_resolution": "Amend the no-test-regression rubric criterion to include a safe-harbour clause: test file changes are permitted when (a) the spec explicitly requires the test change, OR (b) the change is a count/registry assertion updating a hardcoded value that tracks a resource added by the spec, OR (c) the change adds a new test (additive only, no deletions or modifications to existing assertions). Bad-faith silencing: modifications to existing assertions that weaken them without a corresponding spec requirement remain prohibited. The rubric should require the agent to cite the relevant spec requirement when invoking the safe-harbour.",
   "gating_condition": null,
   "status": "open",
-  "occurrence_count": 3,
+  "occurrence_count": 4,
   "first_seen": "2026-05-30T16:15:00Z",
-  "last_seen": "2026-06-05T18:59:27Z",
+  "last_seen": "2026-06-10T10:52:00Z",
   "occurrences": [
     { "timestamp": "2026-05-30T16:15:00Z", "run_id": "consolidated-3e5f9c2a" },
     { "timestamp": "2026-06-03T18:30:00Z", "run_id": "consolidated-c6e8a0b2" },
-    { "timestamp": "2026-06-05T18:59:27Z", "run_id": "e525860c-c4b8-4e46-97a0-a23b5c413401" }
+    { "timestamp": "2026-06-05T18:59:27Z", "run_id": "e525860c-c4b8-4e46-97a0-a23b5c413401" },
+    { "timestamp": "2026-06-10T10:52:00Z", "run_id": "7d50435a-61e3-4281-9541-517a60c20bf8" }
   ],
   "resolution_summary": null,
   "superseded_by": null,
