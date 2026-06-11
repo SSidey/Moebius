@@ -4,7 +4,7 @@
   "command": "run",
   "spec_path": ".moeb/specifications/moeb/moeb.signal-id-as-first-class-workflow-handle.md",
   "signal_id": "a1000094-0610-4000-8000-000000000094",
-  "candidate_tag": null,
+  "candidate_tag": "v1.27.0-candidate.moeb-signal-id-as-first-class-workflow-handle",
   "metrics_path": ".moeb/metrics/004c6afb-9d83-474f-bc34-1046fffa1cfd.metrics.json",
   "emittedSignals": [
     { "id": "a1000096-0611-4000-8000-000000000096", "description": "moeb-tool-origin: Read called on spec.skill.md without MissingMoebTool signal" },

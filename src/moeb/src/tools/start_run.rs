@@ -102,7 +102,7 @@ impl ToolHandler for StartRunTool {
         let spec_stem = abs_spec_path
             .file_stem()
             .map(|s| s.to_string_lossy().to_string())
-            .unwrap_or_else(|| spec_path_arg.to_string());
+            .unwrap_or_else(|| resolved_spec_path.to_string());
         let run_file_path = format!(".moeb/runs/{}_run_{}.json", run_ts, spec_stem);
 
         let asset = Prompts::get("run.prompt")
