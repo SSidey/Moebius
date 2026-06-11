@@ -1,0 +1,20 @@
+{
+  "signal_id": "a1000098-0611-4000-8000-000000000098",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "run skill does not verify build compiles before tagging candidate",
+  "description": "During run 004c6afb-9d83-474f-bc34-1046fffa1cfd (signal a1000094), the Verify phase completed and a candidate tag was created without ever running `cargo build` or equivalent. The implemented code contained a compile error (`spec_path_arg` used in scope where only `resolved_spec_path` exists). The error was only discovered post-run when the user attempted to use the build. The spec.skill.md Verify phase checks rubric adherence but has no step that actually compiles the project.",
+  "proposed_resolution": "Add a mandatory build-verification step to the spec.skill.md Verify phase: run `mcp__moeb__run_command` with the project's build command (e.g. `cargo build`) and treat a non-zero exit as a blocking Verify failure. The candidate tag must not be created if the build fails.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-11T22:30:00Z",
+  "last_seen": "2026-06-11T22:30:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-11T22:30:00Z", "run_id": "004c6afb-9d83-474f-bc34-1046fffa1cfd" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}
