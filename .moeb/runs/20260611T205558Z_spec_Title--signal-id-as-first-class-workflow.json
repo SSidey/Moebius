@@ -1,0 +1,19 @@
+{
+  "run_id": "89d25ead-57cd-4029-af2e-1fbe94aa3005",
+  "timestamp": "2026-06-11T20:55:58Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.signal-id-as-first-class-workflow-handle.md",
+  "signal_id": "a1000094-0610-4000-8000-000000000094",
+  "metrics_path": ".moeb/metrics/89d25ead-57cd-4029-af2e-1fbe94aa3005.metrics.json",
+  "emittedSignals": [],
+  "rubric_score": null,
+  "end_review_error_count": 0,
+  "tools_used": ["complete_review", "create_task_list", "enter_phase", "get_run_status", "grep_files", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "start_spec", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
