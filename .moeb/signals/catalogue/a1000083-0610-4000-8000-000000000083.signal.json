@@ -7,7 +7,8 @@
   "description": "Spec frontmatter now stores signal_id when a spec was authored in response to a signal (moeb.start-spec-from-signal.md). The start_run MCP tool already accepts signal_id but still requires spec_path as a mandatory parameter. To run the specification that fixes a known signal, a user must manually look up the spec path.\n\nThe signal_id in spec frontmatter provides a stable, unique key to locate the implementing spec without requiring the user to know its path. Extending start_run and the moeb run CLI to derive spec_path from signal_id when no explicit path is given would close this ergonomic gap.",
   "proposed_resolution": "Extend start_run to make spec_path optional when signal_id is provided. Add a spec-path resolution step that scans .moeb/specifications/*/*.md frontmatter for a signal_id match and uses the matched path as spec_path. If multiple specs share the same signal_id, prefer the most recently authored one. Apply the equivalent change to the moeb run CLI --signal-id flag. Update start_run parameter description to reflect that spec_path is now optional when signal_id resolves a unique spec.",
   "gating_condition": null,
-  "status": "open",
+  "status": "superseded",
+  "superseded_by": "a1000094-0610-4000-8000-000000000094",
   "occurrence_count": 1,
   "first_seen": "2026-06-10T10:42:00Z",
   "last_seen": "2026-06-10T10:42:00Z",
@@ -15,6 +16,5 @@
     { "timestamp": "2026-06-10T10:42:00Z", "run_id": "manual-0610-0000-0000-000000000083" }
   ],
   "resolution_summary": null,
-  "superseded_by": null,
   "archived_on": null
 }
