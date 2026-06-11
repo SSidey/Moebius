@@ -1,0 +1,20 @@
+{
+  "signal_id": "a1000095-0611-4000-8000-000000000095",
+  "category": "ToolImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Write-gate rejects edits without checking read cache; cache invalidation semantics after agent-initiated edits are undefined",
+  "description": "The write-gate requires a file to have been explicitly read before allowing write_file or patch_file. Two related gaps:\n\n1. The gate does not consult the read cache before rejecting. If a file was read earlier in the session — by a prior read_file call, or as part of reading multiple files — and is then modified, the gate may still reject the operation as if no read occurred. This produces false rejections that force agents into the a1000086 recovery path: read_file again → fall back to write_file with full content, introducing unnecessary tool calls, large diffs, and clobber risk.\n\n2. Cache invalidation semantics after a successful agent-initiated edit are not defined. Consider the sequence: patch_file A (succeeds) → patch_file A again. Must the second patch be preceded by a re-read? If the cache is cleared on any write, the answer is yes — producing a mandatory read between every pair of sequential edits to the same file, which is both wasteful and inconsistent with the intent of the gate (preventing edits to files whose current state is unknown). The gate should only require a re-read when the file's on-disk state could differ from the agent's known state — i.e. when an external modification has occurred since the last read or write.",
+  "proposed_resolution": "1. Before attempting a write_file or patch_file call, check the session read cache. If a valid cache entry exists for the target path (read or last-write timestamp is newer than the file's mtime at that point), permit the operation without requiring a new read_file call.\n\n2. After a successful write_file or patch_file, update the cache entry to reflect the new known state (new mtime, new content hash if tracked) rather than clearing it. This means a second consecutive edit to the same file is valid without re-reading.\n\n3. Cache invalidation should fire only when an external modification is detected: if the file's on-disk mtime is newer than the cache entry's last-write timestamp at the time of a subsequent edit attempt, the gate rejects and requires a fresh read. This distinguishes 'I wrote this' from 'something else changed this'.\n\n4. Document the cache entry lifecycle explicitly in the write-gate implementation: read_file → cache entry created; write_file/patch_file (agent) → cache entry updated; external modification detected → cache entry invalidated, next edit requires read.\n\n5. Add a regression test: read file A, patch file A, patch file A again — assert that the second patch succeeds without an intervening read_file call.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-11T00:00:00Z",
+  "last_seen": "2026-06-11T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-11T00:00:00Z", "run_id": "manual-0611-0000-0000-000000000095" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}

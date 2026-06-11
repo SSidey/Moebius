@@ -1,0 +1,29 @@
+{
+  "run_id": "004c6afb-9d83-474f-bc34-1046fffa1cfd",
+  "timestamp": "2026-06-11T21:00:00Z",
+  "rubric_score": null,
+  "step_metrics": [],
+  "end_review_error_count": null,
+  "wall_time_ms": null,
+  "tools_used": [
+    "complete_review",
+    "create_task_list",
+    "grep_files",
+    "list_directory",
+    "patch_file",
+    "push_thinking_blocks",
+    "read_file",
+    "read_file_range",
+    "start_run",
+    "update_task",
+    "verify_rubrics",
+    "write_file"
+  ],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

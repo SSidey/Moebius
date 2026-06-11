@@ -54,7 +54,11 @@ enum Commands {
     },
     /// Run the next implementation step for a specification
     Run {
-        spec: String,
+        /// Path or partial name of the specification file
+        spec: Option<String>,
+        /// Signal ID to resolve to a spec via frontmatter scan
+        #[arg(long)]
+        signal_id: Option<String>,
         /// Force full file content in trace (overrides LOG_FILE_CONTENT)
         #[arg(long)]
         embed_files: bool,
@@ -134,12 +138,23 @@ fn main() -> anyhow::Result<()> {
             let file_content_mode = resolve_file_content_mode(embed_files, hash_files);
             SpecPort::run(&adapter, &input.join(" "), file_content_mode, no_review)
         }
-        Commands::Run { spec, embed_files, hash_files, no_review } => {
+        Commands::Run { spec, signal_id, embed_files, hash_files, no_review } => {
             if embed_files && hash_files {
                 anyhow::bail!("--embed-files and --hash-files are mutually exclusive.");
             }
+            let resolved_spec = match (spec.as_deref(), signal_id.as_deref()) {
+                (Some(s), _) => s.to_owned(),
+                (None, Some(id)) => {
+                    let cwd = std::env::current_dir()?;
+                    crate::tools::start_run::resolve_spec_by_signal_id(id, &cwd)?
+                }
+                (None, None) => {
+                    eprintln!("error: one of --spec-path or --signal-id is required");
+                    std::process::exit(1);
+                }
+            };
             let file_content_mode = resolve_file_content_mode(embed_files, hash_files);
-            RunPort::run(&adapter, &spec, file_content_mode, no_review)
+            RunPort::run(&adapter, &resolved_spec, file_content_mode, no_review)
         }
         Commands::Adapters => ListAdaptersPort::run(&adapter),
         Commands::Adapter { name, action: AdapterAction::Config { key, value } } => {

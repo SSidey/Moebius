@@ -174,8 +174,10 @@ the new row on the next line. If `patch_file` returns an error, read the complet
 content, apply the row insertion in working memory, and write the full updated content
 using `write_file` — do not retry `patch_file`.
 
-New row format (four columns, Status value `active`):
-| <Title> | <one-sentence description> | [specifications/<domain>/<domain>.<slug>.md](specifications/<domain>/<domain>.<slug>.md) | active |
+**Signal ID value:** Use the `signal_id` session context variable if non-empty. Otherwise, read the `signal_id` field from the spec file's YAML frontmatter (already written in Phase 4). If neither is set, use `-`.
+
+New row format (five columns, Status value `active`, Signal ID from session context or frontmatter):
+| <Title> | <one-sentence description> | [specifications/<domain>/<domain>.<slug>.md](specifications/<domain>/<domain>.<slug>.md) | active | <signal_id> |
 
 ### Per-Step Review Sub-Loop (README patch)
 

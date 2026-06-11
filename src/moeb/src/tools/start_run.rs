@@ -34,26 +34,33 @@ impl ToolHandler for StartRunTool {
                 "properties": {
                     "spec_path": {
                         "type": "string",
-                        "description": "Relative path or partial name of the spec file, \
-                            e.g. 'moeb.kernel' or '.moeb/specifications/moeb/moeb.kernel.md'."
+                        "description": "Relative path to the spec file. Optional when signal_id resolves a unique spec via frontmatter scan."
                     },
                     "signal_id": {
                         "type": "string",
-                        "description": "Optional UUID of the signal in .moeb/signals/catalogue/ that triggered this run. Written to the run file when provided."
+                        "description": "Optional UUID of the signal in .moeb/signals/catalogue/ that triggered this run. When provided without spec_path, the tool scans spec frontmatter to resolve spec_path automatically."
                     }
                 },
-                "required": ["spec_path"]
+                "required": []
             }),
         }
     }
 
     fn execute(&self, args: &serde_json::Value, working_dir: &Path) -> Result<String> {
-        let spec_path_arg = args["spec_path"]
-            .as_str()
-            .ok_or_else(|| anyhow::anyhow!("start_run: 'spec_path' must be a string"))?;
+        let spec_path_opt = args["spec_path"].as_str().map(str::to_owned);
         let signal_id = args["signal_id"].as_str().unwrap_or("").to_string();
 
-        let (abs_spec_path, rel_spec_path) = resolve_spec_path(spec_path_arg, working_dir)?;
+        let resolved_spec_path: String = match spec_path_opt {
+            Some(p) => p,
+            None => {
+                if signal_id.is_empty() {
+                    anyhow::bail!("start_run: 'spec_path' is required when no signal_id is provided");
+                }
+                resolve_spec_by_signal_id(&signal_id, working_dir)?
+            }
+        };
+
+        let (abs_spec_path, rel_spec_path) = resolve_spec_path(&resolved_spec_path, working_dir)?;
 
         let spec_content = std::fs::read_to_string(&abs_spec_path)
             .map_err(|e| anyhow::anyhow!("start_run: cannot read '{}': {}", rel_spec_path, e))?;
@@ -221,7 +228,7 @@ fn resolve_spec_path(spec_path: &str, working_dir: &Path) -> Result<(PathBuf, St
     }
 }
 
-fn find_spec_matches(dir: &Path, query: &str) -> Result<Vec<PathBuf>> {
+fn walk_md_files<F: Fn(&Path) -> bool>(dir: &Path, pred: &F) -> Result<Vec<PathBuf>> {
     let mut matches = Vec::new();
     for entry in std::fs::read_dir(dir)
         .map_err(|e| anyhow::anyhow!("start_run: cannot read {}: {}", dir.display(), e))?
@@ -229,15 +236,53 @@ fn find_spec_matches(dir: &Path, query: &str) -> Result<Vec<PathBuf>> {
         let entry = entry?;
         let path = entry.path();
         if path.is_dir() {
-            matches.extend(find_spec_matches(&path, query)?);
-        } else if path.extension().and_then(|e| e.to_str()) == Some("md") {
-            let name = path.file_name().unwrap_or_default().to_string_lossy();
-            if name.contains(query) {
-                matches.push(path);
-            }
+            matches.extend(walk_md_files(&path, pred)?);
+        } else if path.extension().and_then(|e| e.to_str()) == Some("md") && pred(&path) {
+            matches.push(path);
         }
     }
     Ok(matches)
+}
+
+fn find_spec_matches(dir: &Path, query: &str) -> Result<Vec<PathBuf>> {
+    walk_md_files(dir, &|p| p.file_name().unwrap_or_default().to_string_lossy().contains(query))
+}
+
+fn collect_specs_with_signal_id(dir: &Path, signal_id: &str) -> Result<Vec<PathBuf>> {
+    walk_md_files(dir, &|p| spec_has_signal_id(p, signal_id))
+}
+
+fn spec_has_signal_id(path: &Path, signal_id: &str) -> bool {
+    let Ok(content) = std::fs::read_to_string(path) else { return false };
+    if !content.starts_with("---") { return false; }
+    let Some(nl) = content.find('\n') else { return false };
+    let rest = &content[nl + 1..];
+    let end = rest.find("\n---").unwrap_or(rest.len());
+    let target = format!("signal_id: {}", signal_id.trim());
+    rest[..end].lines().any(|l| l.trim() == target)
+}
+
+pub fn resolve_spec_by_signal_id(signal_id: &str, working_dir: &Path) -> Result<String> {
+    let specs_dir = working_dir.join(".moeb").join("specifications");
+    if !specs_dir.exists() {
+        anyhow::bail!("no spec found for signal_id {}; provide spec_path explicitly", signal_id);
+    }
+    let mut candidates = collect_specs_with_signal_id(&specs_dir, signal_id)?;
+    if candidates.is_empty() {
+        anyhow::bail!("no spec found for signal_id {}; provide spec_path explicitly", signal_id);
+    }
+    if candidates.len() > 1 {
+        candidates.sort_by(|a, b| {
+            let mtime = |p: &PathBuf| std::fs::metadata(p).and_then(|m| m.modified()).ok();
+            mtime(b).partial_cmp(&mtime(a)).unwrap_or(std::cmp::Ordering::Equal)
+        });
+        eprintln!("warning: multiple specs found for signal_id {}; using most recently modified: {}",
+            signal_id, candidates[0].display());
+    }
+    let path = candidates.into_iter().next().unwrap();
+    Ok(path.strip_prefix(working_dir)
+        .map(|p| p.to_string_lossy().replace('\\', "/"))
+        .unwrap_or_else(|_| path.to_string_lossy().replace('\\', "/")))
 }
 
 #[cfg(test)]

@@ -1,0 +1,20 @@
+{
+  "signal_id": "a1000096-0611-4000-8000-000000000096",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "moeb-tool-origin: Read called on spec.skill.md without MissingMoebTool signal",
+  "description": "During run 004c6afb-9d83-474f-bc34-1046fffa1cfd, the native Read tool was called on src/moeb/internal/skills/spec.skill.md (lines 164-226) to inspect Phase 5 content before patching, instead of using the available read_file_range moeb tool. No MissingMoebTool signal was buffered for this call. read_file_range was available and would have served this purpose.",
+  "proposed_resolution": "Use read_file_range for bounded reads on known-path source files during a moeb run; buffer a MissingMoebTool signal whenever a native tool is used because no moeb equivalent exists.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-11T12:00:00Z",
+  "last_seen": "2026-06-11T12:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-11T12:00:00Z", "run_id": "004c6afb-9d83-474f-bc34-1046fffa1cfd" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}
