@@ -1,0 +1,18 @@
+{
+  "run_id": "352fd1c1-5e55-4f96-8761-b4a45c1d2ed3",
+  "timestamp": "2026-06-12T19:02:21Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.moeb-source-signal-github-routing.md",
+  "metrics_path": ".moeb/metrics/352fd1c1-5e55-4f96-8761-b4a45c1d2ed3.metrics.json",
+  "signal_id": "a1000107-0612-4000-8000-000000000107",
+  "candidate_tag": null,
+  "emittedSignals": [],
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "start_spec", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
