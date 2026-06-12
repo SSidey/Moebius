@@ -1,0 +1,19 @@
+{
+  "run_id": "214662d7-076e-437e-8658-56fa36e87024",
+  "timestamp": "2026-06-12T13:13:52Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.run-skill-signal-status-to-candidate.md",
+  "metrics_path": ".moeb/metrics/214662d7-076e-437e-8658-56fa36e87024.metrics.json",
+  "emittedSignals": [
+    { "id": "b9c0d1e2-f3a4-4b5c-8d6e-7f8a9b0c1d2e", "description": "Tool error not recovered: read_file_range on persisted-output outside allowed roots" },
+    { "id": "c0d1e2f3-a4b5-4c6d-9e7f-0a1b2c3d4e5f", "description": "start_spec persisted-output path is outside moeb read_file allowed roots, forcing Read tool fallback" }
+  ],
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "start_spec", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
