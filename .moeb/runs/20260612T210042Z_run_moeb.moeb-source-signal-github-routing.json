@@ -3,7 +3,7 @@
   "timestamp": "2026-06-12T21:00:42Z",
   "command": "run",
   "signal_id": "a1000107-0612-4000-8000-000000000107",
-  "candidate_tag": null,
+  "candidate_tag": "v1.28.0-candidate.moeb-moeb-source-signal-github-routing",
   "spec_path": "src/moeb/internal/specs/moeb.moeb-source-signal-github-routing.spec.md",
   "metrics_path": ".moeb/metrics/18eadcc3-b142-4096-b3ac-5cbde9dc570c.metrics.json",
   "emittedSignals": [

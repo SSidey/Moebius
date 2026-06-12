@@ -1,0 +1,20 @@
+{
+  "signal_id": "a1000110-0612-4000-8000-000000000110",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Index Update sub-procedure rewrites full signals/index.md on every signal emit instead of patching the affected row",
+  "description": "The Index Update sub-procedure called after every signal write in run.skill.md, spec.skill.md, fix_signal.skill.md, and accept_candidate.skill.md reads the entire signals/index.md, rebuilds the complete markdown table, and calls write_file to replace the whole file. For a catalogue of n signals this is O(n) on every emit regardless of how many rows changed — always exactly one. As the catalogue grows the operation becomes observably slow and disproportionate to the work being done.\n\nThe sub-procedure has two distinct cases that each have a cheaper path:\n1. New signal: the row does not yet exist in the index → append one line.\n2. Existing signal update (status change, occurrence count increment, severity upgrade): the row already exists → find and replace that single row in-place.\n\nNeither case requires reading or regenerating any other row.",
+  "proposed_resolution": "Replace the full-file-rewrite strategy in the Index Update sub-procedure with a targeted patch approach:\n\n**Case 1 — new signal (row absent from index):**\nAppend the new row to the end of the table body using `patch_file` with the last existing table row as the anchor. Do not read or rewrite any other row.\n\n**Case 2 — existing signal update (row present in index):**\nLocate the row by `signal_id` (the first column is the signal_id; use a targeted `patch_file` replacing the matched row with the updated row). Do not read or rewrite any other row.\n\n**Implementation:**\nThe sub-procedure first checks whether the signal_id appears in the current index (a single grep_files or read_file_range scan of the id column is sufficient — no full parse needed). If absent: append. If present: patch the matching row.\n\nApply this change to the Index Update sub-procedure definition wherever it is defined (likely a shared section in run.skill.md or a shared prompt include) and verify all four canonical skill files reference the updated procedure.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-12T00:00:00Z",
+  "last_seen": "2026-06-12T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-12T00:00:00Z", "run_id": "manual-0612-0000-0000-000000000110" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}
