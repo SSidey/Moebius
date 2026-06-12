@@ -278,6 +278,9 @@ Write each signal via the **Canonical Signal Dedup-and-Write Procedure** defined
 #                                            Null unless status is "superseded".
 #   "archived_on": string | null          -- ISO 8601 timestamp set by archive_signal when the file is
 #                                            moved to archive/catalogue/. Null until archived.
+#   "candidate_tag": string | null,       -- The candidate tag created during the run that produced this signal's
+#                                            candidate status. Set when status transitions to 'candidate'.
+#                                            Null until then.
 # }
 
 For each signal S in the ReviewSignalReport:

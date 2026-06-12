@@ -319,6 +319,9 @@ Run-level signal template:
 #                                            Null unless status is "superseded".
 #   "archived_on": string | null          -- ISO 8601 timestamp set by archive_signal when the file is
 #                                            moved to archive/catalogue/. Null until archived.
+#   "candidate_tag": string | null,       -- The candidate tag created during the run that produced this signal's
+#                                            candidate status. Set when status transitions to 'candidate'.
+#                                            Null until then.
 # }
 
 For each signal S in the ReviewSignalReport:
@@ -611,13 +614,14 @@ After `create_candidate_tag` returns a tag name (not an error):
 Skip this update if `create_candidate_tag` returned an error string or if the QA gate
 prevented the tag from being created.
 
-**Signal status update (conditional on signal_id in spec frontmatter)**:
-1. Call `read_file` on the spec file at `spec_path`.
-2. Parse the YAML frontmatter. If `signal_id` is absent or empty, skip steps 3–6 entirely.
-3. Construct the catalogue path: `.moeb/signals/catalogue/<signal_id>.signal.json`.
-4. Call `read_file` on that path. If the file does not exist, skip steps 5–6.
-5. Parse the signal JSON. Set `"status"` to `"candidate"`. Write the updated JSON back using `write_file`.
-6. Run the **Index Update sub-procedure**: read `.moeb/signals/index.md`, find the row matching `signal_id`, update its `Status` cell to `candidate`, write the complete updated `index.md` using `write_file`.
+### Signal Status Update <!-- condition: signal_id non-empty, candidate tag created -->
+
+If the session context variable `signal_id` is empty or absent, skip this sub-procedure entirely and proceed to Phase 10.
+
+1. Call `read_file` on `.moeb/signals/catalogue/<signal_id>.signal.json` where `<signal_id>` is the `signal_id` context variable. If the file does not exist, skip the remaining steps and proceed to Phase 10.
+2. Parse the returned JSON. Set `"status"` to `"candidate"`. Set `"candidate_tag"` to the tag value returned by `create_candidate_tag`. Do not alter any other field.
+3. Write the updated JSON back to the same path using `write_file`.
+4. Run the **Index Update sub-procedure**: read `.moeb/signals/index.md`, find the row whose `Signal ID` cell matches `signal_id`, update its `Status` cell to `candidate`, write the complete updated `index.md` using `write_file`. If no matching row is found, append a new row with current field values.
 
 ## Phase 9a — Archive Resolved Signals
 

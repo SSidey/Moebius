@@ -1,0 +1,20 @@
+{
+  "signal_id": "a1000101-0612-4000-8000-000000000101",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "spec.skill.md Phase 9a emits one signal per uncommitted path instead of a single root-cause signal and must stage remaining files atomically",
+  "description": "Two defects in spec.skill.md Phase 9a (Exit Cleanliness Check) Case B, both observable in the live signal catalogue where multiple per-file 'Uncommitted path at spec skill exit: <P>' signals were emitted from the same invocation:\n\n1. Signal-per-file emission: Case B writes one signal per unrecognised path P with title 'Uncommitted path at spec skill exit: <P>'. This is wrong for the same reason the per-file write_file signal pattern was wrong: the problem does not lie with any individual file, it lies with a missing or incomplete staging step earlier in the skill. The file path is a symptom; one consolidated signal identifying the root cause (files left uncommitted at skill exit) is the correct output. Naming each path in a separate signal title obscures the underlying cause and inflates signal noise.\n\n2. Implied per-file staging: the Case B prose is structured as a loop over each unrecognised path P, which leads executing agents to interpret the commit step as conditional on individual path handling rather than as a single unconditional atomic operation. The git_commit tool with kind 'run' already invokes git add -A in the kernel (vcs.rs commit_run), making per-path staging both unnecessary and misleading. The skill must unambiguously direct the agent to commit all pending working-tree changes — untracked and modified alike — in one git_commit call, not path-by-path.",
+  "proposed_resolution": "Fix spec.skill.md Phase 9a Case B in two ways: (1) Replace the per-file signal loop with a single signal emission that does not name any specific path in its title. Use a title such as 'Uncommitted files detected at spec skill exit' and include the full list of unrecognised paths in the description field rather than in separate signal records. (2) Restructure the cleanup commit step to make clear it is unconditional and atomic: collect all unrecognised paths as a set, emit one signal describing them collectively, then call git_commit with kind 'run' to stage and commit everything (equivalent to git add .) — no per-path loop precedes or wraps the commit call.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-12T00:00:00Z",
+  "last_seen": "2026-06-12T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-12T00:00:00Z", "run_id": "manual-0612-0000-0000-000000000101" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}
