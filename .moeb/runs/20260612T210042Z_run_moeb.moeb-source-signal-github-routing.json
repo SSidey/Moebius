@@ -1,0 +1,41 @@
+{
+  "run_id": "18eadcc3-b142-4096-b3ac-5cbde9dc570c",
+  "timestamp": "2026-06-12T21:00:42Z",
+  "command": "run",
+  "signal_id": "a1000107-0612-4000-8000-000000000107",
+  "candidate_tag": null,
+  "spec_path": "src/moeb/internal/specs/moeb.moeb-source-signal-github-routing.spec.md",
+  "metrics_path": ".moeb/metrics/18eadcc3-b142-4096-b3ac-5cbde9dc570c.metrics.json",
+  "emittedSignals": [
+    { "id": "a8c3f1e9-7b4d-4e2f-9a0c-1d3b5e7f9a2c", "description": "Spec path shorthand ambiguity caused wrong-path write during run" },
+    { "id": "b9d4a2f0-8c5e-4f3a-0b1d-2e4c6f8a0b3d", "description": "Tool output issue: read_file — pre-creation probe of absent file recorded as tool error" },
+    { "id": "c0e5b3a1-9d6f-4a4b-1c2e-3f5d7a9b1c4e", "description": "run_command dir fails with double-quoted path on Windows cmd.exe" },
+    { "id": "d1f2a3b4-c5e6-4d7f-8a9b-0c1d2e3f4a5b", "description": "Reasoning gap: empty-PEM dev behavior for non-moeb projects not explicitly addressed" }
+  ],
+  "rubric_score": 0.9375,
+  "end_review_error_count": 0,
+  "qa_passed": true,
+  "tools_used": [
+    "complete_review",
+    "create_task_list",
+    "get_run_status",
+    "grep_files",
+    "list_directory",
+    "patch_file",
+    "push_thinking_blocks",
+    "read_file",
+    "read_file_range",
+    "run_command",
+    "start_run",
+    "update_task",
+    "verify_rubrics",
+    "write_file"
+  ],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

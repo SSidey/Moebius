@@ -1,0 +1,21 @@
+{
+  "signal_id": "b9d4a2f0-8c5e-4f3a-0b1d-2e4c6f8a0b3d",
+  "category": "ToolImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "Tool output issue: read_file — pre-creation probe of absent file recorded as tool error",
+  "description": "During run 18eadcc3-b142-4096-b3ac-5cbde9dc570c, read_file was called on .moeb/config.json before the file was created, to determine whether to merge or create it. The failed call was recorded by the kernel as a tool error, causing the tool-errors rubric criterion to fail permanently (kernel-authoritative; cannot be overridden via acknowledged_failures). The file was subsequently created correctly. Workaround: proceeded with unconditional create; no data was lost.",
+  "proposed_resolution": "Introduce a file_exists moeb tool (or an exists_only: true flag on read_file) that returns a boolean without recording a tool error on file absence. This allows agents to check file existence as a precondition without poisoning the tool-errors rubric record.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-12T21:15:00Z",
+  "last_seen": "2026-06-12T21:15:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-12T21:15:00Z", "run_id": "18eadcc3-b142-4096-b3ac-5cbde9dc570c" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}
