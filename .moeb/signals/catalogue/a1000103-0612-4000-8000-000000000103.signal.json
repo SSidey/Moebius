@@ -1,0 +1,23 @@
+{
+  "signal_id": "a1000103-0612-4000-8000-000000000103",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Moeb invocation context bloated by markdown table overhead across spec index, backlinks, and rubrics; no human index regeneration capability",
+  "description": "Four artifact types carry avoidable token overhead in AI invocations. (1) The specification index (150+ rows, 5-column markdown table with link markup) is embedded in README.md and sent on every start_run, despite agents already having their spec's Backlinks section identifying parent specs — agents never browse the index during a run. Domain folders already encode the information the index provides; list_directory on .moeb/specifications/<domain>/ plus grep_files is sufficient for AI contradiction-checking and is always current. (2) Backlinks sections in spec files use a 3-column markdown table where agents only need path and a one-line purpose. (3) Rubric tables in spec files and rubric files use a 4-column format (Name, Description, Threshold, Pass Condition) where Description and Threshold are redundant with Pass Condition for AI consumption; however the full human-readable context in rubric source files is worth preserving. (4) There is no CLI command to regenerate human-navigable index files, so removing the index from README.md would leave no human entry point to the specification catalogue.",
+  "proposed_resolution": "1. Remove the specification index section from README.md entirely. Replace with a brief pointer: 'Run moeb index to generate human-navigable index files.' AI traversal uses list_directory on .moeb/specifications/<domain>/ to enumerate specs by filename, then read_file or grep_files for targeted lookup. start_spec gains an instruction to list the relevant domain directory as its contradiction-checking entry point. 2. Add a moeb index CLI command (retained through any future CLI slimming) that walks .moeb/specifications/ and generates per-domain markdown index files (current 5-column table format with file links) into .moeb/indices/. Add .moeb/indices/ to .gitignore and to .claudeignore (or equivalent AI ignore mechanism). Humans call moeb index locally when they want navigable tables; files are never committed and never enter AI context. 3. Reformat signals/index.md to compact flat format for AI consumers: one line per signal as '<signal_id> | <status> | <severity> | <title>'. This index is legitimately AI-consumed by fix_signal for severity ranking and stays, but drops the markdown table overhead. moeb index includes the full verbose signals table in its human output. 4. Reformat spec backlinks from 3-column table to flat list in the spec schema: '- <path>: <one-line purpose>'. Update spec-schema.yaml and spec-schema-validation.json. Apply to all existing spec files. 5. Rubric source files (.moeb/rubrics/, internal/rubrics/) and spec ## Rubric sections retain their full 4-column tables as the human-readable source of truth. start_run transforms rubric content to compact format ('<name>: <pass condition>') at injection time when building {{command_rubrics}} and injecting spec content. moeb index links to existing rubric files directly — no assembly required since the full tables are already present in source.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-12T00:00:00Z",
+  "last_seen": "2026-06-12T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-12T00:00:00Z", "run_id": null }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "picked_up_at": null,
+  "fix_branch": null,
+  "candidate_tag": null
+}

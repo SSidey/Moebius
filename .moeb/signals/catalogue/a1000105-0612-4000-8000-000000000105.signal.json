@@ -1,0 +1,23 @@
+{
+  "signal_id": "a1000105-0612-4000-8000-000000000105",
+  "category": "ToolImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "push_thinking_blocks has no retrieval path; Reasoning Reviewer silently degrades after compaction with no detection mechanism",
+  "description": "push_thinking_blocks stores reasoning texts in RunState.thinking_blocks server-side but there is no tool to retrieve them. The inline Reasoning Reviewer reads conversation history directly. When compaction occurs before Phase 7b — either from moeb's internal compaction (standalone Rust adapter mode, already emits CompactionEvent to trace) or Claude Code auto-compaction (MCP mode, invisible to RunState) — early-phase reasoning is summarised in conversation history but remains intact in RunState. There is no detection mechanism and no retrieval path, so the Reasoning Reviewer silently operates on degraded context. get_run_status does not expose thinking_blocks and is the wrong home for them in any case: it serves the qualitative QA Architect reviewer whose concerns are task, rubric, and token status rather than reasoning content.",
+  "proposed_resolution": "1. Add has_been_compacted: bool to RunState, set to true by the internal compaction module when any CompactionEvent fires. Expose it in get_run_status output as 'compaction: occurred | none'. This covers standalone Rust adapter mode where moeb's own compaction fires. 2. Add a get_thinking_blocks tool to the standard and MCP tool registries. Takes no input. Returns the full RunState.thinking_blocks array as a formatted text block (one entry per block, prefixed with index). 3. Update the Reasoning Review phase (Phase 7b) in all three canonical skill files: before reasoning as the Reasoning Reviewer persona, call get_thinking_blocks if either (a) get_run_status shows 'compaction: occurred', OR (b) the most recent push_thinking_blocks call is not visible in current conversation context. Condition (b) covers Claude Code auto-compaction in MCP mode where the RunState flag is always false. The two conditions together handle both compaction sources with a single conditional tool call rather than an unconditional read.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-12T00:00:00Z",
+  "last_seen": "2026-06-12T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-12T00:00:00Z", "run_id": null }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "picked_up_at": null,
+  "fix_branch": null,
+  "candidate_tag": null
+}
