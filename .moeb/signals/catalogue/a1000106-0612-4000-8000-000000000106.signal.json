@@ -1,0 +1,20 @@
+{
+  "signal_id": "a1000106-0612-4000-8000-000000000106",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "archive_signal overwrites terminal status; fix_signal Phase 1 does not sweep terminal-state signals from catalogue",
+  "description": "Two related gaps in the archive lifecycle:\n\n1. archive_signal.rs line 82 unconditionally sets record[\"status\"] = \"archived\" before writing to archive/catalogue/. This erases the original terminal state, making it impossible to distinguish resolved (a fix was accepted and merged) from superseded (a design decision made the fix unnecessary) when browsing the archive. The \"archived\" status carries no information beyond the physical location of the file.\n\n2. fix_signal.skill.md Phase 1 collects only signals where status is \"open\" or \"reopened\". Signals that reached a terminal state (resolved, superseded, rejected) outside a fix_signal run — e.g. via manual patch, accept_candidate called without a follow-up fix_signal, or a supersede applied by hand — accumulate indefinitely in the active catalogue. Each fix_signal invocation passes over them silently. The result is catalogue bloat and a misleading count of \"active\" signals.",
+  "proposed_resolution": "1. Remove the status override from archive_signal.rs: delete the line `record[\"status\"] = Value::String(\"archived\".to_string())`. The existing gate (line 62–68) already ensures only terminal-state signals enter the archive; the archived_on timestamp and file location in archive/catalogue/ are sufficient to indicate archival. The \"archived\" enum value in signal.schema.json should be deprecated — treat existing records that carry it as legacy, valid reads but never written by new code.\n\n2. Add a terminal-signal sweep to fix_signal.skill.md Phase 1: after reading all .signal.json files, collect any signal whose status is \"resolved\", \"superseded\", or \"rejected\" (i.e. not the signal being worked on in this run). For each, call archive_signal with a resolution_summary derived from the signal's own resolution_summary field. If archive_signal returns an error (most likely an index integrity mismatch), emit a SkillImprovement signal describing the failure and continue — do not abort Phase 1.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-12T00:00:00Z",
+  "last_seen": "2026-06-12T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-12T00:00:00Z", "run_id": "manual-0612-0000-0000-000000000106" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}
