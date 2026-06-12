@@ -7,7 +7,7 @@
   "description": "When run.skill.md Phase 9 successfully creates a candidate tag, the corresponding signal's status field is not updated from 'spec_written' to 'candidate'. This means the signal index diverges from actual run state: a signal appears to still be awaiting a run even after one has succeeded. There is no call to fix_signal or tag_signal at the point of candidate tag creation in run.skill.md.",
   "proposed_resolution": "Add a step to run.skill.md Phase 9, after create_candidate_tag succeeds: call fix_signal (or a new update_signal_status MCP tool) to advance the signal status from 'spec_written' to 'candidate'. Include the candidate_tag value in the signal update. This should be gated on the candidate tag creation succeeding — if the QA gate fails, the status must not be advanced.",
   "gating_condition": null,
-  "status": "spec_written",
+  "status": "candidate",
   "occurrence_count": 1,
   "first_seen": "2026-06-06T00:00:00Z",
   "last_seen": "2026-06-06T00:00:00Z",
@@ -18,5 +18,6 @@
   "superseded_by": null,
   "archived_on": null,
   "picked_up_at": "2026-06-12T13:10:00Z",
-  "fix_branch": "feat/moeb-run-skill-does-not-advance-signal-status-from-spec"
+  "fix_branch": "feat/moeb-run-skill-does-not-advance-signal-status-from-spec",
+  "candidate_tag": "v1.27.1-candidate.moeb-run-skill-signal-status-to-candidate"
 }
