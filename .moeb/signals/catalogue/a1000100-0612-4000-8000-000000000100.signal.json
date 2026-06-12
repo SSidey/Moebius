@@ -1,0 +1,23 @@
+{
+  "signal_id": "a1000100-0612-4000-8000-000000000100",
+  "category": "NewCapability",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Behavioural rubric phase needs a dedicated persona to evaluate runtime test results from the test_suite harness",
+  "description": "The rubric phased execution framework (a1000099) defines a `behavioural` phase for `moeb run` that exercises runtime-verified criteria via the test_suite harness (a1000092). Unlike the structural phase (deterministic, objectively verifiable) and the qualitative phase (judgment-based, evaluated by the QA Architect persona), the behavioural phase requires a distinct evaluation mode: it consumes structured test result output from the test_suite harness and maps pass/fail outcomes to rubric criterion verdicts.\n\nNo persona currently exists for this purpose. The QA Architect (qualitative evaluator) and Reasoning Reviewer (holistic process reviewer) both lack the scope and input contract needed to interpret test_suite output against behavioural rubric criteria. Attempting to route behavioural rubric evaluation through either existing persona would produce unreliable verdicts because:\n1. The QA Architect evaluates judgment-based criteria against artifact content — it has no protocol for consuming structured test result JSON.\n2. The Reasoning Reviewer evaluates process and reasoning quality holistically — behavioural rubric pass/fail is deterministic from test output, not a judgment call.\n\nThe behavioural phase therefore needs its own role file defining: input contract (test_suite result JSON), evaluation logic (map test outcomes to criterion verdicts), output schema (consistent with the ReviewSignalReport used by QA Architect and Reasoning Reviewer), and signal categories (Error for criterion failures, SkillImprovement when a criterion's test coverage is insufficient).",
+  "proposed_resolution": "Create `src/moeb/internal/roles/behavioural-reviewer.role.md`.\n\nThe **Behavioural Reviewer** persona:\n- **Identity:** Evaluates behavioural rubric criteria by consuming structured test result output from the test_suite harness. Makes no judgment calls — pass/fail is determined mechanically from test outcomes.\n- **Input:** A JSON object containing: (a) the behavioural rubric criteria from the spec's `## Rubric / ### Structural` table rows where `phase: 'behavioural'`; (b) the test_suite result JSON produced by the behavioural phase test run, including per-test pass/fail status, assertion counts, and any error output.\n- **Evaluation:** For each behavioural criterion, locate the corresponding test suite test(s) by criterion name or tag. If all associated tests pass: no signal. If any associated test fails: emit one Error signal per failing criterion. If no test is associated with a criterion: emit one SkillImprovement signal noting the criterion has no test coverage.\n- **Output schema:** ReviewSignalReport JSON (same schema as QA Architect and Reasoning Reviewer) with signal categories restricted to `Error` and `SkillImprovement`.\n- **Cannot gate:** behavioural rubric failures are collected and batched with structural/qualitative failures per a1000099. The Behavioural Reviewer does not independently gate pass/fail — gating is handled by the unified batch emission at the end of Verify.\n\nUpdate `run.skill.md` behavioural phase invocation to reference the Behavioural Reviewer Persona by name.\n\nUpdate `skill.template.md` to document the behavioural phase slot and its persona assignment.",
+  "gating_condition": [
+    "a1000092-0610-4000-8000-000000000092",
+    "a1000099-0611-4000-8000-000000000099"
+  ],
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-12T00:00:00Z",
+  "last_seen": "2026-06-12T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-12T00:00:00Z", "run_id": "manual-0612-0000-0000-000000000100" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}
