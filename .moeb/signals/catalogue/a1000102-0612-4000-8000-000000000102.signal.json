@@ -1,0 +1,23 @@
+{
+  "signal_id": "a1000102-0612-4000-8000-000000000102",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "run.skill.md Phase 7 commit precedes Phase 9 harness artifacts, leaving them uncommitted at run exit",
+  "description": "run.skill.md calls git_commit in Phase 7, before Phase 9 creates the post-candidate-tag harness artifacts: the run file candidate_tag field update, the signal status advance to 'candidate', and the signal index update. These three files are left uncommitted when the run completes. A manual chore commit is required after every successful run to avoid orphaned working-tree changes.",
+  "proposed_resolution": "Either (a) move the git_commit call to after Phase 9's Signal Status Update and event file write, so all artifacts are included in a single commit; or (b) add an explicit 'commit harness artifacts' step at the end of Phase 10 covering the run file, signal file, and index. Option (a) is simpler but requires moving Phase 7 to Phase 10+. See also signal a1000066 which proposes amending the existing commit rather than creating a new one.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-12T13:48:00Z",
+  "last_seen": "2026-06-12T13:48:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-12T13:48:00Z", "run_id": "40604c1a-38b1-47c6-8523-8b2d7b8c80cf" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "picked_up_at": null,
+  "fix_branch": null,
+  "candidate_tag": null
+}
