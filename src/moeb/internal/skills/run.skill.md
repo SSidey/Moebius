@@ -364,25 +364,21 @@ After all catalogue writes complete, add each emitted signal as { "id": signal_i
 ### Index Update
 
 After completing the Dedup-and-Write Procedure for all signals:
-- Attempt to read `.moeb/signals/index.md` using `read_file`. If missing, create it with
-  `write_file` using this header:
 
-  ```markdown
-  # Signal Index
+1. If `.moeb/signals/index.md` does not exist, create it with `write_file` using the standard header, then process each signal as Case 1 below:
 
-  | Signal ID | Title | Category | Source | Severity | Status | Occurrences | Last Seen | File |
-  |-----------|-------|----------|--------|----------|--------|-------------|-----------|------|
-  ```
+   ```markdown
+   # Signal Index
 
-- For each canonical signal written in the current run, search the existing table for a
-  row whose `Signal ID` cell matches the canonical `signal_id`.
-  - If found: replace that row in the in-memory content with updated values for
-    `Severity`, `Status`, `Occurrences`, and `Last Seen`, then write the complete
-    updated file using `write_file`.
-  - If not found: append a new row to the in-memory content, then write the complete
-    updated file using `write_file`:
+   | Signal ID | Title | Category | Source | Severity | Status | Occurrences | Last Seen | File |
+   |-----------|-------|----------|--------|----------|--------|-------------|-----------|------|
+   ```
 
-    `| <signal_id> | <title> | <category> | <signal_source> | <severity> | <status> | <occurrence_count> | <last_seen> | [catalogue/<signal_id>.signal.json](catalogue/<signal_id>.signal.json) |`
+2. For each canonical signal written in the current run, call `grep_files` with `path: ".moeb/signals/index.md"` and `pattern: "<signal_id>"` (the literal UUID string). If `grep_files` returns a match, treat as Case 2; otherwise treat as Case 1.
+
+3. **Case 1 — row absent (new signal):** Call `grep_files` on `.moeb/signals/index.md` with `pattern: "| "` to locate the last `| ` line in the table body and obtain the exact last data row text. Call `patch_file` with `old_string` set to that last data row and `new_string` set to that same row followed immediately by a newline and the new row: `| <signal_id> | <title> | <category> | <signal_source> | <severity> | <status> | <occurrence_count> | <last_seen> | [catalogue/<signal_id>.signal.json](catalogue/<signal_id>.signal.json) |`. If `patch_file` fails (including when no data rows exist yet), fall back to `read_file` + `write_file` with the full updated content.
+
+4. **Case 2 — row present (existing signal update):** Use the matching line returned by `grep_files` as the exact current row text. Call `patch_file` with `old_string` set to that exact row and `new_string` set to the updated row with refreshed values for `Severity`, `Status`, `Occurrences`, and `Last Seen`. If `patch_file` fails, fall back to `read_file` + `write_file` with the full updated content.
 
 ### archive_signal usage
 

@@ -1,0 +1,21 @@
+{
+  "signal_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "context-budget: skill markdown files exceed 300-line threshold",
+  "description": "The three canonical skill files modified in this run (run.skill.md: 682 lines, spec.skill.md: 566 lines, fix_signal.skill.md: 524 lines) all exceed the 300-line implementation file budget. These files pre-date this run and this run reduced their line counts by 4 lines each. Splitting them to meet the budget requires a dedicated skill-splitting specification.",
+  "proposed_resolution": "Author a spec to split the canonical skill files at natural section boundaries into included sub-files, or update the context-budget criterion to exempt markdown skill files from the 300-line limit.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-13T00:00:00Z",
+  "last_seen": "2026-06-13T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-13T00:00:00Z", "run_id": "59bd70ff-865a-4197-92b1-4ee267566de6" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}

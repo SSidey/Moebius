@@ -1,0 +1,50 @@
+{
+  "run_id": "59bd70ff-865a-4197-92b1-4ee267566de6",
+  "skill": "run",
+  "domain": "moeb",
+  "slug": "index-update-sub-procedure-targeted-patch",
+  "signal_id": "a1000110-0612-4000-8000-000000000110",
+  "spec_path": "docs/specs/moeb.index-update-sub-procedure-targeted-patch.spec.md",
+  "status": "completed",
+  "started_at": "2026-06-12T22:14:16Z",
+  "completed_at": "2026-06-13T00:00:00Z",
+  "qa_passed": true,
+  "emittedSignals": [
+    "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a"
+  ],
+  "rubric_verdicts": {
+    "skill-mandatory-phases": "pass",
+    "moeb-tool-origin": "pass",
+    "no-dead-code": "na",
+    "no-signal-reoccurrence": "pass",
+    "kernel-thin-and-parity": "pass",
+    "all-skill-files-parity": "pass",
+    "binary-builds": "pass",
+    "all-tests-pass": "pass",
+    "no-test-regression": "pass",
+    "new-artifact-naming-schema": "na",
+    "context-budget": "fail",
+    "no-drift": "pass",
+    "spec-schema-compliance": "na",
+    "ai-first-org": "pass",
+    "branch-clean-at-exit": "na",
+    "thin-kernel": "pass",
+    "mcp-cli-behavioural-parity": "pass",
+    "write-review-compliance": "pass",
+    "tool-errors": "pass",
+    "rubric-qualification": "pass"
+  },
+  "rubric_summary": {
+    "pass": 15,
+    "fail": 1,
+    "na": 4,
+    "kernel_overrides": 1,
+    "acknowledged_failures": ["context-budget"]
+  },
+  "files_modified": [
+    "src/moeb/internal/skills/run.skill.md",
+    "src/moeb/internal/skills/spec.skill.md",
+    "src/moeb/internal/skills/fix_signal.skill.md"
+  ],
+  "metrics_file": ".moeb/metrics/59bd70ff-865a-4197-92b1-4ee267566de6.metrics.json"
+}
