@@ -1,0 +1,21 @@
+{
+  "run_id": "7588055a-2672-468a-9251-1544e8636e70",
+  "timestamp": "2026-06-13T10:47:22Z",
+  "command": "fix_signal",
+  "event_path": ".moeb/events/a1000104-0612-4000-8000-000000000104.event.json",
+  "metrics_path": ".moeb/metrics/7588055a-2672-468a-9251-1544e8636e70.metrics.json",
+  "emittedSignals": [
+    { "id": "3c4d5e6f-a7b8-4c9d-0e1f-2a3b4c5d6e7f", "description": "Agent used external tools after context compaction without buffering MissingMoebTool signals" },
+    { "id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c", "description": "read_file guesses wrong extension for signal catalogue file causing tool error" }
+  ],
+  "rubric_score": "15 pass, 2 fail, 0 na",
+  "end_review_error_count": 0,
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "run_command", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

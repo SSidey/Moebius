@@ -127,7 +127,8 @@ impl ToolHandler for StartRunTool {
             .replace("{{reviewer_role_content}}", &reviewer_role)
             .replace("{{moderator_role_content}}", &moderator_role)
             .replace("{{qa_architect_role_content}}", &qa_architect_role)
-            .replace("{{reasoning_reviewer_persona}}", &reasoning_reviewer_role);
+            .replace("{{reasoning_reviewer_persona}}", &reasoning_reviewer_role)
+            .replace("{{run_only_personas}}", "");
 
         Ok(prompt)
     }

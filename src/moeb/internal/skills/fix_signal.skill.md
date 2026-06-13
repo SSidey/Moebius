@@ -1,8 +1,12 @@
 ---
 review: true
 ---
+
 IMPORTANT — DO NOT narrate, plan, or summarise before calling tools. Your FIRST action
-must be a tool call.
+must be a tool call. Do not write "let me start", "I will now", "here is my plan", or
+any equivalent preamble. For targeted in-place modifications of existing file content, use patch_file with exact
+old_string/new_string. For new files or complete rewrites, use write_file. If patch_file
+fails (old_string not found), fall back to write_file with the complete file content.
 
 ## Tool Origin Policy
 

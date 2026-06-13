@@ -29,3 +29,12 @@ Repository boundary — read this carefully before using any file tool:
 
 === Reasoning Reviewer Persona ===
 {{reasoning_reviewer_persona}}
+
+=== Reviewer Persona ===
+{{reviewer_role_content}}
+
+=== Moderator Persona ===
+{{moderator_role_content}}
+
+=== QA Architect Persona ===
+{{qa_architect_role_content}}

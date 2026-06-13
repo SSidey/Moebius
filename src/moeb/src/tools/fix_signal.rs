@@ -57,6 +57,9 @@ impl ToolHandler for FixSignalTool {
             .unwrap_or_else(|_| "(not found)".to_string());
 
         let role_content = crate::skills::load_role(&moeb_dir, "run");
+        let reviewer_role = crate::skills::load_role(&moeb_dir, "reviewer");
+        let moderator_role = crate::skills::load_role(&moeb_dir, "moderator");
+        let qa_architect_role = crate::skills::load_role(&moeb_dir, "qa-architect");
         let reasoning_reviewer_role = crate::skills::load_role(&moeb_dir, "reasoning-reviewer");
         let skill_content = crate::skills::load_skill(&moeb_dir, "fix_signal")?;
 
@@ -75,7 +78,10 @@ impl ToolHandler for FixSignalTool {
             .replace(RUN_FILE_PATH_TOKEN, &run_file_path)
             .replace(SIGNAL_ID_TOKEN, &signal_id)
             .replace("{{fix_signal_source}}", &signal_source)
-            .replace("{{reasoning_reviewer_persona}}", &reasoning_reviewer_role);
+            .replace("{{reasoning_reviewer_persona}}", &reasoning_reviewer_role)
+            .replace("{{reviewer_role_content}}", &reviewer_role)
+            .replace("{{moderator_role_content}}", &moderator_role)
+            .replace("{{qa_architect_role_content}}", &qa_architect_role);
 
         Ok(prompt)
     }
