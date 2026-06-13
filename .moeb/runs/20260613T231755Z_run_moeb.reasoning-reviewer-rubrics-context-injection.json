@@ -3,7 +3,7 @@
   "timestamp": "2026-06-13T23:17:55Z",
   "command": "run",
   "signal_id": "6458affb-5d94-4350-9125-f08b2ee8af9a",
-  "candidate_tag": null,
+  "candidate_tag": "v1.29.1-candidate.moeb-reasoning-reviewer-rubrics-context-injection",
   "spec_path": ".moeb/specifications/moeb/moeb.reasoning-reviewer-rubrics-context-injection.md",
   "metrics_path": ".moeb/metrics/fd3a5aa3-79f0-482b-b71e-121aee7dd526.metrics.json",
   "emittedSignals": [],
