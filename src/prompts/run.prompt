@@ -62,4 +62,7 @@ HARD RULES — any violation is a critical failure and the run must not be consi
 === Reasoning Reviewer Persona ===
 {{reasoning_reviewer_persona}}
 
+=== Retrospective Reviewer Persona ===
+{{retrospective_reviewer_persona}}
+
 {{run_only_personas}}

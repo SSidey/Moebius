@@ -1,0 +1,20 @@
+{
+  "run_id": "7baf46a6-fc3a-465e-a375-752b77f9afeb",
+  "timestamp": "2026-06-13T17:02:42Z",
+  "command": "run",
+  "spec_path": ".moeb/specifications/moeb/moeb.rubric-phased-execution-framework.md",
+  "metrics_path": ".moeb/metrics/7baf46a6-fc3a-465e-a375-752b77f9afeb.metrics.json",
+  "emittedSignals": [
+    { "id": "f3a2b1c0-d4e5-4f6a-87b8-c9d0e1f2a3b4", "description": "Missing moeb tool: Read (absolute-path tool result file access)" }
+  ],
+  "rubric_score": null,
+  "end_review_error_count": 0,
+  "tools_used": ["complete_review", "create_task_list", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "run_command", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

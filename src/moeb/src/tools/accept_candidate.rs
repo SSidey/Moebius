@@ -60,6 +60,7 @@ impl ToolHandler for AcceptCandidateTool {
 
         let role_content = crate::skills::load_role(&moeb_dir, "run");
         let reasoning_reviewer_role = crate::skills::load_role(&moeb_dir, "reasoning-reviewer");
+        let retrospective_reviewer_role = crate::skills::load_role(&moeb_dir, "retrospective-reviewer");
         let skill_content = crate::skills::load_skill(&moeb_dir, "accept_candidate")?;
 
         let command_rubrics = build_accept_candidate_rubrics(&moeb_dir);
@@ -74,6 +75,7 @@ impl ToolHandler for AcceptCandidateTool {
             .replace("{{skill_content}}", &skill_content)
             .replace("{{command_rubrics}}", &command_rubrics)
             .replace("{{reasoning_reviewer_persona}}", &reasoning_reviewer_role)
+            .replace("{{retrospective_reviewer_persona}}", &retrospective_reviewer_role)
             .replace(RUN_ID_TOKEN, &run_id)
             .replace(RUN_FILE_PATH_TOKEN, &run_file_path)
             .replace(RESOLUTION_SUMMARY_TOKEN, &resolution_summary)

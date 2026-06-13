@@ -207,6 +207,20 @@ For each criterion, evaluate pass, fail, or na:
 - All other criteria: apply the stated Pass Condition. Mark `na` only when the criterion
   genuinely does not apply to this specification's scope.
 
+### Structural Inline Fix Sub-Phase
+
+Before calling `verify_rubrics`, apply inline fixes for any structural rubric criterion annotated with `phase: structural` and `skill_ref`:
+
+1. Identify all criteria with `phase: structural` in `{{command_rubrics}}` and the spec's `## Rubric / ### Structured` table.
+2. Evaluate all structural criteria as a group, recording pass/fail for each.
+3. For each structural criterion that **fails** and has a `skill_ref` value:
+   a. Locate the skill block at `.moeb/rubric-skills/<skill_ref>.md`. If absent, treat as no `skill_ref` and proceed to item 4.
+   b. Invoke the skill block inline: the block receives the failing criterion text and the observed failure evidence. The block may call write_file, patch_file, read_file, and run_command tools to apply a targeted fix. The block **must not** call `verify_rubrics`, `enter_phase`, or any orchestration tool.
+   c. After the block exits, re-run structural criteria only (step 2 above, restricted to structural criteria). Increment an iteration counter per criterion.
+   d. If `skill_ref_max_iterations` (default 2) is reached and the criterion still fails, collect the failure and stop retrying this criterion.
+4. For structural criteria that fail with no `skill_ref`, collect the failure as-is.
+5. Do not emit individual signals for structural failures here. All rubric failures are emitted as a batch in Phase 5 via the ReviewSignalReport. Include structural verdicts in the `verify_rubrics` call as pass or fail.
+
 Call `verify_rubrics` with the complete list of verdicts covering all criteria from both
 sources. Do not call `verify_rubrics` with a partial list.
 
@@ -390,7 +404,7 @@ alongside the archive timestamp. Archived signals are moved to
 `.moeb/signals/archive/catalogue/` and their index rows are moved to
 `.moeb/signals/archive/index.md`.
 
-After all Phase 5 signals are processed, evaluate the ReviewSignalReport produced above. Set working memory `qa_passed = true` if the signals array contains no entry with `"severity": "Critical"`; otherwise set `qa_passed = false`.
+After all Phase 5 signals are processed, evaluate the ReviewSignalReport produced above. Set working memory `qa_passed = true` if the signals array contains no entry with `"severity": "Critical"`; otherwise set `qa_passed = false`. Signals from Phase 5b (Reasoning Review) and Phase 5c (Retrospective Review) do NOT contribute to `qa_passed`. Only Critical signals produced during Phase 5 (qualitative and invocation-specific rubric evaluation by the QA Architect) affect `qa_passed`.
 
 2. Do not fail or abort the skill if critical signals are present. Continue to the
    Metrics Recording phase.
@@ -453,6 +467,35 @@ queue but do not affect the rubric verdict or run pass/fail.
 5. After all signals are processed, run the Index Update sub-procedure.
 
 6. Append each emitted signal's `{ "id": signal_id, "description": title }` to the
+   run file's `emittedSignals` array.
+
+Continue to Phase 6 — Metrics Recording regardless of signal count.
+
+## Phase 5c — Retrospective Review
+
+This phase always runs regardless of the value of `{{no_review}}`. It is advisory —
+signals emitted here never gate pass/fail and never affect `qa_passed`.
+
+1. Without calling any tool, adopt the **Retrospective Reviewer Persona** pre-loaded
+   in your context. Evaluate the run process using the ten observational lenses defined
+   in the persona. Produce a raw JSON array of signal objects (each with
+   `"signal_source": "moeb"`, `"severity": "Major"` or `"Minor"` — never Critical).
+   Hold the result in working memory.
+
+2. Parse the returned JSON array. If it is not valid JSON or is not an array, treat it
+   as an empty array and proceed.
+
+3. For each signal S in the array, assign:
+   - `signal_id`: a fresh UUID v4
+   - `run_id`: the current run identifier (`{{run_id}}`)
+   - `timestamp`: ISO 8601 current time
+
+   Then write S via the **Canonical Signal Dedup-and-Write Procedure** defined in
+   this skill file.
+
+4. After all signals are processed, run the Index Update sub-procedure.
+
+5. Append each emitted signal's `{ "id": signal_id, "description": title }` to the
    run file's `emittedSignals` array.
 
 Continue to Phase 6 — Metrics Recording regardless of signal count.

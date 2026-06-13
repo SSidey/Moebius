@@ -76,6 +76,7 @@ impl ToolHandler for StartSpecTool {
         let moderator_role = crate::skills::load_role(&moeb_dir, "moderator");
         let qa_architect_role = crate::skills::load_role(&moeb_dir, "qa-architect");
         let reasoning_reviewer_role = crate::skills::load_role(&moeb_dir, "reasoning-reviewer");
+        let retrospective_reviewer_role = crate::skills::load_role(&moeb_dir, "retrospective-reviewer");
 
         let command_rubrics = build_spec_rubrics(&moeb_dir);
 
@@ -108,6 +109,7 @@ impl ToolHandler for StartSpecTool {
             .replace("{{moderator_role_content}}", &moderator_role)
             .replace("{{qa_architect_role_content}}", &qa_architect_role)
             .replace("{{reasoning_reviewer_persona}}", &reasoning_reviewer_role)
+            .replace("{{retrospective_reviewer_persona}}", &retrospective_reviewer_role)
             .replace("{{signal_id}}", signal_id);
 
         Ok(prompt)

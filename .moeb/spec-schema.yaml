@@ -136,6 +136,18 @@ spec:
     # Structured entries are used for measurable criteria.
     # Free-form entries are used for qualitative criteria.
 
+    # ### Structured table: required columns: name, description, threshold, pass_condition.
+    #   Optional columns (omit when defaults apply):
+    #   - phase: "structural" | "behavioural" | "qualitative". Default "qualitative" when absent.
+    #     Governs which Verify sub-phase evaluates this criterion:
+    #       structural — deterministic checks (build, lint, schema validity, file presence).
+    #       behavioural — runtime-verified via test suite.
+    #       qualitative — judgment-based (default; applies to all existing criteria).
+    #   - skill_ref: string. Valid ONLY when phase is "structural". Path to a skill block under
+    #     .moeb/rubric-skills/<name>.md or a built-in identifier. Agents must not include skill_ref
+    #     on qualitative or behavioural criteria; the run agent rejects such entries as malformed.
+    #   - skill_ref_max_iterations: integer. Default 2. Maximum inline-fix attempts before
+    #     the criterion is collected as a failure. Valid only when skill_ref is present.
     structured:
       - name: string        # Name of the criterion e.g. "Test coverage"
         description: string # What is being measured

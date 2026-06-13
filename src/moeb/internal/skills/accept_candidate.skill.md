@@ -169,6 +169,28 @@ After completing the Dedup-and-Write Procedure for all signals:
 
     `| <signal_id> | <title> | <category> | <severity> | <status> | <occurrence_count> | <last_seen> | [catalogue/<signal_id>.signal.json](catalogue/<signal_id>.signal.json) |`
 
+## Phase 5b — Retrospective Review
+
+This phase always runs. It is advisory — signals emitted here never gate pass/fail.
+
+1. Without calling any tool, adopt the **Retrospective Reviewer Persona** pre-loaded
+   in your context. Evaluate the accept_candidate run process using the ten
+   observational lenses. Produce a raw JSON array of signal objects
+   (`"severity": "Major"` or `"Minor"` only, never Critical). Hold in working memory.
+
+2. Parse the returned JSON array. If not valid JSON or not an array, treat as empty.
+
+3. For each signal S in the array, assign `signal_id` (UUID v4), `run_id`, and
+   `timestamp` (ISO 8601). Write S via the **Canonical Signal Dedup-and-Write
+   Procedure** defined in this skill file.
+
+4. Run the Index Update sub-procedure.
+
+5. Append each emitted signal's `{ "id": signal_id, "description": title }` to the
+   run file's `emittedSignals` array.
+
+Continue to Phase 6 — Metrics Recording regardless of signal count.
+
 ## Phase 6 — Metrics Recording
 
 Call `get_run_status` immediately before writing to capture `tools_used` and `token_usage`.
