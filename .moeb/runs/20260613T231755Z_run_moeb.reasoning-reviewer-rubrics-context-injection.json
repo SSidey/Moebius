@@ -1,0 +1,21 @@
+{
+  "run_id": "fd3a5aa3-79f0-482b-b71e-121aee7dd526",
+  "timestamp": "2026-06-13T23:17:55Z",
+  "command": "run",
+  "signal_id": "6458affb-5d94-4350-9125-f08b2ee8af9a",
+  "candidate_tag": null,
+  "spec_path": ".moeb/specifications/moeb/moeb.reasoning-reviewer-rubrics-context-injection.md",
+  "metrics_path": ".moeb/metrics/fd3a5aa3-79f0-482b-b71e-121aee7dd526.metrics.json",
+  "emittedSignals": [],
+  "rubric_score": 1.0,
+  "end_review_error_count": 0,
+  "qa_passed": true,
+  "tools_used": ["complete_review", "create_task_list", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "run_command", "search_files", "start_run", "update_task", "verify_rubrics"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

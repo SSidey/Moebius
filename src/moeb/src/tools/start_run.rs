@@ -90,6 +90,10 @@ impl ToolHandler for StartRunTool {
         let qa_architect_role = crate::skills::load_role(&moeb_dir, "qa-architect");
         let reasoning_reviewer_role = crate::skills::load_role(&moeb_dir, "reasoning-reviewer");
         let retrospective_reviewer_role = crate::skills::load_role(&moeb_dir, "retrospective-reviewer");
+        let reasoning_rubrics = std::fs::read_to_string(moeb_dir.join("rubrics/reasoning.rubrics.md"))
+            .unwrap_or_else(|_| Internal::get("rubrics/reasoning.rubrics.md")
+                .and_then(|f| std::str::from_utf8(f.data.as_ref()).ok().map(str::to_owned))
+                .unwrap_or_default());
 
         let command_rubrics = build_run_rubrics(&moeb_dir);
 
@@ -130,6 +134,7 @@ impl ToolHandler for StartRunTool {
             .replace("{{qa_architect_role_content}}", &qa_architect_role)
             .replace("{{reasoning_reviewer_persona}}", &reasoning_reviewer_role)
             .replace("{{retrospective_reviewer_persona}}", &retrospective_reviewer_role)
+            .replace("{{reasoning_rubrics}}", &reasoning_rubrics)
             .replace("{{run_only_personas}}", "");
 
         Ok(prompt)

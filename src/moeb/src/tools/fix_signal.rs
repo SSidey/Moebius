@@ -62,6 +62,16 @@ impl ToolHandler for FixSignalTool {
         let qa_architect_role = crate::skills::load_role(&moeb_dir, "qa-architect");
         let reasoning_reviewer_role = crate::skills::load_role(&moeb_dir, "reasoning-reviewer");
         let retrospective_reviewer_role = crate::skills::load_role(&moeb_dir, "retrospective-reviewer");
+        let reasoning_rubrics = {
+            let project_path = moeb_dir.join("rubrics/reasoning.rubrics.md");
+            if project_path.exists() {
+                std::fs::read_to_string(&project_path).unwrap_or_default()
+            } else {
+                Internal::get("rubrics/reasoning.rubrics.md")
+                    .and_then(|f| std::str::from_utf8(f.data.as_ref()).ok().map(str::to_owned))
+                    .unwrap_or_default()
+            }
+        };
         let skill_content = crate::skills::load_skill(&moeb_dir, "fix_signal")?;
 
         let command_rubrics = build_fix_signal_rubrics(&moeb_dir);
@@ -81,6 +91,7 @@ impl ToolHandler for FixSignalTool {
             .replace("{{fix_signal_source}}", &signal_source)
             .replace("{{reasoning_reviewer_persona}}", &reasoning_reviewer_role)
             .replace("{{retrospective_reviewer_persona}}", &retrospective_reviewer_role)
+            .replace("{{reasoning_rubrics}}", &reasoning_rubrics)
             .replace("{{reviewer_role_content}}", &reviewer_role)
             .replace("{{moderator_role_content}}", &moderator_role)
             .replace("{{qa_architect_role_content}}", &qa_architect_role);
