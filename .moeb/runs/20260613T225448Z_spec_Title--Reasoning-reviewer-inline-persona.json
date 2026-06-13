@@ -1,0 +1,16 @@
+{
+  "run_id": "4d575d2d-8da4-4085-a67c-6244b509f57a",
+  "timestamp": "2026-06-13T22:54:48Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.reasoning-reviewer-rubrics-context-injection.md",
+  "metrics_path": ".moeb/metrics/4d575d2d-8da4-4085-a67c-6244b509f57a.metrics.json",
+  "emittedSignals": [],
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "patch_file", "push_thinking_blocks", "read_file", "start_spec", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
