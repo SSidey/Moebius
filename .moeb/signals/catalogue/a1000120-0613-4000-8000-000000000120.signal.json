@@ -1,0 +1,23 @@
+{
+  "signal_id": "a1000120-0613-4000-8000-000000000120",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Signal titles must not embed run-specific identifiers; dedup key should normalise before matching",
+  "description": "Signals whose titles include specific UUIDs, signal IDs, run IDs, timestamps, or file paths generate a new catalogue entry on every invocation rather than incrementing an existing pattern signal. The dedup procedure uses exact title + category matching, so an embedded UUID makes each instance unique — even when the root cause, category, and resolution are identical. Multiple per-instance signals accumulate without ever elevating the underlying pattern signal. Two complementary fixes are needed: a skill-level title discipline rule and a dedup-level normalisation step.",
+  "proposed_resolution": "1. Add a 'Signal title discipline' rule to the QA Architect persona and the Canonical Signal Dedup-and-Write Procedure: titles must describe the error pattern, not name specific UUIDs, run IDs, signal IDs, or file paths — those belong in the description field. 2. Add a normalise_title step to the dedup identity-key computation that strips UUID-shaped tokens (8-4-4-4-12 hex), ISO 8601 timestamps, and filesystem paths before matching against the index, providing a fallback guard against future title-discipline violations.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-13T22:40:00Z",
+  "last_seen": "2026-06-13T22:40:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-13T22:40:00Z", "run_id": "2f2077c0-66bb-4e90-b397-3f80d8a9a8bd" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null,
+  "picked_up_at": null,
+  "fix_branch": null
+}

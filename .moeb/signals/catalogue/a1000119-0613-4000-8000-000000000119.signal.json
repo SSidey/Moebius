@@ -1,0 +1,23 @@
+{
+  "signal_id": "a1000119-0613-4000-8000-000000000119",
+  "category": "Error",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "write_file does not register newly created paths in the read-state cache",
+  "description": "When write_file creates a new file during a run, the path is not added to the read-state set maintained by run-file-scope-enforcement. A subsequent patch_file or write_file on that same path is rejected with 'has not been read during this run', forcing the agent to call read_file on content it just authored — an unnecessary round-trip that wastes a tool call and can disrupt multi-step workflows (e.g. updating a run file after emitting a late signal).",
+  "proposed_resolution": "In the write_file ToolHandler, after a successful write, register the path in the same read-state HashSet that read_file and read_files populate in RealToolExecutor. Any file the agent creates during a run is implicitly in scope for subsequent writes without requiring a redundant read.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-13T22:40:00Z",
+  "last_seen": "2026-06-13T22:40:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-13T22:40:00Z", "run_id": "2f2077c0-66bb-4e90-b397-3f80d8a9a8bd" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null,
+  "picked_up_at": null,
+  "fix_branch": null
+}
