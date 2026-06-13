@@ -1,0 +1,34 @@
+{
+  "run_id": "7d01d5a6-daa6-40c0-a6d6-7e37f6c86156",
+  "command": "spec",
+  "signal_id": "a1000099-0611-4000-8000-000000000099",
+  "spec_path": ".moeb/specifications/moeb/moeb.rubric-phased-execution-framework.md",
+  "domain": "moeb",
+  "slug": "rubric-phased-execution-framework",
+  "started_at": "2026-06-13T16:28:46Z",
+  "completed_at": "2026-06-13T17:30:00Z",
+  "status": "complete",
+  "qa_passed": true,
+  "rubric_score": 1.0,
+  "emittedSignals": [],
+  "phases_entered": [
+    "phase-1",
+    "phase-2",
+    "phase-3",
+    "phase-4",
+    "phase-5",
+    "phase-5a",
+    "phase-5b",
+    "phase-6",
+    "phase-7",
+    "phase-7a",
+    "phase-7b",
+    "phase-8"
+  ],
+  "artifacts": [
+    ".moeb/specifications/moeb/moeb.rubric-phased-execution-framework.md",
+    ".moeb/README.md",
+    ".moeb/signals/catalogue/a1000099-0611-4000-8000-000000000099.signal.json",
+    ".moeb/signals/index.md"
+  ]
+}
