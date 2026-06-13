@@ -1,0 +1,21 @@
+{
+  "signal_id": "a1000115-0613-4000-8000-000000000115",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "Archive Resolved Signals procedure duplicated across run and fix_signal skills",
+  "description": "run.skill.md Phase 9a and fix_signal.skill.md's Archive Resolved Signal section both implement the same iteration pattern: read each signal ID from the emitted signals list, check catalogue status, call archive_signal if resolved or superseded, and emit a SkillImprovement signal on failure (~15 lines in run, ~10 in fix_signal). The archive_signal tool already exists as a kernel tool; the surrounding iteration and error-signal prose is the redundancy. Both copies require updating whenever archive conditions change. The error signal emission on failure currently goes through the full Dedup-and-Write Procedure prose rather than a write_signal call.",
+  "proposed_resolution": "Implement a batch_archive_resolved MCP tool accepting { signal_ids: string[], run_id: string } that iterates the list, applies the internal archive_signal logic for each entry whose status is 'resolved' or 'superseded', and calls write_signal for each failure. Returns { archived: [ids], skipped: [ids], errors: [{ signal_id, message }] }. Remove the iteration prose from both run.skill.md and fix_signal.skill.md and replace with a single batch_archive_resolved call. Requires write_signal (a1000113-0613-4000-8000-000000000113) to be implemented first.",
+  "gating_condition": ["a1000113-0613-4000-8000-000000000113"],
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-13T18:00:00Z",
+  "last_seen": "2026-06-13T18:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-13T18:00:00Z", "run_id": null }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}

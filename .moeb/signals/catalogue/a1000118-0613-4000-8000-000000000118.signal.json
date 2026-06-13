@@ -1,0 +1,23 @@
+{
+  "signal_id": "a1000118-0613-4000-8000-000000000118",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "No persona-driven mechanism to promote spec-scoped rubric criteria to the appropriate project-level rubric category",
+  "description": "Rubric criteria authored in a spec's ## Rubric section are scoped to that spec invocation only. If the criterion is universally applicable (e.g. 'no test regression', 'build must pass', 'patch_file preferred over write_file'), there is no mechanism for a persona to identify it as promotion-worthy and write it into the appropriate project-level rubric file (catalogue.rubrics.md, run.rubrics.md, or global.rubrics.md) for enforcement across all future runs.\n\nTwo failure modes are observed:\n1. Criteria written in spec rubrics that should apply project-wide accumulate in per-spec files and are never enforced outside that spec's own runs. Each re-specification of the same project must re-author the same criterion.\n2. The QA Architect currently has no instruction to identify promotion candidates. The retrospective lenses in a1000111 include an 'Efficiency' lens but no lens specifically targeting rubric promotion — the review personas have no structured output path for 'this criterion belongs in the project rubric.'\n\na1000014-0529-4000-8000-000000000014 describes the same capability gap at a high level and proposes a CLI command. This signal captures the persona-driven approach and the structural requirement that the review chain produces rubric promotion as a structured output, not just a CLI action.",
+  "proposed_resolution": "1. Add a 'Rubric Promotion' lens to the QA Architect's qualitative review pass (qa-architect.role.md). After evaluating each spec rubric criterion, the QA Architect determines whether the criterion is: (a) spec-specific — applies only to this spec's domain/slug; (b) category-scoped — applies to all specs of the same category or trait; or (c) project-scoped — applies to every moeb run regardless of spec. For each criterion assessed as category-scoped or project-scoped, emit a structured 'promote_rubric' action in the QA review output, specifying: criterion name, criterion text, target file (catalogue.rubrics.md | run.rubrics.md | global.rubrics.md), and target trait or table section.\n\n2. After the QA Architect phase, the run agent processes each promote_rubric action: read the target rubric file, check whether an equivalent criterion already exists (name match or pass-condition match), and if absent append the new row with an 'elevated_from: <spec_slug>' annotation. Use patch_file to append to the correct table section.\n\n3. Update spec-schema.yaml and spec-schema-validation.json to add an optional 'rubric_scope' field to each rubric table row with values: 'spec' (default, current behaviour), 'category:<trait>', or 'project'. The QA Architect uses this field as input when evaluating promotion candidates; the absence of the field triggers the QA Architect's judgment.\n\n4. Supersedes the CLI-command approach proposed in a1000014-0529-4000-8000-000000000014. The CLI command remains useful as a human escape hatch but is not the primary promotion path.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-13T00:00:00Z",
+  "last_seen": "2026-06-13T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-13T00:00:00Z", "run_id": null }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null,
+  "picked_up_at": null,
+  "fix_branch": null
+}

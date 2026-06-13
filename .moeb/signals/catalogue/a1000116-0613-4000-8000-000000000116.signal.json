@@ -1,0 +1,21 @@
+{
+  "signal_id": "a1000116-0613-4000-8000-000000000116",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "Partial Resolution Check signal assembly prose in run.skill.md superseded by write_signal",
+  "description": "run.skill.md's Partial Resolution Check (~15 lines) contains an inline signal assembly block constructing an Error/Major signal field-by-field, followed by a reference to the Canonical Signal Dedup-and-Write Procedure. Once write_signal is available, the assembly and write collapse to a single tool call supplying the field values inline. The full assembly prose becomes dead-weight context on every run prompt, adding lines whose only purpose is to describe an operation that a kernel tool handles atomically.",
+  "proposed_resolution": "After write_signal (a1000113-0613-4000-8000-000000000113) is implemented, replace the signal assembly block and Dedup-and-Write reference in the Partial Resolution Check with a single write_signal call supplying { category: 'Error', severity: 'Major', title: 'Partial resolution: <domain>/<slug>', description: '...', proposed_resolution: '...' } inline. Reduce the total Partial Resolution Check prose from ~15 lines to ~5.",
+  "gating_condition": ["a1000113-0613-4000-8000-000000000113"],
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-13T18:00:00Z",
+  "last_seen": "2026-06-13T18:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-13T18:00:00Z", "run_id": null }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}

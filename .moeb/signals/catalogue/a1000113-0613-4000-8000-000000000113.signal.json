@@ -1,0 +1,21 @@
+{
+  "signal_id": "a1000113-0613-4000-8000-000000000113",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Canonical Signal Dedup-and-Write Procedure should be a kernel write_signal tool",
+  "description": "The Canonical Signal Dedup-and-Write Procedure and Index Update sub-procedure are embedded verbatim in all four canonical skills: run.skill.md (~90 lines), fix_signal.skill.md (~90 lines), spec.skill.md (~90 lines), and accept_candidate.skill.md (~60 lines). The four copies have already diverged: accept_candidate.skill.md uses the deprecated identity_key-as-filename lookup strategy rather than the current index.md title-and-category lookup, and its schema omits signal_source, superseded_by, archived_on, and candidate_tag fields. Each signal emission requires the agent to interpret and execute a five-step prose procedure as sequential file operations (read index, grep for row, patch or write catalogue, patch or write index, fallback paths), driving 5–10 tool calls per signal whose accumulated ToolResult content directly contributes to mid-run context compaction. The ~330 combined prose lines across all four skills multiply this overhead at every review phase.",
+  "proposed_resolution": "Implement a write_signal MCP tool in src/moeb/src/tools/ accepting { category, severity, title, description, proposed_resolution, gating_condition, signal_source, run_id } with return type { signal_id, action: created|updated|unchanged }. The tool internalises the current run.skill.md dedup strategy: index.md title-and-category lookup, UUID-named catalogue files, occurrence append, all fields in canonical schema order. Remove the Canonical Signal Dedup-and-Write Procedure and Index Update blocks from all four skills and replace each invocation site with a single write_signal call. Align accept_candidate.skill.md to the current schema as part of the same spec.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-13T18:00:00Z",
+  "last_seen": "2026-06-13T18:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-13T18:00:00Z", "run_id": null }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}

@@ -1,0 +1,21 @@
+{
+  "signal_id": "a1000114-0613-4000-8000-000000000114",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Budget Breach Check should be a kernel tool: cross-skill template reference is unresolvable in MCP mode",
+  "description": "The Budget Breach Check in run.skill.md defines three signal templates inline (~40 lines) for tool-level, phase-level, and run-level breaches. fix_signal.skill.md and spec.skill.md both reference these templates with the phrase 'Use the same signal templates defined in run.skill.md's Budget Breach Check section.' In MCP mode each skill is the only skill in the agent's context window — run.skill.md is not present when fix_signal or spec executes. The cross-reference is unresolvable: the agent must rely on training-time recall of the templates rather than authoritative in-context text. This is a latent correctness risk that worsens as templates evolve. Additionally, each breach signal emission drives 5–10 sequential tool calls via the Dedup-and-Write Procedure, adding compaction pressure at the end of every run that breaches budget.",
+  "proposed_resolution": "Implement a check_budget_breaches MCP tool that calls get_run_status internally, parses the 'budget breaches:' section, applies the granularity rule (tool > phase > run), and calls write_signal for each breach at the appropriate level. The tool returns the list of emitted signal IDs. Remove the Budget Breach Check phase and all three signal templates from all three skills and replace with a single check_budget_breaches call. Requires write_signal (a1000113-0613-4000-8000-000000000113) to be implemented first.",
+  "gating_condition": ["a1000113-0613-4000-8000-000000000113"],
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-13T18:00:00Z",
+  "last_seen": "2026-06-13T18:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-13T18:00:00Z", "run_id": null }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}
