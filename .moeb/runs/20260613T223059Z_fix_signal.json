@@ -1,0 +1,20 @@
+{
+  "run_id": "2f2077c0-66bb-4e90-b397-3f80d8a9a8bd",
+  "timestamp": "2026-06-13T22:30:00Z",
+  "command": "fix_signal",
+  "event_path": ".moeb/events/6458affb-5d94-4350-9125-f08b2ee8af9a.event.json",
+  "metrics_path": ".moeb/metrics/2f2077c0-66bb-4e90-b397-3f80d8a9a8bd.metrics.json",
+  "emittedSignals": [
+    { "id": "b7c8d9e0-f1a2-4b3c-8d4e-5f6a7b8c9d0e", "description": "archive_signal failed in fix_signal post-resolution hook: 6458affb-5d94-4350-9125-f08b2ee8af9a" }
+  ],
+  "rubric_score": null,
+  "end_review_error_count": 0,
+  "tools_used": ["complete_review", "create_branch", "fix_signal", "get_run_status", "patch_file", "push_thinking_blocks", "read_file", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
