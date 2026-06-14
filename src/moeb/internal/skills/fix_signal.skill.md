@@ -243,24 +243,6 @@ from the injected rubric baseline and the specification's `## Rubric / ### Struc
 table. Do not supply verdicts for kernel-authoritative criteria (`tool-errors`,
 `rubric-qualification`). Call `verify_rubrics` with the complete verdict list.
 
-## Phase 7 — End-of-Skill Review
-
-Call `enter_phase` with `phase_id: "phase-7"` as the first action in this phase.
-
-Without calling any tool, adopt the **QA Architect Persona** pre-loaded in your context.
-Evaluate the fix_signal workflow outputs (signal marking patch, branch creation, event
-artifact, accumulated StepMetrics). Produce a `ReviewSignalReport` JSON matching the
-schema defined in the QA Architect Persona. Hold the result in working memory.
-
-Parse the returned `ReviewSignalReport` JSON:
-
-1. Assign each signal:
-   - `signal_id`: a fresh UUID v4
-   - `run_id`: the current run identifier (`{{run_id}}`)
-   - `timestamp`: ISO 8601 current time
-
-Write each signal via the **Canonical Signal Dedup-and-Write Procedure** defined below.
-
 ## Canonical Signal Dedup-and-Write Procedure
 
 # Identity key: "<category>-<title-slug>"  (slug = lowercase, [^a-z0-9]+ → '-', strip edges, max 80 chars)
@@ -351,90 +333,6 @@ alongside the archive timestamp. Archived signals are moved to
 
 2. Do not fail or abort the skill if critical signals are present. Continue to the
    Metrics Recording phase.
-
-## Phase 7a — Push Thinking Blocks
-
-This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
-`{{no_review}}` is the exact string `"true"`.
-
-Call `push_thinking_blocks` with the key reasoning text produced during this run.
-Include:
-
-- Decision rationale for any non-obvious implementation choice (why this signal
-  category, why this fix approach, why a deviation from the skill default was taken).
-- Deliberation about whether any signal should or should not be emitted.
-- Any uncertainty that was resolved and how it was resolved.
-- Reasoning about tradeoffs between alternatives that were considered.
-
-Do not include mechanical steps: file reads, build output, cargo test results, or
-descriptions of what was done rather than why.
-
-Submit all reasoning as a single `push_thinking_blocks` call with one string element
-per distinct decision point. Each element should be 2–6 sentences.
-
-After `push_thinking_blocks` returns, proceed to Phase 7b — Reasoning Review.
-
-## Phase 7b — Reasoning Review
-
-> **MCP/inline mode note:** Do not call `query_agent` in this phase. When running
-> inline (via `start_spec` or `start_run` MCP tools), the agent IS the model and must
-> use only inline persona reasoning. The Reasoning Reviewer Persona is pre-loaded in
-> your context for exactly this purpose.
-
-This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
-`{{no_review}}` is the exact string `"true"`.
-
-This review is advisory — its findings are emitted as signals to the improvement
-queue but do not affect the rubric verdict or run pass/fail.
-
-1. If `RunState.thinking_blocks` is empty, skip this phase entirely and proceed to
-   Phase 8.
-
-2. Without calling any tool, adopt the **Reasoning Reviewer Persona** pre-loaded in
-   your context. Evaluate the accumulated thinking block strings from this run against
-   the reasoning quality criteria. Produce a raw JSON array of signal objects (each
-   with `"category": "ReasoningImprovement"`) in working memory, or an empty array
-   `[]` if no improvements are identified.
-
-3. Parse the returned JSON array. If it is not valid JSON or is not an array, treat it
-   as an empty array and proceed.
-
-4. For each signal S in the array, assign:
-   - `signal_id`: a fresh UUID v4
-   - `run_id`: the current run identifier (`{{run_id}}`)
-   - `timestamp`: ISO 8601 current time
-
-   Then write S via the **Canonical Signal Dedup-and-Write Procedure** defined in
-   this skill file.
-
-5. After all signals are processed, run the Index Update sub-procedure.
-
-6. Append each emitted signal's `{ "id": signal_id, "description": title }` to the
-   run file's `emittedSignals` array.
-
-Continue to Phase 8 — Metrics Recording regardless of signal count.
-
-## Phase 7c — Retrospective Review
-
-This phase always runs. It is advisory — signals emitted here never gate pass/fail.
-
-1. Without calling any tool, adopt the **Retrospective Reviewer Persona** pre-loaded
-   in your context. Evaluate the fix_signal run process using the ten observational
-   lenses. Produce a raw JSON array of signal objects (`"severity": "Major"` or
-   `"Minor"` only, never Critical). Hold the result in working memory.
-
-2. Parse the returned JSON array. If not valid JSON or not an array, treat as empty.
-
-3. For each signal S in the array, assign `signal_id` (UUID v4), `run_id`, and
-   `timestamp` (ISO 8601). Write S via the **Canonical Signal Dedup-and-Write
-   Procedure** defined in this skill file.
-
-4. Run the Index Update sub-procedure.
-
-5. Append each emitted signal's `{ "id": signal_id, "description": title }` to the
-   run file's `emittedSignals` array.
-
-Continue to Phase 8 — Metrics Recording regardless of signal count.
 
 ## Phase 8 — Metrics Recording
 
@@ -527,6 +425,114 @@ If `archive_signal` returns an error, emit a SkillImprovement signal:
 - `proposed_resolution`: `"Investigate and manually archive the signal record."`
 
 Continue to the next phase regardless.
+
+## Phase 7 — End-of-Skill Review
+
+Call `enter_phase` with `phase_id: "phase-7"` as the first action in this phase.
+
+Without calling any tool, adopt the **QA Architect Persona** pre-loaded in your context.
+Evaluate the fix_signal workflow outputs (signal marking patch, branch creation, event
+artifact, accumulated StepMetrics). Produce a `ReviewSignalReport` JSON matching the
+schema defined in the QA Architect Persona. Hold the result in working memory.
+
+Parse the returned `ReviewSignalReport` JSON:
+
+1. Assign each signal:
+   - `signal_id`: a fresh UUID v4
+   - `run_id`: the current run identifier (`{{run_id}}`)
+   - `timestamp`: ISO 8601 current time
+
+Write each signal via the **Canonical Signal Dedup-and-Write Procedure** defined below.
+
+## Phase 7a — Push Thinking Blocks
+
+This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
+`{{no_review}}` is the exact string `"true"`.
+
+Call `push_thinking_blocks` with the key reasoning text produced during this run.
+Include:
+
+- Decision rationale for any non-obvious implementation choice (why this signal
+  category, why this fix approach, why a deviation from the skill default was taken).
+- Deliberation about whether any signal should or should not be emitted.
+- Any uncertainty that was resolved and how it was resolved.
+- Reasoning about tradeoffs between alternatives that were considered.
+
+Do not include mechanical steps: file reads, build output, cargo test results, or
+descriptions of what was done rather than why.
+
+Submit all reasoning as a single `push_thinking_blocks` call with one string element
+per distinct decision point. Each element should be 2–6 sentences.
+
+After `push_thinking_blocks` returns, proceed to Phase 7b — Reasoning Review.
+
+## Phase 7b — Reasoning Review
+
+> **MCP/inline mode note:** Do not call `query_agent` in this phase. When running
+> inline (via `start_spec` or `start_run` MCP tools), the agent IS the model and must
+> use only inline persona reasoning. The Reasoning Reviewer Persona is pre-loaded in
+> your context for exactly this purpose.
+
+This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
+`{{no_review}}` is the exact string `"true"`.
+
+This review is advisory — its findings are emitted as signals to the improvement
+queue but do not affect the rubric verdict or run pass/fail.
+
+1. If `RunState.thinking_blocks` is empty, skip this phase entirely and proceed to
+   Phase 8.
+
+2. Without calling any tool, adopt the **Reasoning Reviewer Persona** pre-loaded in
+   your context. Evaluate the accumulated thinking block strings from this run against
+   the reasoning quality criteria. Produce a raw JSON array of signal objects (each
+   with `"category": "ReasoningImprovement"`) in working memory, or an empty array
+   `[]` if no improvements are identified.
+
+3. Parse the returned JSON array. If it is not valid JSON or is not an array, treat it
+   as an empty array and proceed.
+
+4. For each signal S in the array, assign:
+   - `signal_id`: a fresh UUID v4
+   - `run_id`: the current run identifier (`{{run_id}}`)
+   - `timestamp`: ISO 8601 current time
+
+   Then write S via the **Canonical Signal Dedup-and-Write Procedure** defined in
+   this skill file.
+
+5. After all signals are processed, run the Index Update sub-procedure.
+
+6. Append each emitted signal's `{ "id": signal_id, "description": title }` to the
+   run file's `emittedSignals` array.
+
+Continue to Phase 8 — Metrics Recording regardless of signal count.
+
+## Phase 7c — Retrospective Review
+
+This phase always runs. It is advisory — signals emitted here never gate pass/fail.
+
+1. Without calling any tool, adopt the **Retrospective Reviewer Persona** pre-loaded
+   in your context. Evaluate the fix_signal run process using the ten observational
+   lenses. Produce a raw JSON array of signal objects (`"severity": "Major"` or
+   `"Minor"` only, never Critical). Hold the result in working memory.
+
+2. Parse the returned JSON array. If not valid JSON or not an array, treat as empty.
+
+3. For each signal S in the array, assign `signal_id` (UUID v4), `run_id`, and
+   `timestamp` (ISO 8601). Write S via the **Canonical Signal Dedup-and-Write
+   Procedure** defined in this skill file.
+
+4. Run the Index Update sub-procedure.
+
+5. Append each emitted signal's `{ "id": signal_id, "description": title }` to the
+   run file's `emittedSignals` array.
+
+Continue to Phase 8 — Metrics Recording regardless of signal count.
+
+## Cleanup Commit
+
+Call `git_commit` with `kind: "run"`. This stages all uncommitted working-tree changes — signals, metrics, run file, and signal catalogue entries written during the review phases — and commits them, keeping the branch clean before the Complete event fires.
+
+If the working tree is already clean (nothing to commit), `git_commit` with `kind: "run"` is a no-op; proceed to Complete without error.
 
 ## Complete
 

@@ -1,0 +1,44 @@
+{
+  "run_id": "2aa600af-d3ac-46fa-9202-0780b1da8194",
+  "timestamp": "2026-06-14T08:00:00Z",
+  "command": "run",
+  "signal_id": "a1000121-0613-4000-8000-000000000121",
+  "candidate_tag": null,
+  "spec_path": ".moeb/specifications/moeb/moeb.end-of-skill-review-phases-reorder.md",
+  "metrics_path": ".moeb/metrics/2aa600af-d3ac-46fa-9202-0780b1da8194.metrics.json",
+  "emittedSignals": [
+    {
+      "id": "fc000004",
+      "description": "Context compaction mid-run forced use of external Read tool for file content recovery"
+    },
+    {
+      "id": "fc000005",
+      "description": "Task list updates deferred to Phase 5 due to task ID loss after context compaction"
+    }
+  ],
+  "rubric_score": 0.9286,
+  "end_review_error_count": 0,
+  "qa_passed": true,
+  "tools_used": [
+    "complete_review",
+    "create_task_list",
+    "get_run_status",
+    "grep_files",
+    "list_directory",
+    "patch_file",
+    "push_thinking_blocks",
+    "read_file",
+    "read_file_range",
+    "start_run",
+    "update_task",
+    "verify_rubrics",
+    "write_file"
+  ],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

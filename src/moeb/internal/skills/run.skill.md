@@ -244,74 +244,6 @@ b. Write this record via the **Canonical Signal Dedup-and-Write Procedure** alre
 
 Continue to End-of-Skill Review regardless of whether a signal was emitted.
 
-## Phase 5 — End-of-Skill Review
-
-This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
-`{{no_review}}` is the exact string `"true"`.
-
-Without calling any tool, adopt the **QA Architect Persona** pre-loaded in your context.
-Evaluate the paths and contents of all artifacts produced in this run, the accumulated
-StepMetrics as JSON, and the active specification's full `## Rubric` section. Produce a
-ReviewSignalReport JSON matching the schema defined in the QA Architect Persona. Hold
-the result in working memory and continue with parsing and signal processing below.
-
-If `[PARSE_WARNING]` prefix is present in the response, treat it as a Critical error
-signal: append a signal with title "QA Architect response parse failure" and
-description containing the raw response, then continue.
-
-Parse the returned `ReviewSignalReport` JSON:
-
-1. Assign each signal:
-   - `signal_id`: a fresh UUID v4
-   - `run_id`: the current run identifier
-   - `timestamp`: ISO 8601 current time
-
-### Budget Breach Check
-
-After the QA Architect review and before writing signals, call `get_run_status` and
-inspect the `budget breaches:` section of the output.
-
-For each breach listed, apply the granularity rule:
-- If any breach has `level=tool`: emit one tool-level signal per unique (phase, turn) combination.
-- Else if any breach has `level=phase`: emit one phase-level signal per unique phase.
-- Else if any breach has `level=run`: emit one run-level signal.
-
-Tool-level signal template:
-```json
-{
-  "category": "SkillImprovement",
-  "severity": "Major",
-  "title": "Token budget exceeded at tool-call level: phase=<phase_id> turn=<n>",
-  "description": "Tool call in phase <phase_id> at turn <n> used <total> tokens, exceeding the per-tool budget of <threshold>.",
-  "proposed_resolution": "Review the tool call in phase <phase_id> that produced the most output. Consider splitting the operation into smaller steps or raising TOKEN_BUDGET_TOOL if the threshold is too conservative.",
-  "gating_condition": null
-}
-```
-
-Phase-level signal template:
-```json
-{
-  "category": "SkillImprovement",
-  "severity": "Major",
-  "title": "Token budget exceeded at phase level: phase=<phase_id>",
-  "description": "Phase <phase_id> consumed <total> tokens in aggregate, exceeding the per-phase budget of <threshold>.",
-  "proposed_resolution": "Review whether phase <phase_id> can be decomposed, or raise TOKEN_BUDGET_PHASE if the threshold is too conservative.",
-  "gating_condition": null
-}
-```
-
-Run-level signal template:
-```json
-{
-  "category": "SkillImprovement",
-  "severity": "Major",
-  "title": "Token budget exceeded at run level",
-  "description": "The run consumed <total> tokens in total, exceeding the run budget of <threshold>.",
-  "proposed_resolution": "Enable conversation compaction (COMPACTION_ENABLED), reduce the number of phases, or raise TOKEN_BUDGET_RUN if the threshold is appropriate for this workload.",
-  "gating_condition": null
-}
-```
-
 ## Canonical Signal Dedup-and-Write Procedure
 
 # Identity key: "<category>-<title-slug>"  (slug = lowercase, [^a-z0-9]+ → '-', strip edges, max 80 chars)
@@ -408,97 +340,6 @@ After all Phase 5 signals are processed, evaluate the ReviewSignalReport produce
 
 2. Do not fail or abort the skill if critical signals are present. Continue to the
    Metrics Recording phase.
-
-## Phase 5a — Push Thinking Blocks
-
-This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
-`{{no_review}}` is the exact string `"true"`.
-
-Call `push_thinking_blocks` with the key reasoning text produced during this run.
-Include:
-
-- Decision rationale for any non-obvious implementation choice (why this signal
-  category, why this fix approach, why a deviation from the skill default was taken).
-- Deliberation about whether any signal should or should not be emitted.
-- Any uncertainty that was resolved and how it was resolved.
-- Reasoning about tradeoffs between alternatives that were considered.
-
-Do not include mechanical steps: file reads, build output, cargo test results, or
-descriptions of what was done rather than why.
-
-Submit all reasoning as a single `push_thinking_blocks` call with one string element
-per distinct decision point. Each element should be 2–6 sentences.
-
-After `push_thinking_blocks` returns, proceed to Phase 5b — Reasoning Review.
-
-## Phase 5b — Reasoning Review
-
-> **MCP/inline mode note:** Do not call `query_agent` in this phase. When running
-> inline (via `start_spec` or `start_run` MCP tools), the agent IS the model and must
-> use only inline persona reasoning. The Reasoning Reviewer Persona is pre-loaded in
-> your context for exactly this purpose.
-
-This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
-`{{no_review}}` is the exact string `"true"`.
-
-This review is advisory — its findings are emitted as signals to the improvement
-queue but do not affect the rubric verdict or run pass/fail.
-
-1. If `RunState.thinking_blocks` is empty, skip this phase entirely and proceed to
-   Phase 6.
-
-2. Without calling any tool, adopt the **Reasoning Reviewer Persona** pre-loaded in
-   your context. Evaluate the accumulated thinking block strings from this run against
-   the reasoning quality criteria. Produce a raw JSON array of signal objects (each
-   with `"category": "ReasoningImprovement"`) in working memory, or an empty array
-   `[]` if no improvements are identified.
-
-3. Parse the returned JSON array. If it is not valid JSON or is not an array, treat it
-   as an empty array and proceed.
-
-4. For each signal S in the array, assign:
-   - `signal_id`: a fresh UUID v4
-   - `run_id`: the current run identifier (`{{run_id}}`)
-   - `timestamp`: ISO 8601 current time
-
-   Then write S via the **Canonical Signal Dedup-and-Write Procedure** defined in
-   this skill file.
-
-5. After all signals are processed, run the Index Update sub-procedure.
-
-6. Append each emitted signal's `{ "id": signal_id, "description": title }` to the
-   run file's `emittedSignals` array.
-
-Continue to Phase 6 — Metrics Recording regardless of signal count.
-
-## Phase 5c — Retrospective Review
-
-This phase always runs regardless of the value of `{{no_review}}`. It is advisory —
-signals emitted here never gate pass/fail and never affect `qa_passed`.
-
-1. Without calling any tool, adopt the **Retrospective Reviewer Persona** pre-loaded
-   in your context. Evaluate the run process using the ten observational lenses defined
-   in the persona. Produce a raw JSON array of signal objects (each with
-   `"signal_source": "moeb"`, `"severity": "Major"` or `"Minor"` — never Critical).
-   Hold the result in working memory.
-
-2. Parse the returned JSON array. If it is not valid JSON or is not an array, treat it
-   as an empty array and proceed.
-
-3. For each signal S in the array, assign:
-   - `signal_id`: a fresh UUID v4
-   - `run_id`: the current run identifier (`{{run_id}}`)
-   - `timestamp`: ISO 8601 current time
-
-   Then write S via the **Canonical Signal Dedup-and-Write Procedure** defined in
-   this skill file.
-
-4. After all signals are processed, run the Index Update sub-procedure.
-
-5. Append each emitted signal's `{ "id": signal_id, "description": title }` to the
-   run file's `emittedSignals` array.
-
-Continue to Phase 6 — Metrics Recording regardless of signal count.
 
 ## Phase 6 — Metrics Recording
 
@@ -680,6 +521,178 @@ For each `{ "id": signal_id, ... }` entry in the current run file's `emittedSign
      c. Continue to the next entry regardless.
    - Otherwise skip this entry.
 
+## Phase 5 — End-of-Skill Review
+
+This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
+`{{no_review}}` is the exact string `"true"`.
+
+Without calling any tool, adopt the **QA Architect Persona** pre-loaded in your context.
+Evaluate the paths and contents of all artifacts produced in this run, the accumulated
+StepMetrics as JSON, and the active specification's full `## Rubric` section. Produce a
+ReviewSignalReport JSON matching the schema defined in the QA Architect Persona. Hold
+the result in working memory and continue with parsing and signal processing below.
+
+If `[PARSE_WARNING]` prefix is present in the response, treat it as a Critical error
+signal: append a signal with title "QA Architect response parse failure" and
+description containing the raw response, then continue.
+
+Parse the returned `ReviewSignalReport` JSON:
+
+1. Assign each signal:
+   - `signal_id`: a fresh UUID v4
+   - `run_id`: the current run identifier
+   - `timestamp`: ISO 8601 current time
+
+### Budget Breach Check
+
+After the QA Architect review and before writing signals, call `get_run_status` and
+inspect the `budget breaches:` section of the output.
+
+For each breach listed, apply the granularity rule:
+- If any breach has `level=tool`: emit one tool-level signal per unique (phase, turn) combination.
+- Else if any breach has `level=phase`: emit one phase-level signal per unique phase.
+- Else if any breach has `level=run`: emit one run-level signal.
+
+Tool-level signal template:
+```json
+{
+  "category": "SkillImprovement",
+  "severity": "Major",
+  "title": "Token budget exceeded at tool-call level: phase=<phase_id> turn=<n>",
+  "description": "Tool call in phase <phase_id> at turn <n> used <total> tokens, exceeding the per-tool budget of <threshold>.",
+  "proposed_resolution": "Review the tool call in phase <phase_id> that produced the most output. Consider splitting the operation into smaller steps or raising TOKEN_BUDGET_TOOL if the threshold is too conservative.",
+  "gating_condition": null
+}
+```
+
+Phase-level signal template:
+```json
+{
+  "category": "SkillImprovement",
+  "severity": "Major",
+  "title": "Token budget exceeded at phase level: phase=<phase_id>",
+  "description": "Phase <phase_id> consumed <total> tokens in aggregate, exceeding the per-phase budget of <threshold>.",
+  "proposed_resolution": "Review whether phase <phase_id> can be decomposed, or raise TOKEN_BUDGET_PHASE if the threshold is too conservative.",
+  "gating_condition": null
+}
+```
+
+Run-level signal template:
+```json
+{
+  "category": "SkillImprovement",
+  "severity": "Major",
+  "title": "Token budget exceeded at run level",
+  "description": "The run consumed <total> tokens in total, exceeding the run budget of <threshold>.",
+  "proposed_resolution": "Enable conversation compaction (COMPACTION_ENABLED), reduce the number of phases, or raise TOKEN_BUDGET_RUN if the threshold is appropriate for this workload.",
+  "gating_condition": null
+}
+```
+
+## Phase 5a — Push Thinking Blocks
+
+This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
+`{{no_review}}` is the exact string `"true"`.
+
+Call `push_thinking_blocks` with the key reasoning text produced during this run.
+Include:
+
+- Decision rationale for any non-obvious implementation choice (why this signal
+  category, why this fix approach, why a deviation from the skill default was taken).
+- Deliberation about whether any signal should or should not be emitted.
+- Any uncertainty that was resolved and how it was resolved.
+- Reasoning about tradeoffs between alternatives that were considered.
+
+Do not include mechanical steps: file reads, build output, cargo test results, or
+descriptions of what was done rather than why.
+
+Submit all reasoning as a single `push_thinking_blocks` call with one string element
+per distinct decision point. Each element should be 2–6 sentences.
+
+After `push_thinking_blocks` returns, proceed to Phase 5b — Reasoning Review.
+
+## Phase 5b — Reasoning Review
+
+> **MCP/inline mode note:** Do not call `query_agent` in this phase. When running
+> inline (via `start_spec` or `start_run` MCP tools), the agent IS the model and must
+> use only inline persona reasoning. The Reasoning Reviewer Persona is pre-loaded in
+> your context for exactly this purpose.
+
+This phase runs when `{{no_review}}` is `"false"` (the default). Skip ONLY if
+`{{no_review}}` is the exact string `"true"`.
+
+This review is advisory — its findings are emitted as signals to the improvement
+queue but do not affect the rubric verdict or run pass/fail.
+
+1. If `RunState.thinking_blocks` is empty, skip this phase entirely and proceed to
+   Phase 6.
+
+2. Without calling any tool, adopt the **Reasoning Reviewer Persona** pre-loaded in
+   your context. Evaluate the accumulated thinking block strings from this run against
+   the reasoning quality criteria. Produce a raw JSON array of signal objects (each
+   with `"category": "ReasoningImprovement"`) in working memory, or an empty array
+   `[]` if no improvements are identified.
+
+3. Parse the returned JSON array. If it is not valid JSON or is not an array, treat it
+   as an empty array and proceed.
+
+4. For each signal S in the array, assign:
+   - `signal_id`: a fresh UUID v4
+   - `run_id`: the current run identifier (`{{run_id}}`)
+   - `timestamp`: ISO 8601 current time
+
+   Then write S via the **Canonical Signal Dedup-and-Write Procedure** defined in
+   this skill file.
+
+5. After all signals are processed, run the Index Update sub-procedure.
+
+6. Append each emitted signal's `{ "id": signal_id, "description": title }` to the
+   run file's `emittedSignals` array.
+
+Continue to Phase 6 — Metrics Recording regardless of signal count.
+
+## Phase 5c — Retrospective Review
+
+This phase always runs regardless of the value of `{{no_review}}`. It is advisory —
+signals emitted here never gate pass/fail and never affect `qa_passed`.
+
+1. Without calling any tool, adopt the **Retrospective Reviewer Persona** pre-loaded
+   in your context. Evaluate the run process using the ten observational lenses defined
+   in the persona. Produce a raw JSON array of signal objects (each with
+   `"signal_source": "moeb"`, `"severity": "Major"` or `"Minor"` — never Critical).
+   Hold the result in working memory.
+
+2. Parse the returned JSON array. If it is not valid JSON or is not an array, treat it
+   as an empty array and proceed.
+
+3. For each signal S in the array, assign:
+   - `signal_id`: a fresh UUID v4
+   - `run_id`: the current run identifier (`{{run_id}}`)
+   - `timestamp`: ISO 8601 current time
+
+   Then write S via the **Canonical Signal Dedup-and-Write Procedure** defined in
+   this skill file.
+
+4. After all signals are processed, run the Index Update sub-procedure.
+
+5. Append each emitted signal's `{ "id": signal_id, "description": title }` to the
+   run file's `emittedSignals` array.
+
+Continue to Phase 6 — Metrics Recording regardless of signal count.
+
+## Cleanup Commit
+
+Call `git_commit` with `kind: "run"`. This stages all uncommitted working-tree changes — signals, metrics, run file, and signal catalogue entries written during the review phases — and commits them, keeping the branch clean before the Complete event fires.
+
+If the working tree is already clean (nothing to commit), `git_commit` with `kind: "run"` is a no-op; proceed to Complete without error.
+
+## Rubric
+
+### Structured
+
+| Criterion | Description | Pass Condition | Verification Method |
+|-----------|-------------|----------------|---------------------|
+
 ## Phase 10 — Complete
 
 Derive the compact ISO timestamp as `yyyyMMddTHHmmssZ` from the current time (e.g.
@@ -716,10 +729,3 @@ The event write must not interrupt subsequent phases. The closing summary must b
 regardless of whether the event write succeeds.
 
 Respond with a concise summary of every file created or updated.
-
-## Rubric
-
-### Structured
-
-| Criterion | Description | Pass Condition | Verification Method |
-|-----------|-------------|----------------|---------------------|

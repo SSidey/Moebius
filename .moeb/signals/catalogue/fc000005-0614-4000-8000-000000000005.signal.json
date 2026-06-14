@@ -1,0 +1,21 @@
+{
+  "signal_id": "fc000005-0614-4000-8000-000000000005",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "Task list updates deferred to Phase 5 due to task ID loss after context compaction",
+  "description": "Run 2aa600af-d3ac-46fa-9202-0780b1da8194: task IDs from create_task_list were not available after context compaction, preventing update_task calls at the end of each Phase 3 step. All four tasks were batch-updated during Phase 5. The task list did not serve as a live progress indicator during Phase 3.",
+  "proposed_resolution": "Call get_run_status at the start of any post-compaction phase to recover task IDs before continuing implementation steps. The skill guidance should note this recovery pattern.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-14T10:01:00Z",
+  "last_seen": "2026-06-14T10:01:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-14T10:01:00Z", "run_id": "2aa600af-d3ac-46fa-9202-0780b1da8194" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}
