@@ -1,0 +1,20 @@
+{
+  "run_id": "e5098f4a-7e57-4a73-9b6d-5337c1e79f67",
+  "timestamp": "2026-06-14T11:36:15Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.qa-architect-mandatory-checks-cover-correctness-on.md",
+  "metrics_path": ".moeb/metrics/e5098f4a-7e57-4a73-9b6d-5337c1e79f67.metrics.json",
+  "emittedSignals": [
+    { "id": "7a2d9c4f-3e8b-4c1a-b5f2-9d6e0a3c7b1f", "description": "spec-ambiguity: slug derivation when fix_signal branch already exists not prescribed" },
+    { "id": "4f1a8e3c-6b9d-4a2f-8c5e-0b7d3f9a1c5e", "description": "tooling-gaps: read_file absolute path cannot access Claude project temp directory for overflow files" }
+  ],
+  "end_review_error_count": 0,
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "patch_file", "push_thinking_blocks", "read_file", "start_spec", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
