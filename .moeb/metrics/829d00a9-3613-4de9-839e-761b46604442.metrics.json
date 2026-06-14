@@ -1,0 +1,16 @@
+{
+  "run_id": "829d00a9-3613-4de9-839e-761b46604442",
+  "timestamp": "2026-06-14T12:05:29Z",
+  "rubric_score": null,
+  "step_metrics": [],
+  "end_review_error_count": 0,
+  "wall_time_ms": 600000,
+  "tools_used": ["create_task_list", "get_run_status", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "read_files", "run_command", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

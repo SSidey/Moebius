@@ -1,0 +1,21 @@
+{
+  "signal_id": "fd000008-0614-4000-8000-000000000008",
+  "category": "Error",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Qualitative rubric fail: non-gating contract string absent from role file opening",
+  "description": "retrospective-reviewer.role.md opens with 'You are a Retrospective Reviewer.' rather than the exact required non-gating contract: 'You are the Retrospective Reviewer. You NEVER gate a run. All signals you emit must be Major or Minor severity. Critical is forbidden in this phase.' The qualitative rubric criterion explicitly requires this exact opening string. Semantic non-gating content is present in the Values section but the prescribed opening sentence is absent.",
+  "proposed_resolution": "Replace the opening of src/moeb/internal/roles/retrospective-reviewer.role.md with the exact non-gating contract string specified in Step 1 of spec moeb.qa-architect-mandatory-checks-cover-correctness-on.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-14T12:35:00Z",
+  "last_seen": "2026-06-14T12:35:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-14T12:35:00Z", "run_id": "829d00a9-3613-4de9-839e-761b46604442" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}

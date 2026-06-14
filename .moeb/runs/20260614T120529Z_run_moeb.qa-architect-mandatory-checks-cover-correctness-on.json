@@ -1,0 +1,27 @@
+{
+  "run_id": "829d00a9-3613-4de9-839e-761b46604442",
+  "timestamp": "2026-06-14T12:05:29Z",
+  "command": "run",
+  "signal_id": "a1000111-0613-4000-8000-000000000111",
+  "candidate_tag": null,
+  "spec_path": ".moeb/specifications/moeb/moeb.qa-architect-mandatory-checks-cover-correctness-on.md",
+  "metrics_path": ".moeb/metrics/829d00a9-3613-4de9-839e-761b46604442.metrics.json",
+  "emittedSignals": [
+    { "id": "fd000007-0614-4000-8000-000000000007", "description": "accept_candidate.skill.md absent: Retrospective Review phase not added" },
+    { "id": "fd000008-0614-4000-8000-000000000008", "description": "Qualitative rubric fail: non-gating contract string absent from role file opening" },
+    { "id": "fd000009-0614-4000-8000-000000000009", "description": "Template variable naming: prompts use {{retrospective_reviewer_persona}} not {{retrospective_reviewer_role_content}}" },
+    { "id": "fd000010-0614-4000-8000-000000000010", "description": "Context overflow during start_run caused mid-run conversation summarization" },
+    { "id": "fd000011-0614-4000-8000-000000000011", "description": "patch_file read-first precondition forces expensive read for large index" }
+  ],
+  "rubric_score": null,
+  "end_review_error_count": 0,
+  "qa_passed": true,
+  "tools_used": ["create_task_list", "get_run_status", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "read_files", "run_command", "start_run", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
