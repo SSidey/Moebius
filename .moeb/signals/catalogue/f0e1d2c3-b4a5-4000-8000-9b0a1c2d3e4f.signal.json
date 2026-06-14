@@ -1,0 +1,20 @@
+{
+  "signal_id": "f0e1d2c3-b4a5-4000-8000-9b0a1c2d3e4f",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "Uncommitted path at spec skill exit: .moeb/runs/20260614T125103Z_spec_Title--End-of-skill-review-phases-run-be.json",
+  "description": "spec.skill.md exited with the run file .moeb/runs/20260614T125103Z_spec_Title--End-of-skill-review-phases-run-be.json uncommitted (status: ??). The run file was written before Phase 1 but was not staged by the git_commit kind: 'spec' call.",
+  "proposed_resolution": "Include the run file in the git_commit kind: 'spec' phase, or add a dedicated cleanup commit step in spec.skill.md to capture all working-tree changes before Complete.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-14T12:51:03Z",
+  "last_seen": "2026-06-14T12:51:03Z",
+  "occurrences": [
+    { "timestamp": "2026-06-14T12:51:03Z", "run_id": "e326264a-24a3-4d72-8540-9019070fd4e1" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}

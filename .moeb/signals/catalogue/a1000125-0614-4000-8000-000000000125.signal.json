@@ -1,0 +1,21 @@
+{
+  "signal_id": "a1000125-0614-4000-8000-000000000125",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "archive_signal failed in fix_signal post-resolution hook: a1000121-0613-4000-8000-000000000121",
+  "description": "archive_signal: cannot archive 'a1000121-0613-4000-8000-000000000121' — status is 'in_progress' (must be 'resolved' or 'superseded')",
+  "proposed_resolution": "Investigate and manually archive the signal record. Longer term: remove or gate the Archive Resolved Signal phase in fix_signal.skill.md — it belongs in the accepting workflow (accept_candidate or a post-run hook), not in fix_signal which only marks signals in_progress.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-14T12:50:20Z",
+  "last_seen": "2026-06-14T12:50:20Z",
+  "occurrences": [
+    { "timestamp": "2026-06-14T12:50:20Z", "run_id": "afeaa2b7-4175-4cd1-bc98-68a11d378371" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}

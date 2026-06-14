@@ -1,0 +1,20 @@
+{
+  "signal_id": "b1c2d3e4-f5a6-4000-8000-0a1b2c3d4e5f",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "Uncommitted path at spec skill exit: .moeb/signals/catalogue/a1000121-0613-4000-8000-000000000121.signal.json",
+  "description": "spec.skill.md exited with .moeb/signals/catalogue/a1000121-0613-4000-8000-000000000121.signal.json uncommitted (status: M). This path was modified during Phase 5b Signal Status Update but was not staged by the git_commit kind: 'spec' call.",
+  "proposed_resolution": "Include modified signal catalogue files in the git_commit kind: 'spec' phase, or add a dedicated cleanup commit step in spec.skill.md to capture all working-tree changes before Complete.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-14T12:51:03Z",
+  "last_seen": "2026-06-14T12:51:03Z",
+  "occurrences": [
+    { "timestamp": "2026-06-14T12:51:03Z", "run_id": "e326264a-24a3-4d72-8540-9019070fd4e1" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}

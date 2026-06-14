@@ -1,0 +1,20 @@
+{
+  "signal_id": "d2e3f4a5-b6c7-4000-8000-1b2c3d4e5f6a",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "Uncommitted path at spec skill exit: .moeb/signals/catalogue/d5e6f7a8-b9c0-4d1e-8f2a-3b4c5d6e7f8a.signal.json",
+  "description": "spec.skill.md exited with .moeb/signals/catalogue/d5e6f7a8-b9c0-4d1e-8f2a-3b4c5d6e7f8a.signal.json uncommitted (status: ??). This QA Architect signal (write-before-read violation on signals/index.md) was created during Phase 7 but was not staged by the git_commit kind: 'spec' call.",
+  "proposed_resolution": "Include QA Architect signal catalogue files emitted during Phase 7 in the git_commit kind: 'spec' phase, or add a dedicated cleanup commit step in spec.skill.md to capture all working-tree changes before Complete.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-14T12:51:03Z",
+  "last_seen": "2026-06-14T12:51:03Z",
+  "occurrences": [
+    { "timestamp": "2026-06-14T12:51:03Z", "run_id": "e326264a-24a3-4d72-8540-9019070fd4e1" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null
+}

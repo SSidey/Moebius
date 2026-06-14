@@ -1,0 +1,21 @@
+{
+  "signal_id": "d5e6f7a8-b9c0-4d1e-8f2a-3b4c5d6e7f8a",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "spec.skill.md Phase 5a: patch_file on signals/index.md requires prior read_file",
+  "description": "patch_file was called on .moeb/signals/index.md after grep_files returned the target row, but without a prior read_file. The kernel write-before-read guard rejected the call. A fallback read_file was issued and the subsequent patch_file succeeded. The Phase 5a skill instruction does not mention the pre-read requirement for signals/index.md.",
+  "proposed_resolution": "Update the Phase 5a Index Update instruction in spec.skill.md to add an explicit read_file on .moeb/signals/index.md before calling patch_file.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-14T12:51:00Z",
+  "last_seen": "2026-06-14T12:51:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-14T12:51:00Z", "run_id": "e326264a-24a3-4d72-8540-9019070fd4e1" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}

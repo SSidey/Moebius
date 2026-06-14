@@ -8,9 +8,9 @@
   "proposed_resolution": "Determine whether .moeb/signals/index.md should be committed in an existing skill phase or handled by a dedicated cleanup step in spec.skill.md.",
   "gating_condition": null,
   "status": "open",
-  "occurrence_count": 7,
+  "occurrence_count": 8,
   "first_seen": "2026-06-06T19:00:00Z",
-  "last_seen": "2026-06-14T11:36:15Z",
+  "last_seen": "2026-06-14T12:51:03Z",
   "occurrences": [
     { "timestamp": "2026-06-06T19:00:00Z", "run_id": "6e884a36-939f-4295-871d-43a600085722" },
     { "timestamp": "2026-06-07T10:45:27Z", "run_id": "1d3fe231-3cc6-48da-8641-ea9ab35d2dd8" },
@@ -18,7 +18,8 @@
     { "timestamp": "2026-06-10T19:03:23Z", "run_id": "ef962408-70ec-43ae-86b3-54c25f33fb41" },
     { "timestamp": "2026-06-12T13:14:00Z", "run_id": "214662d7-076e-437e-8658-56fa36e87024" },
     { "timestamp": "2026-06-14T00:00:00Z", "run_id": "4d575d2d-8da4-4085-a67c-6244b509f57a" },
-    { "timestamp": "2026-06-14T11:36:15Z", "run_id": "e5098f4a-7e57-4a73-9b6d-5337c1e79f67" }
+    { "timestamp": "2026-06-14T11:36:15Z", "run_id": "e5098f4a-7e57-4a73-9b6d-5337c1e79f67" },
+    { "timestamp": "2026-06-14T12:51:03Z", "run_id": "e326264a-24a3-4d72-8540-9019070fd4e1" }
   ],
   "resolution_summary": null,
   "superseded_by": null,
