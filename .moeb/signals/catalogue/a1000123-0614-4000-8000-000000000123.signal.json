@@ -1,0 +1,21 @@
+{
+  "signal_id": "a1000123-0614-4000-8000-000000000123",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "spec-ambiguity: fix_signal.skill.md Phase 3 patch instruction assumes absent fields but signal schema includes null-valued fields",
+  "description": "The Phase 3 instruction says to 'locate the closing } and call patch_file with old_string set to the closing }' to add picked_up_at and fix_branch. However, the canonical signal schema includes these fields as null from the initial write. The agent must infer to update null-to-value rather than append absent fields, which is a non-obvious judgment call not covered by the skill.",
+  "proposed_resolution": "Update fix_signal.skill.md Phase 3 to state: 'Set the picked_up_at field to the current ISO 8601 timestamp and fix_branch to the computed fix_branch value. Use patch_file to replace the null values, or write_file for the complete updated record if multiple fields change simultaneously.'",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-14T12:50:10Z",
+  "last_seen": "2026-06-14T12:50:10Z",
+  "occurrences": [
+    { "timestamp": "2026-06-14T12:50:10Z", "run_id": "afeaa2b7-4175-4cd1-bc98-68a11d378371" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}

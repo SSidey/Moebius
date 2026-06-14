@@ -1,0 +1,21 @@
+{
+  "run_id": "afeaa2b7-4175-4cd1-bc98-68a11d378371",
+  "timestamp": "2026-06-14T12:42:26Z",
+  "command": "fix_signal",
+  "event_path": ".moeb/events/a1000121-0613-4000-8000-000000000121.event.json",
+  "metrics_path": ".moeb/metrics/afeaa2b7-4175-4cd1-bc98-68a11d378371.metrics.json",
+  "emittedSignals": [
+    { "id": "a1000123-0614-4000-8000-000000000123", "description": "spec-ambiguity: fix_signal.skill.md Phase 3 patch instruction assumes absent fields but signal schema includes null-valued fields" },
+    { "id": "a1000124-0614-4000-8000-000000000124", "description": "tooling-gaps: read_file on .moeb/signals/index.md exceeds 100 KiB cap requiring grep_files fallback" }
+  ],
+  "rubric_score": "6 pass, 0 fail, 1 na",
+  "end_review_error_count": 0,
+  "tools_used": ["complete_review", "create_branch", "fix_signal", "get_run_status", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
