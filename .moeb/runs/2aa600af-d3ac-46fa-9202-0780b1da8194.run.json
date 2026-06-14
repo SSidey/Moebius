@@ -3,7 +3,7 @@
   "timestamp": "2026-06-14T08:00:00Z",
   "command": "run",
   "signal_id": "a1000121-0613-4000-8000-000000000121",
-  "candidate_tag": null,
+  "candidate_tag": "v1.30.1-candidate.moeb-end-of-skill-review-phases-reorder",
   "spec_path": ".moeb/specifications/moeb/moeb.end-of-skill-review-phases-reorder.md",
   "metrics_path": ".moeb/metrics/2aa600af-d3ac-46fa-9202-0780b1da8194.metrics.json",
   "emittedSignals": [
