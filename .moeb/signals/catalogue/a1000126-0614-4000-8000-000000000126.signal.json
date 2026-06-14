@@ -1,0 +1,23 @@
+{
+  "signal_id": "a1000126-0614-4000-8000-000000000126",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "Retrospective Reviewer coverage gaps: Lens 3 misses methodological drift, Lens 9 misses absent phases, no lens surfaces new-capability opportunities",
+  "description": "Cross-referencing the Retrospective Reviewer's ten lenses against the original design criteria reveals three coverage gaps where observable run anomalies would be missed entirely:\n\n1. Lens 3 (behavioral-drift) is defined as 'mandatory skill phases executed out of prescribed order, or a required phase action skipped entirely.' This captures structural violations but not methodological substitution — where an agent executes all prescribed steps in the correct order but uses its own judgment to decide *how* to execute within a step rather than following the skill's explicit instructions (e.g. constructing a lookup by inference instead of following a prescribed tool sequence, or selecting files to read based on general reasoning rather than a specified pattern). This form of drift is distinct from Lens 1 (improvisation-events, which covers extra-curricular actions) and from Lens 3 as currently written.\n\n2. Lens 9 (workflow-gaps) is defined as 'steps that logically belong in a different skill phase, or cleanup actions performed in the wrong phase.' This covers misplaced steps but not absent phases — a run can execute perfectly across all existing phases while a reviewer could observe that an entirely new phase would structurally improve future runs. The lens as written has no instruction to surface phase-level structural gaps.\n\n3. No lens is assigned to observe the run and ask 'where would a new or absent tool, skill, or persona have eliminated improvisation, workaround, or inefficiency?' The signal category NewCapability exists, but no observational lens is tasked with generating signals in that category. Lens 8 (tooling-gaps) explicitly excludes absent tools ('Distinct from MissingMoebTool: this lens covers tools that exist but behaved in a way that required agent workaround'). The result is that the only path to a NewCapability signal is ad hoc agent judgment rather than a systematic retrospective lens.\n\nThese three gaps are distinct from a1000122's focus on review chain integrity and sycophancy suppression. They represent coverage mismatches between the lens definitions and the original set of observational criteria the Retrospective Reviewer was designed to address.",
+  "proposed_resolution": "1. Extend Lens 3 (behavioral-drift) definition to include methodological drift: 'Also flag cases where a prescribed action was taken but the agent substituted its own approach within the step for the skill's explicit instructions — e.g. choosing which files to read by inference instead of following a prescribed lookup sequence, constructing a prompt differently than the skill template specified, or selecting a tool differently than the skill prescribed without spec guidance permitting the choice. This is distinct from Lens 1 (extra steps not in the spec) and from phase-level ordering violations.'\n\n2. Extend Lens 9 (workflow-gaps) to include absent phases: 'Also flag cases where observable run behaviour suggests a missing phase would improve future runs — e.g. a recurring cleanup pattern executed ad hoc across multiple phases that would benefit from a dedicated phase, or a preparation step improvised at the start of several phases that indicates a missing pre-phase. Distinguish from Lens 1 (improvisation within a phase) by asking whether the fix is a new phase structure, not just a new step.'\n\n3. Add Lens 12 (capability-gaps): 'Identify points in the run where an absent tool, skill, or persona would have eliminated improvisation, workaround, or inefficiency observed under other lenses. For each such point, emit a NewCapability signal with a concrete description of the missing capability and the specific run behaviour that would have been avoided. Cross-reference signals from Lens 1, 2, 7, and 8 as primary sources — improvisation and tooling workarounds are the strongest indicators of absent capabilities.'",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-14T00:00:00Z",
+  "last_seen": "2026-06-14T00:00:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-14T00:00:00Z", "run_id": null }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null,
+  "picked_up_at": null,
+  "fix_branch": null
+}
