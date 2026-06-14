@@ -3,7 +3,7 @@
   "timestamp": "2026-06-14T12:05:29Z",
   "command": "run",
   "signal_id": "a1000111-0613-4000-8000-000000000111",
-  "candidate_tag": null,
+  "candidate_tag": "v1.30.0-candidate.moeb-qa-architect-mandatory-checks-cover-correctness-on",
   "spec_path": ".moeb/specifications/moeb/moeb.qa-architect-mandatory-checks-cover-correctness-on.md",
   "metrics_path": ".moeb/metrics/829d00a9-3613-4de9-839e-761b46604442.metrics.json",
   "emittedSignals": [
