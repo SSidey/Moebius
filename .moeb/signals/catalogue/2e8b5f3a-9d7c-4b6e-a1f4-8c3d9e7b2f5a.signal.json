@@ -1,0 +1,21 @@
+{
+  "signal_id": "2e8b5f3a-9d7c-4b6e-a1f4-8c3d9e7b2f5a",
+  "category": "ToolImprovement",
+  "signal_source": "moeb",
+  "severity": "Major",
+  "title": "tooling-gaps: moeb read_file absolute:true cannot reach Claude Code tool-results directory used for fix_signal overflow output",
+  "description": "When the fix_signal MCP tool produces output exceeding the token limit, the Claude Code harness writes the result to C:\\Users\\<user>\\.claude\\projects\\<id>\\tool-results\\. This path is outside the project root and OS temp directory — both the allowed roots for mcp__moeb__read_file with absolute:true. The agent was forced to use the external Read tool to process the overflow result, triggering a moeb-tool-origin failure. moeb generates overflow files it cannot read back with its own tools.",
+  "proposed_resolution": "Extend mcp__moeb__read_file absolute path allowed roots to include the Claude Code projects directory (resolved from a well-known env var or config), or add a dedicated read_tool_result tool that accepts a run-scoped job ID and reads the overflow file by path.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-14T11:28:00Z",
+  "last_seen": "2026-06-14T11:28:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-14T11:28:00Z", "run_id": "eb3ef120-24c3-40e6-8ed7-77aac9a691e8" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}

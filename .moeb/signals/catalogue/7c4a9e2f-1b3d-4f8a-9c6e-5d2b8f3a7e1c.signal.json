@@ -1,0 +1,21 @@
+{
+  "signal_id": "7c4a9e2f-1b3d-4f8a-9c6e-5d2b8f3a7e1c",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "spec-ambiguity: fix_signal Phase 3 patch instruction assumes picked_up_at and fix_branch absent but schema pre-populates them as null",
+  "description": "Phase 3 instructs the agent to patch the closing } to insert picked_up_at and fix_branch fields. The canonical signal schema already includes these fields initialised to null, so patching the closing } would produce duplicate keys. The agent improvised by using write_file with the complete updated content instead. The skill instruction needs to account for the null-initialised field layout.",
+  "proposed_resolution": "Update fix_signal.skill.md Phase 3 to instruct patch_file targeting the existing null field values: old_string '\"picked_up_at\": null' -> new_string with ISO timestamp, and '\"fix_branch\": null' -> new_string with branch name.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-14T11:28:00Z",
+  "last_seen": "2026-06-14T11:28:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-14T11:28:00Z", "run_id": "eb3ef120-24c3-40e6-8ed7-77aac9a691e8" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}

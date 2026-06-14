@@ -1,0 +1,21 @@
+{
+  "run_id": "eb3ef120-24c3-40e6-8ed7-77aac9a691e8",
+  "timestamp": "2026-06-14T11:25:53Z",
+  "command": "fix_signal",
+  "event_path": ".moeb/events/a1000111-0613-4000-8000-000000000111.event.json",
+  "metrics_path": ".moeb/metrics/eb3ef120-24c3-40e6-8ed7-77aac9a691e8.metrics.json",
+  "emittedSignals": [
+    { "id": "7c4a9e2f-1b3d-4f8a-9c6e-5d2b8f3a7e1c", "description": "spec-ambiguity: fix_signal Phase 3 patch instruction assumes picked_up_at and fix_branch absent but schema pre-populates them as null" },
+    { "id": "2e8b5f3a-9d7c-4b6e-a1f4-8c3d9e7b2f5a", "description": "tooling-gaps: moeb read_file absolute:true cannot reach Claude Code tool-results directory used for fix_signal overflow output" }
+  ],
+  "rubric_score": null,
+  "end_review_error_count": 0,
+  "tools_used": ["create_branch", "fix_signal", "get_run_status", "grep_files", "patch_file", "push_thinking_blocks", "read_file", "read_file_range", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
