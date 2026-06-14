@@ -8,13 +8,14 @@
   "proposed_resolution": "Extend read_file to accept absolute paths, or add a dedicated read_tool_result tool that resolves persisted-output paths from oversized tool results. Signal a1000056-0606-4000-8000-000000000056 tracks the underlying read_file absolute-path gap.",
   "gating_condition": null,
   "status": "open",
-  "occurrence_count": 3,
+  "occurrence_count": 4,
   "first_seen": "2026-06-06T13:45:00Z",
-  "last_seen": "2026-06-13T17:30:00Z",
+  "last_seen": "2026-06-14T18:12:00Z",
   "occurrences": [
     { "timestamp": "2026-06-06T13:45:00Z", "run_id": "ed6e87c4-5bd6-44bf-8c27-e6bffc621211" },
     { "timestamp": "2026-06-06T19:00:14Z", "run_id": "18aea822-d9eb-4ebc-87ec-06ceb5eda5f7" },
-    { "timestamp": "2026-06-13T17:30:00Z", "run_id": "7baf46a6-fc3a-465e-a375-752b77f9afeb" }
+    { "timestamp": "2026-06-13T17:30:00Z", "run_id": "7baf46a6-fc3a-465e-a375-752b77f9afeb" },
+    { "timestamp": "2026-06-14T18:12:00Z", "run_id": "71a840ea-08cf-4771-9c6e-67925ac52823" }
   ],
   "resolution_summary": null,
   "superseded_by": null,

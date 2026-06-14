@@ -5,7 +5,11 @@
   "signal_id": "a1000122-0614-4000-8000-000000000122",
   "event_path": ".moeb/events/a1000122-0614-4000-8000-000000000122.event.json",
   "metrics_path": ".moeb/metrics/71a840ea-08cf-4771-9c6e-67925ac52823.metrics.json",
-  "emittedSignals": [],
+  "emittedSignals": [
+    { "id": "f3a2b1c0-d4e5-4f6a-87b8-c9d0e1f2a3b4", "description": "Missing moeb tool: Read (absolute-path tool result file access)" },
+    { "id": "c4d5e6f7-a8b9-4c0d-8e1f-2a3b4c5d6e7f", "description": "archive_signal failed in fix_signal post-resolution hook: a1000122-0614-4000-8000-000000000122" },
+    { "id": "d5e6f7a8-b9c0-4d1e-9f2a-3b4c5d6e7f8a", "description": "Archive Resolved Signal phase in fix_signal.skill.md always fails at in_progress status" }
+  ],
   "rubric_score": null,
   "end_review_error_count": null,
   "tools_used": ["complete_review", "create_branch", "fix_signal", "get_run_status", "grep_files", "patch_file", "read_file", "verify_rubrics", "write_file"],
