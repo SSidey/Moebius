@@ -7,7 +7,7 @@
   "description": "The baseline for any step metric is iteration_count = 0: the agent found and applied the change correctly on the first attempt. An iteration_count > 0 means the agent had to retry or work around a failure before producing a good result — something in the process caused unnecessary rework. Accepting iteration_count = 1 with acceptance_rate = 1.0 as a clean pass conflates 'eventually correct' with 'process is sound'.\n\nIn the run 0606670c-e9be-4c08-b3f2-9549fc08c6c8 (retrospective-reviewer-review-chain-integrity-lens), two steps recorded iteration_count = 1:\n- patch-run-skill (iteration_count=1): patch_file was rejected because run.skill.md had not been read via read_file in the current session. The agent had to call read_file first and retry. Root cause: the spec steps did not include an explicit pre-read of target files before Phase 3 patching.\n- patch-fix-signal-skill (iteration_count=1): grep_files found no match for the target phrase because it spans two lines in the file. The agent fell back to read_file_range to locate the text. Root cause: grep is line-based and cannot match phrases that cross line boundaries; the agent did not verify via read_file_range before attempting the patch.\n\nThe Retrospective Reviewer's lens 2 (transient-failures) correctly identifies these as transient failures but stops short of flagging them as improvement signals requiring follow-up. The review chain (QA Architect, Reasoning Reviewer, Retrospective Reviewer) all described these as 'correctly handled' without proposing concrete improvements.",
   "proposed_resolution": "1. Update lens 2 (transient-failures) in retrospective-reviewer.role.md: add explicit instruction that iteration_count > 0 in step metrics is an improvement signal, not a clean result. For each step with iteration_count > 0, the reviewer must identify the root cause and propose a specific improvement. Zero iterations is the expected baseline.\n2. For the two root causes found in this run: (a) Add a pre-read step to spec/run flows that touch multiple files via patch_file — read all target files at the start of the implement phase so scope enforcement is satisfied before any patch is attempted. (b) Add a note to run.skill.md or spec.skill.md Phase 3 guidance that grep_files is line-based; if a target phrase may span lines, use read_file_range to confirm the exact text before calling patch_file.",
   "gating_condition": null,
-  "status": "open",
+  "status": "in_progress",
   "occurrence_count": 1,
   "first_seen": "2026-06-15T11:42:00Z",
   "last_seen": "2026-06-15T11:42:00Z",
@@ -18,6 +18,6 @@
   "superseded_by": null,
   "archived_on": null,
   "candidate_tag": null,
-  "picked_up_at": null,
-  "fix_branch": null
+  "picked_up_at": "2026-06-15T19:00:00Z",
+  "fix_branch": "feat/moeb-retrospective-reviewer-treats-iteration-count-0-as"
 }
