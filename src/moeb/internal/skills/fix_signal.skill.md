@@ -511,8 +511,8 @@ Continue to Phase 8 — Metrics Recording regardless of signal count.
 This phase always runs. It is advisory — signals emitted here never gate pass/fail.
 
 1. Without calling any tool, adopt the **Retrospective Reviewer Persona** pre-loaded
-   in your context. Evaluate the fix_signal run process using the ten observational
-   lenses. Produce a raw JSON array of signal objects (`"severity": "Major"` or
+   in your context. Evaluate the fix_signal run process using the observational lenses
+   defined in the Retrospective Reviewer Persona. Produce a raw JSON array of signal objects (`"severity": "Major"` or
    `"Minor"` only, never Critical). Hold the result in working memory.
 
 2. Parse the returned JSON array. If not valid JSON or not an array, treat as empty.

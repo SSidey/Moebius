@@ -1,0 +1,21 @@
+{
+  "run_id": "0606670c-e9be-4c08-b3f2-9549fc08c6c8",
+  "timestamp": "2026-06-15T11:16:34Z",
+  "command": "run",
+  "signal_id": "a1000122-0614-4000-8000-000000000122",
+  "candidate_tag": null,
+  "spec_path": ".moeb/specifications/moeb/moeb.retrospective-reviewer-review-chain-integrity-lens.md",
+  "metrics_path": ".moeb/metrics/0606670c-e9be-4c08-b3f2-9549fc08c6c8.metrics.json",
+  "emittedSignals": [],
+  "rubric_score": null,
+  "end_review_error_count": 0,
+  "qa_passed": false,
+  "tools_used": ["complete_review", "create_task_list", "grep_files", "list_directory", "patch_file", "read_file", "read_file_range", "run_command", "start_run", "update_task", "verify_rubrics"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

@@ -657,8 +657,8 @@ This phase always runs regardless of the value of `{{no_review}}`. It is advisor
 signals emitted here never gate pass/fail and never affect `qa_passed`.
 
 1. Without calling any tool, adopt the **Retrospective Reviewer Persona** pre-loaded
-   in your context. Evaluate the run process using the ten observational lenses defined
-   in the persona. Produce a raw JSON array of signal objects (each with
+   in your context. Evaluate the run process using the observational lenses defined in
+   the Retrospective Reviewer Persona. Produce a raw JSON array of signal objects (each with
    `"signal_source": "moeb"`, `"severity": "Major"` or `"Minor"` — never Critical).
    Hold the result in working memory.
 
