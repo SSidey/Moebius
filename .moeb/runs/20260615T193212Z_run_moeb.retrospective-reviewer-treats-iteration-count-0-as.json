@@ -1,0 +1,21 @@
+{
+  "run_id": "4e5e2179-4de1-4ccb-9f9a-e9bbbc4a57f9",
+  "timestamp": "2026-06-15T19:32:12Z",
+  "command": "run",
+  "signal_id": "f4e3d2c1-b0a9-4876-8f5e-4d3c2b1a0f9e",
+  "candidate_tag": "v1.30.3-candidate.moeb-retrospective-reviewer-treats-iteration-count-0-as",
+  "spec_path": ".moeb/specifications/moeb/moeb.retrospective-reviewer-treats-iteration-count-0-as.md",
+  "metrics_path": ".moeb/metrics/4e5e2179-4de1-4ccb-9f9a-e9bbbc4a57f9.metrics.json",
+  "emittedSignals": [],
+  "rubric_score": null,
+  "end_review_error_count": 0,
+  "qa_passed": true,
+  "tools_used": ["complete_review", "create_task_list", "grep_files", "list_directory", "patch_file", "push_thinking_blocks", "read_file", "run_command", "start_run", "update_task", "verify_rubrics"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}
