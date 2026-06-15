@@ -3,13 +3,15 @@
   "timestamp": "2026-06-15T11:16:34Z",
   "command": "run",
   "signal_id": "a1000122-0614-4000-8000-000000000122",
-  "candidate_tag": null,
+  "candidate_tag": "v1.30.2-candidate.moeb-retrospective-reviewer-review-chain-integrity-lens",
   "spec_path": ".moeb/specifications/moeb/moeb.retrospective-reviewer-review-chain-integrity-lens.md",
   "metrics_path": ".moeb/metrics/0606670c-e9be-4c08-b3f2-9549fc08c6c8.metrics.json",
-  "emittedSignals": [],
+  "emittedSignals": [
+    { "id": "e3f4a5b6-c7d8-4e9f-a0b1-c2d3e4f5a6b7", "description": "run.skill.md has no step to refresh qa_passed in run file after Phase 5 reorder" }
+  ],
   "rubric_score": null,
   "end_review_error_count": 0,
-  "qa_passed": false,
+  "qa_passed": true,
   "tools_used": ["complete_review", "create_task_list", "grep_files", "list_directory", "patch_file", "read_file", "read_file_range", "run_command", "start_run", "update_task", "verify_rubrics"],
   "token_usage": {
     "input_tokens": 0,

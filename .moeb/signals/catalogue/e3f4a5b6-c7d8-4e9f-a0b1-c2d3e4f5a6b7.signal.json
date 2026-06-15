@@ -1,0 +1,23 @@
+{
+  "signal_id": "e3f4a5b6-c7d8-4e9f-a0b1-c2d3e4f5a6b7",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "run.skill.md has no step to refresh qa_passed in run file after Phase 5 reorder",
+  "description": "After the a1000121 phase reorder, Phase 6 (Metrics Recording) runs before Phase 5 (End-of-Skill Review). The run file is written in Phase 6 with qa_passed defaulting to false. Phase 5 sets working memory qa_passed = true or false, but no skill step updates the run file after that. All run files produced after a1000121's candidate tag will have qa_passed: false regardless of QA outcome. The event file (Phase 10) captures the correct value via working memory, but the run file is a persistent artifact that downstream tooling may read to determine QA pass/fail status.",
+  "proposed_resolution": "Add a run file update step immediately after Phase 5 sets working memory qa_passed: call read_file on the run file path, set qa_passed to the working memory value, then call write_file with the updated JSON. This can be appended to the existing 'After all Phase 5 signals are processed' instruction in run.skill.md.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-15T11:16:34Z",
+  "last_seen": "2026-06-15T11:16:34Z",
+  "occurrences": [
+    { "timestamp": "2026-06-15T11:16:34Z", "run_id": "0606670c-e9be-4c08-b3f2-9549fc08c6c8" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null,
+  "picked_up_at": null,
+  "fix_branch": null
+}
