@@ -49,6 +49,14 @@ MissingMoebTool signal for ToolSearch calls. The moeb-tool-origin boundary appli
 Phase 1 onwards for all other external tools that have moeb equivalents (e.g. Read →
 read_file, Bash → run_command, Glob → list_directory/search_files, Grep → grep_files).
 
+### Pre-Read Discipline
+
+Before calling `patch_file` on any file, that file must have been read via `read_file` or `read_file_range` earlier in the current session. If a file that will be patched has not been read, call `read_file` on it first. Skipping this step causes a scope-enforcement rejection that forces an unplanned retry and inflates `iteration_count`.
+
+### grep_files Line-Boundary Limitation
+
+`grep_files` matches within single lines only. If the text you intend to use as `old_string` in a `patch_file` call may span two or more lines in the file, `grep_files` will return no match. Before calling `patch_file` with a multi-line `old_string`, use `read_file_range` to retrieve and confirm the exact text (including whitespace, indentation, and line endings) from the file. Do not call `patch_file` based solely on a grep result when the target phrase is known or suspected to span lines.
+
 ## Phase 1 — Scan
 
 Call `enter_phase` with `phase_id: "phase-1"` as the first action in this phase.

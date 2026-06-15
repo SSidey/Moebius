@@ -34,6 +34,8 @@ Evaluate the run against each of the following lenses:
    around. A rejected call that eventually succeeded is a transient failure even if no
    error appears in verify_rubrics.
 
+   **iteration_count baseline.** `iteration_count = 0` is the expected outcome for every step metric. Any step with `iteration_count > 0` is a process failure — the agent had to retry or work around a failure that should not have occurred. For each step where `iteration_count > 0` appears in the run's StepMetrics, the reviewer must: (a) identify the specific root cause (e.g. scope-enforcement rejection, grep no-match, tool parse error); (b) propose a concrete improvement to a skill file, role, or prompt that would reduce `iteration_count` to 0 in future runs; and (c) emit a `SkillImprovement` or `ToolImprovement` signal for that step. An `acceptance_rate = 1.0` combined with `iteration_count > 0` means 'eventually correct', not 'process is sound'. Do not suppress the signal on the basis that the step ultimately succeeded.
+
 3. **behavioral-drift**: Mandatory skill phases executed out of prescribed order, or a
    required phase action skipped entirely (e.g. create_task_list omitted, enter_phase not
    called, complete_review skipped for a non-.moeb/ file write).
