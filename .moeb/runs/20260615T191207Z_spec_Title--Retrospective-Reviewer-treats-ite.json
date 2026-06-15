@@ -1,0 +1,21 @@
+{
+  "run_id": "665e4e92-38b0-4f37-b8af-8cc00e4af8b2",
+  "timestamp": "2026-06-15T19:12:07Z",
+  "command": "spec",
+  "spec_path": ".moeb/specifications/moeb/moeb.retrospective-reviewer-treats-iteration-count-0-as.md",
+  "metrics_path": ".moeb/metrics/665e4e92-38b0-4f37-b8af-8cc00e4af8b2.metrics.json",
+  "emittedSignals": [
+    { "id": "f5a6b7c8-d9e0-4f1a-8b2c-3d4e5f6a7b8c", "description": "transient-failures: patch_file rejected on signals/index.md before read_file satisfied scope enforcement in Phase 5a" },
+    { "id": "a6b7c8d9-e0f1-4a2b-8c3d-4e5f6a7b8c9d", "description": "efficiency: read_file on 63KB signals/index.md when read_file_range sufficed for scope enforcement" }
+  ],
+  "rubric_score": null,
+  "end_review_error_count": 0,
+  "tools_used": ["complete_review", "create_task_list", "get_run_status", "grep_files", "patch_file", "push_thinking_blocks", "read_file", "start_spec", "update_task", "verify_rubrics", "write_file"],
+  "token_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_creation_tokens": 0,
+    "total_tokens": 0
+  }
+}

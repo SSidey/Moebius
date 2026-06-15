@@ -1,0 +1,21 @@
+{
+  "signal_id": "a6b7c8d9-e0f1-4a2b-8c3d-4e5f6a7b8c9d",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "efficiency: read_file on 63KB signals/index.md when read_file_range sufficed for scope enforcement",
+  "description": "When recovering from the Phase 5a scope-enforcement rejection, the agent called read_file on the entire .moeb/signals/index.md (63KB, 197 lines), producing an overflow result saved to a temp file. grep_files had already identified the target row at line 192. read_file_range targeting lines 192-195 would have satisfied scope enforcement and avoided the overflow, reducing token waste and eliminating the temp-file indirection.",
+  "proposed_resolution": "Update the Phase 5a signal index update instruction in spec.skill.md to use read_file_range targeting the grep-identified line after a scope-enforcement rejection, rather than full-file read_file. The Pre-Read Discipline sub-section being added by this spec's implementation should mention read_file_range as the preferred option when grep_files has already identified the target line.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-15T19:12:00Z",
+  "last_seen": "2026-06-15T19:12:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-15T19:12:00Z", "run_id": "665e4e92-38b0-4f37-b8af-8cc00e4af8b2" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}

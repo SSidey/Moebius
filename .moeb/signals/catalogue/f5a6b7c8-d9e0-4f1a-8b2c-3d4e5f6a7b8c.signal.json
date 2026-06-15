@@ -1,0 +1,21 @@
+{
+  "signal_id": "f5a6b7c8-d9e0-4f1a-8b2c-3d4e5f6a7b8c",
+  "category": "SkillImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "transient-failures: patch_file rejected on signals/index.md before read_file satisfied scope enforcement in Phase 5a",
+  "description": "In Phase 5a of spec.skill.md, patch_file was called on .moeb/signals/index.md before the file had been read in the current session. The scope-enforcement layer rejected the call. The agent recovered by calling read_file (which produced a 63KB overflow result) and then retrying patch_file successfully. This is a transient failure (iteration_count = 1 for the Phase 5a signal index update). The spec being authored by this run (moeb.retrospective-reviewer-treats-iteration-count-0-as) prescribes a Pre-Read Discipline fix to prevent exactly this class of failure, evidencing that the spec's proposed resolution addresses a real recurring pattern.",
+  "proposed_resolution": "Add a read_file_range call at the start of Phase 5a's index update step — after grep_files identifies the target row and before the patch_file call — to pre-satisfy scope enforcement. Prefer read_file_range over read_file to avoid the 63KB overflow on large index files.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-15T19:12:00Z",
+  "last_seen": "2026-06-15T19:12:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-15T19:12:00Z", "run_id": "665e4e92-38b0-4f37-b8af-8cc00e4af8b2" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}
