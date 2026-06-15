@@ -1,6 +1,6 @@
 [package]
 name = "moeb"
-version = "1.30.2"
+version = "1.30.3"
 edition = "2021"
 
 [[bin]]
