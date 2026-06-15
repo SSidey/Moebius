@@ -4,10 +4,16 @@
   "command": "fix_signal",
   "event_path": ".moeb/events/f4e3d2c1-b0a9-4876-8f5e-4d3c2b1a0f9e.event.json",
   "metrics_path": ".moeb/metrics/02b8cfb3-1344-425c-b257-345962f7d382.metrics.json",
-  "emittedSignals": [],
+  "emittedSignals": [
+    { "id": "c5d6e7f8-a9b0-4c1d-8e2f-3a4b5c6d7e8f", "description": "archive_signal failed in fix_signal post-resolution hook: f4e3d2c1-b0a9-4876-8f5e-4d3c2b1a0f9e" },
+    { "id": "d6e7f8a9-b0c1-4d2e-8f3a-4b5c6d7e8f9a", "description": "proportionality: over-justification of spec-mandated slug truncation" },
+    { "id": "e7f8a9b0-c1d2-4e3f-8a4b-5c6d7e8f9a0b", "description": "transient-failures: run file patch rejected by scope enforcement requiring read+write fallback" },
+    { "id": "f8a9b0c1-d2e3-4f4a-8b5c-6d7e8f9a0b1c", "description": "tooling-gaps: scope enforcement fires on files written by the current run" },
+    { "id": "a9b0c1d2-e3f4-4a5b-9c6d-7e8f9a0b1c2d", "description": "workflow-gaps: run file written in Phase 8 before review phases collect all emittedSignals" }
+  ],
   "rubric_score": "5 pass, 0 fail, 2 na",
   "end_review_error_count": 0,
-  "tools_used": ["complete_review", "create_branch", "fix_signal", "get_run_status", "grep_files", "patch_file", "read_file", "verify_rubrics", "write_file"],
+  "tools_used": ["complete_review", "create_branch", "fix_signal", "get_run_status", "grep_files", "patch_file", "read_file", "tag_run", "tag_signal", "verify_rubrics", "write_file"],
   "token_usage": {
     "input_tokens": 0,
     "output_tokens": 0,

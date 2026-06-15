@@ -1,0 +1,21 @@
+{
+  "signal_id": "d6e7f8a9-b0c1-4d2e-8f3a-4b5c6d7e8f9a",
+  "category": "ReasoningImprovement",
+  "signal_source": "moeb",
+  "severity": "Minor",
+  "title": "proportionality: over-justification of spec-mandated slug truncation",
+  "description": "Block 2 spends 2 sentences verifying that the 50-char slug truncation landed on a word boundary and is readable. The spec mandates the rule mechanically; no verification or rationale is needed. Example: 'The fix_branch slug truncation rule (50 chars) results in slug ... which is a complete word boundary. No ambiguity in the branch name; the truncated slug is still readable.'",
+  "proposed_resolution": "Add a note to the thinking-block guidelines in push_thinking_blocks that mechanical spec-mandated operations (slug computation, timestamp formatting, UUID generation) require no reasoning — apply and proceed without commentary.",
+  "gating_condition": null,
+  "status": "open",
+  "occurrence_count": 1,
+  "first_seen": "2026-06-15T19:05:00Z",
+  "last_seen": "2026-06-15T19:05:00Z",
+  "occurrences": [
+    { "timestamp": "2026-06-15T19:05:00Z", "run_id": "02b8cfb3-1344-425c-b257-345962f7d382" }
+  ],
+  "resolution_summary": null,
+  "superseded_by": null,
+  "archived_on": null,
+  "candidate_tag": null
+}
